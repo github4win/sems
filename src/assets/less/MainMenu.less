@@ -1,0 +1,187 @@
+@Nav_Menu_Height:70px;
+@Div_Path_Height:30px;
+// @Nav_Menu_Color:rgb(212, 180, 71);
+// @Nav_Menu_Color:#1a8363bb;
+// @Nav_Menu_Color:#218838;
+// @Nav_Menu_Color:#17a2b8;
+@Nav_Menu_Color:#FFBA00;
+// @Nav_Menu_Color:#ffa726;
+////// 메인 메뉴 바 //////
+.nav-main {
+  height:@Nav_Menu_Height;
+  // background-color: @Nav_Menu_Color;
+  background: linear-gradient( to right, #00CFDB, #467ce1 );
+  .nav-brand {
+    img {
+      width:30px;
+      height:30px;
+      // position:absolute;
+      left:0;
+      -webkit-transition: opacity 0.5s ease-in-out;
+      -moz-transition: opacity 0.5s ease-in-out;
+      -o-transition: opacity 0.5s ease-in-out;
+      transition: opacity 0.5s ease-in-out;
+      // &:hover{
+        // background:url("../assets/image/menu_list_hover.png") no-repeat;
+        //opacity: 0;
+        //src:"../assets/image/menu_list_hover.png";
+      // }
+    }
+  }
+}
+
+////// 사이드 메뉴바 //////
+.nav-Sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: -250px;  // left면 왼쪽, right면 오른쪽  .active와 동일하게 하면 됨
+    height: 100vh;
+    z-index: 999;
+    //background: #7386D5;
+    background-color: #005ad5;
+    color: #fff;
+    transition: all 0.3s;
+    overflow-y: scroll;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
+    vertical-align: top;
+    align-content: flex-start;
+
+    // 사이드 메뉴바 활성화
+    &.active {
+      left: 0;
+    }
+
+    // 뒤로가기 버튼
+    .div-Back {
+      width: 35px;
+      height: 35px;
+      line-height: 35px;
+      text-align: center;
+      background: #7386D5;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      -webkit-transition: all 0.3s;
+      -o-transition: all 0.3s;
+      transition: all 0.3s;
+
+      // 뒤로가기 버튼 Hover
+      &:hover{
+        background: #fff;
+        color: #7386D5;
+      }
+    }
+
+    // 사이드바 헤더
+    .sidebar-header {
+        //background: #6d7fcc;
+        //background: red;
+        width:100vw;
+        height:@Div_Path_Height + @Nav_Menu_Height;  // 메인 메뉴바 Height + Path Height
+    }
+
+    .div-sidebar-menu{
+        width:100vw;
+        a {
+            display: block;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            text-decoration: none;
+            &:hover{
+                color: rgb(213, 115, 136);
+                background: #fff;
+            }
+            span{
+              padding-left: 20px;
+            }
+        }
+
+        .div-sidebar-submenu{
+            span{
+              margin-left: 20px;
+            }
+        }
+    }
+    
+}
+
+////// 경로 공간 //////
+.div_Path{
+  height:@Div_Path_Height;
+  display: flex;
+  margin-top: 10px;
+  margin-left: 20px;
+  font-size: 30px;
+  font-weight: bold;
+  
+  // background:green;
+}
+
+////// 사이드바 활성화 시 불투명 배경 //////
+.overlay {
+    display: none;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 998;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+
+    &.active{
+      display: block;
+      opacity: 1;
+    }
+}
+
+.wrapper{
+  content:'';
+}
+.wrapper::before{content:'';}
+
+@media all and (max-width:575px) {
+  content:'xs';
+}
+@media all and (max-width:767px) {
+  content:'sm';
+}
+@media all and (max-width:991px) {
+  content:'md';
+}
+@media all and (max-width:1199px) {
+  content:'lg';
+}
+@media all and (min-width:1200px) {
+  content:'xl';
+}
+
+  
+
+// #sidebar ul li a {
+//     //padding: 10px;
+//     font-size: 1.1em;
+//     display: block;
+// }
+
+// #sidebar ul li a:hover {
+//     color: rgb(213, 115, 136);
+//     background: #fff;
+// }
+
+// ul ul a {
+//     font-size: 0.9em !important;
+//     padding-left: 30px !important;
+//     background: #30e43f;
+// }
+
+
+// 메뉴 Hover CSS
+  .navbar-nav li a{margin-top: -5px; padding:10px;display:block;text-transform: uppercase; font-size: 18px; font-weight: 500; display: inline-block; position: relative;} // 대메뉴 CSS   
+  .navbar-nav li:hover ul{display:inline-block; }  //대 메뉴 hover시 하위 메뉴 display 속성   
+  .navbar-nav ul{position:absolute;min-width:150px;display:none;padding:0px} // 하위메뉴 ul  속성
+  .navbar-nav li ul:hover li{display:block} // //대 메뉴 hover시 하위 메뉴 display 속성 
+  .navbar-nav ul li{display:inline-block;} // 하위 메뉴 리스트 생길때 
+  .navbar-nav li ul li a { font-size: 15px;} // 하위 메뉴 Font Size
+// 메뉴 Hover CSS 

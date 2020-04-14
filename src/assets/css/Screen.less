@@ -1,0 +1,32 @@
+@charset "UTF-8";
+
+.Screen_size{
+    display: none;
+}
+
+.Screen_size::before{content:'';}
+
+/* // 모바일 (세로) */
+@media all and (min-width:0px) and (max-width:575px){
+    .Screen_size:before{content:'Mobile_V';}
+}
+
+/* // 모바일(가로) */
+@media all and (min-width:576px) and (max-width:767px){ 
+    .Screen_size:before{content:'Mobile_H';}
+}
+
+/* // 태블릿 */
+@media all and (min-width:768px) and (max-width:991px){ 
+    .Screen_size:before{content:'Tablet';}
+}
+
+/* // 데스크탑 */
+@media all and (min-width:992px) and (max-width:1199px){ 
+    .Screen_size:before{content:'Desktop';}
+}
+
+/* // 데스크탑 보다 큰 */
+@media all and (min-width:1200px){ 
+    .Screen_size:before{content:'Desktop_L';}
+}
