@@ -307,7 +307,8 @@ export default {
 
         //차트 생성위치
         container = document.getElementById('chart-date')
-
+        
+        $('#chart-date').empty();
         //일자별 차트 생성
         tui.lineChart(container,this.chartData_date,this.chartOptions_date)
       }

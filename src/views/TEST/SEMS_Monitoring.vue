@@ -26,9 +26,9 @@
             </div>
           </div>
           <div v-if="panelStatus" class="sub_menu_div" >
-              <sub_1 v-if="btn_selected == 1" ></sub_1>
-              <sub_2 v-if="btn_selected == 2" ></sub_2>
-              <sub_3 v-if="btn_selected == 3" ></sub_3>
+              <Sub_GasType v-if="btn_selected == 1" ></Sub_GasType>
+              <Sub_Chart v-if="btn_selected == 2" ></Sub_Chart>
+              <Sub_Notice v-if="btn_selected == 3" ></Sub_Notice>
           </div>
           <div style="display:inline-block; position :absolute; float:left" >
             <b-button-close v-if="panelStatus" id="btn_close" style="width: 30px; height : 30px " @click="btn_close" > X </b-button-close>
@@ -87,9 +87,9 @@
   import "ol/ol.css";
   import Map from 'ol/Map';
   import View from "ol/View";
-  import sub_1 from "./Test_sub_1.vue"
-  import sub_2 from "./Test_sub_2.vue"
-  import sub_3 from "./Test_sub_3.vue"
+  import Sub_GasType from "./Sub_GasType.vue"
+  import Sub_Chart from "./Sub_Chart.vue"
+  import Sub_Notice from "./Sub_Notice.vue"
   import { GetMap  } from "@/api/SEMS_Map.js";
   import { Tile as TileLayer } from 'ol/layer.js';
 
@@ -108,9 +108,9 @@
 
     // Component 선언부
     components: {
-      sub_1,
-      sub_2,
-      sub_3
+      Sub_GasType,
+      Sub_Chart,
+      Sub_Notice
     },
 
     // 초기 데이터 변수 선언부
@@ -138,7 +138,8 @@
       var Circle_iotNO;   // IOT 고유번호
       var Circle_Text;    // 센서 내용
       var Circle_Center = [];  // 센서 위치
-          Circle_Center[0] = [14400500.836050374, 4237522.974666473];
+        //  Circle_Center[0] = [14400500.836050374, 4237522.974666473];
+          Circle_Center[0] = [14396952.53, 4225056.70];
       var Circle_cnt;     // 센서 갯수
 
       var container = document.getElementById('popup');   // Overlay - div적용

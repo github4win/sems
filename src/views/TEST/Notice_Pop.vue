@@ -14,27 +14,27 @@
         <fieldset>
           <div class="row">
             <div class="col-md-12 col-sm-6">
-              <label class="col-md-2 col-sm-4 col-xs-4 control-label" v-text="LB_TITLE"></label>
-              <div class="col-md-10 col-sm-8 col-xs-8">
-                <b-form-input id="RNF_CD_ID" v-model="LB_TITLE_TXT" readonly></b-form-input>
+              <label class="col-md-3 col-sm-4 col-xs-4 control-label" v-text="LB_TITLE"></label>
+              <div class="col-md-9 col-sm-8 col-xs-8">
+                <b-textarea id="TEXTAREA_NOT_ID" v-model="LB_TITLE_TXT" rows="3" readonly  style="resize: none; "></b-textarea>
               </div>
             </div>
             <div class="col-md-12 col-sm-6">
-              <label class="col-md-2 col-sm-4 col-xs-4 control-label" v-text="LB_REG_DATE"></label>
-              <div class="col-md-10 col-sm-8 col-xs-8">
+              <label class="col-md-3 col-sm-4 col-xs-4 control-label" v-text="LB_REG_DATE"></label>
+              <div class="col-md-9 col-sm-8 col-xs-8">
                 <input type="date" id="REG_SDATE" v-model="LB_REG_DATE_TXT" readonly class="form-control">
               </div>
             </div>
             <div class="col-md-12 col-sm-6">
-              <label class="col-md-2 col-sm-4 col-xs-4 control-label" v-text="LB_REG_USER"></label>
-              <div class="col-md-10 col-sm-8 col-xs-8">
+              <label class="col-md-3 col-sm-4 col-xs-4 control-label" v-text="LB_REG_USER"></label>
+              <div class="col-md-9 col-sm-8 col-xs-8">
                 <b-form-input id="RNF_CD_ID" v-model="LB_REG_USER_TXT" readonly></b-form-input>
               </div>
             </div>
             <div class="col-md-12 col-sm-6">
-              <label class="col-md-2 col-sm-4 col-xs-4 control-label" v-text="LB_DATA"></label>
-              <div class="col-md-10 col-sm-8 col-xs-8">
-                <b-textarea  v-model="LB_DATA_TXT" rows="10" readonly  style="resize: none;  overflow: hidden;"></b-textarea>
+              <label class="col-md-3 col-sm-4 col-xs-4 control-label" v-text="LB_DATA"></label>
+              <div class="col-md-9 col-sm-8 col-xs-8">
+                <b-textarea  v-model="LB_DATA_TXT" rows="10" readonly  style="resize: none; "></b-textarea>
               </div>
             </div>
           </div>
@@ -88,7 +88,6 @@ export default {
   // 화면이 로드될 때 DOM 생성이 완료된 후 실행되는 이벤트 선언부
   mounted() {    
     window.addEventListener('load',  this.ScreenOnload(), false); // 초기 화면 Screen 설정 이벤트
-
   },
 
   // 이벤트 선언부
@@ -97,15 +96,13 @@ export default {
     ScreenOnload(){
       Utility.fn_SetMenuPath(this); // 메뉴 Path 표시
     },
-    
 
     //세부내용 조회
     async SEARCH(){
-
-        let NOT_RESULT = await SELECT_NOT_DETAIL(this.LB_RNF_CD_TXT);
+        let NOT_RESULT = await SELECT_NOT_DETAIL(this.TARGET.NOT_ID);
 
            // 조회된 데이터가 null이거나 undefined 인 경우
-           if(Utility.fn_IsNull(NOT_RESULT[0].ROWNUM))
+           if(Utility.fn_IsNull(NOT_RESULT[0].NOT_ID))
            {
               return;
            }

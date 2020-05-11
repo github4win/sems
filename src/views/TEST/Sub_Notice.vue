@@ -7,14 +7,16 @@
     </div>
       <div id = "input-group-id">
       <b-input-group
-        v-for="(LIST,idx) in NOT_RESULT"
-        :key="idx"
+        v-for=" LIST in NOT_RESULT"
+        :key="LIST.NOT_ID"
         class = "group"
+        :id = "LIST.NOT_ID"
+        @click="SERACH_DETAIL($event)"
       >
         <div class="input-group-prepend">
             <span class="input-group-text"  v-text="LIST.ROWNUM"></span>
         </div>
-        <textarea class="group-name" cols="2" readonly="readonly" v-text="LIST.TITLE" @click="SERACH_DETAIL($event)" ></textarea>
+        <textarea class="group-name" cols="2" readonly="readonly" v-text="LIST.TITLE"  ></textarea>
         
 
       </b-input-group>
@@ -30,7 +32,7 @@
 import {SELECT_NOT} from "@/api/Test_map.js";
 import Utility from "../../assets/js/CommonUtility.js";   // 전 화면 공통으로 사용하는 함수
 import GlobalValue from "../../assets/js/GlobalValue.js"; // 전 화면 공통으로 사용하는 변수
-import Modal from "./TEST_NOT.vue"
+import Modal from "./Notice_Pop.vue"
 
 export default {
   component() {
@@ -40,7 +42,8 @@ export default {
   data() {
     return {
       NOT_RESULT : [{}], // 검색결과 담을 배열
-      Device_Type : "" // 장비 타입
+      NOT_ID : "",       // 선택한 공지사항의 ID값(팝업 호출시 넘겨줄값)
+      Device_Type : ""   // 장비 타입
     };
   },
 
@@ -81,16 +84,16 @@ export default {
 
     // 제목 클릭시 내용 조회 팝업 호출
     async SERACH_DETAIL(event){ 
-      debugger
         this.Device_Type = Utility.fn_ScreenSize();
         var widthsize;
         var heightsize;
         var gubun;
         var selected_rownum;
+
         if (this.Device_Type == '"Mobile_V"' || this.Device_Type == "Mobile_V") 
         {
           this.widthsize =  "350px"
-          this.heightsize = "500px"
+          this.heightsize = "490px"
         }
         else if (this.Device_Type == '"Mobile_H"' || this.Device_Type == "Mobile_H") 
         {
@@ -100,10 +103,10 @@ export default {
         else
         {
           this.widthsize = "600px"
-          this.heightsize = "500px"
+          this.heightsize = "490px"
         }
 
-        debugger
+        this.NOT_ID = event.currentTarget.id;
         jQuery(document).ready(function($) {
             $('html, body').css({'height': '100%'}); // 모달팝업 중 html,body의 scroll을 hidden시킴
             $('.v--modal-box').on('scroll touchmove mousewheel', function(event) { // 터치무브와 마우스휠 스크롤 방지

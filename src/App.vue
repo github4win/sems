@@ -9,7 +9,7 @@
         </div>
         <!-- 사이드 메뉴바 헤더-->
         <div class="sidebar-header">
-          <h2>윈정보기술</h2>
+          <h2>유해물질 모니터링</h2>
         </div>
 
         <!-- 사이드 메뉴바 메뉴 부분 -->
@@ -35,7 +35,7 @@
       <b-navbar class="nav-main" toggleable="lg" type="light" id="Mainmenu">
         <b-navbar-brand tag="h1" href="#" class="nav-brand">
           <img style="margin-top:-10px; " id="btn_menu" src="./assets/image/menu_list.png" />
-          <span class="title">윈정보기술</span>
+          <span class="title">유해물질 모니터링</span>
         </b-navbar-brand>
         <!-- 메뉴 나오는 공간 -->
         <!-- 화면 사이즈가 줄었을때 버튼이 나타나는걸 주석처리함 -->
@@ -103,8 +103,7 @@
 </template>
 
 <script>
-import { LoginCheck } from "@/api/Login.js";
-import { getMenu } from "@/api/getMenu.js";
+import { getMenu, LoginCheck } from "@/api/AppVue.js";
 import { setToken, getToken, removeToken } from "@/utils/Cookie"; // 로그인 정보를 저장할 Cookie
 import GlobalValue from "@/assets/js/GlobalValue.js";
 import Utility from "@/assets/js/CommonUtility.js"; // 전 화면 공통으로 사용하는 함수
@@ -176,6 +175,7 @@ export default {
     // 메뉴 조회
     getMenu() {
       getMenu(getToken("MENU_AUTH")).then(response => {
+        debugger;
         var arr = []; // 배열 선언
         for (var i = 0; i < response.length; i++) 
         {
@@ -194,12 +194,13 @@ export default {
           };
         }
         this.menuitems = arr;
-        this.$router.push({ path: "/Rent_Book" }); // 도서 대여화면을 초기 화면으로 보여준다.
+        //this.$router.push({ path: "/Rent_Book" }); // 도서 대여화면을 초기 화면으로 보여준다.
       });
     },
 
     // 대메뉴를 구한다.
     GetMainMenu: function() {
+      debugger;
       var MainMenu = [];
       for (let i = 0; i < this.menuitems.length; i++) 
       {
@@ -213,6 +214,7 @@ export default {
 
     // 대메뉴에 속한 소메뉴를 구한다.
     GetChildMenu: function(group_idx) {
+      debugger;
       var ChildMenu = [];
       for (let i = 0; i < this.menuitems.length; i++) 
       {

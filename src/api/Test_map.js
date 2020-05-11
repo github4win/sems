@@ -40,10 +40,12 @@ export function SELECT_NOT() {
     })
 }
 
+
 // 공지사항 세부내용 조회
-export function SELECT_NOT_DETAIL(ROWNUM) {
+export function SELECT_NOT_DETAIL(NOT_ID) {
     return request({
-        url: '/SELECT_NOT_DETAIL?data={ROWNUM"'+ ROWNUM +'"}',
+        url: '/SELECT_NOT_DETAIL?data={NOT_ID:"'+ NOT_ID +'"}',
         method: 'get'
     })
 }
+
