@@ -8,11 +8,17 @@ Vue.use(VueRouter)
     path: '/',
     name: 'SEMS_Monitoring',
     component: () => import(/* webpackChunkName: "about" */ '../views/TEST/SEMS_Monitoring.vue')
+  },
+  {
+    path: '/SEMS_Menu_MNG',
+    name: 'SEMS_Menu_Mng',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Menu_Management.vue')
   }
+  
 ]
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   routes
 })

@@ -120,7 +120,7 @@
 import GlobalValue from "@/assets/js/GlobalValue.js";  // 전 화면 공통으로 사용하는 변수
 import Utility from "@/assets/js/CommonUtility.js"; // 전 화면 공통으로 사용하는 함수
 import { GridDefault } from "@/assets/js/GridDefault.js"; // 그리드 기본값 세팅, 그리드 EditOptions
-import { SEARCH_MENU, SAVE_MENU, DELETE_MENU} from "@/api/Management/Menu_Management.js";
+import { SEARCH_MENU, SAVE_MENU, DELETE_MENU} from "@/api/Management.js";
 import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 /* eslint-disable no-debugger */
   export default {
@@ -130,19 +130,19 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     },
 
     computed: {
-      // 벨리데이션 체크 //
-      // 메뉴명
-      MenuName_EmptyValidation() {
-        return this.Check_Validation("MenuName");
-      }, 
-      // 메뉴경로
-      MenuRoute_EmptyValidation() {
-        return this.Check_Validation("MenuRoute");
-      }, 
-      // 정렬순서
-      NumberValidation() {
-        return this.Check_Validation("Sort_No");
-      }
+      // // 벨리데이션 체크 //
+      // // 메뉴명
+      // MenuName_EmptyValidation() {
+      //   return this.Check_Validation("MenuName");
+      // }, 
+      // // 메뉴경로
+      // MenuRoute_EmptyValidation() {
+      //   return this.Check_Validation("MenuRoute");
+      // }, 
+      // // 정렬순서
+      // NumberValidation() {
+      //   return this.Check_Validation("Sort_No");
+      // }
     },
     data() {
 
