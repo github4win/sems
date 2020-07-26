@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 공통코드조회
 export function SEARCH_CODE(CODE_DVN_NAME) {
   return request({
-  url: '/SEARCH_CODE?data={CODE_DVN_NAME:"' + CODE_DVN_NAME + '"}',
+  url: '/SEARCH_CODE?data={CODE_NAME:"' + CODE_DVN_NAME + '"}',
   method: 'get'
   });
 }

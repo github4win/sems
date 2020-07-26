@@ -121,9 +121,9 @@ export default {
         scrollY: false,
         scrollX: false,
         columns: [
-          { header: "코드",       name: "CODE_DVN",      align: "center", width: 100, validation:{required:true}, ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:10, upper:true }}},
-          { header: "코드명",     name: "CODE_DVN_NAME", align: "left",  validation:{required:true}, ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:30 }}},
-          { header: "저장 구분",  name: "CODE_MAIN_KEY", hidden: true },
+          { header: "코드",       name: "CODE_NO",      align: "center", width: 100, validation:{required:true}, ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:10, upper:true }}},
+          { header: "코드명",     name: "CODE_NAME", align: "left",  validation:{required:true}, ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:30 }}},
+          { header: "저장 구분",  name: "INSERT_TYPE", hidden: true },
         ],
         myTheme: {
           name: "mygrid",
@@ -165,6 +165,7 @@ export default {
 		btn_Search() {
 			SEARCH_CODE(this.Search_CodeName).then(res => {
 				console.log('test', res)
+				this.$refs.MainGrid.invoke('resetData', res)
 			})
 		},
 		btn_MainAdd() {
