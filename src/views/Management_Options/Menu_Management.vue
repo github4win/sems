@@ -54,7 +54,7 @@
 						<div class="col-md-12 col-sm-12 col-xs-12 common-schwrap">
               <b-row>
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                  <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">메뉴 코드: </label>
+                  <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label"><span style="color: red;">*</span>메뉴코드: </label>
                   <b-input class="col-md-8 col-sm-8 col-xs-8 Input-Text" :readonly="true" type="text" v-model="txt_Menu_Code"/>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
@@ -74,17 +74,17 @@
                   </b-form-invalid-feedback>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
+                  <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label"><span style="color: red;">*</span>권한: </label>
+                  <b-form-select v-model="txt_Menu_Auth" :options="cboMenu_Auth" class="col-md-8 col-sm-8 col-xs-8" ></b-form-select>
+                </div>
+              </b-row>
+              <b-row>
+                <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">정렬순서: </label>
                   <b-input class="col-md-8 col-sm-8 col-xs-8 Input-Text" :state="NumberValidation"  type="text" v-model="txt_Sort_No"/>
                   <b-form-invalid-feedback :state="NumberValidation" class="col-lg-11 col-md-11 col-sm-11 col-xs-11 feedback_style">
                     {{this.FeedBack_SortNo}}
                   </b-form-invalid-feedback>
-                </div>
-              </b-row>
-              <b-row>
-                 <div class="col-md-6 col-sm-6 col-xs-6">
-                  <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">디바이스: </label>
-                  <b-form-select v-model="txt_Device_Type" :options="cboDevice_type" class="col-md-8 col-sm-8 col-xs-8"></b-form-select>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">비고: </label>
@@ -92,10 +92,6 @@
                 </div>
               </b-row>
               <b-row>
-                <div class="col-md-6 col-sm-6 col-xs-6">
-                  <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">권한: </label>
-                  <b-form-select v-model="txt_Menu_Auth" :options="cboMenu_Auth" class="col-md-8 col-sm-8 col-xs-8" ></b-form-select>
-                </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">사용여부: </label>
                   <div class="col-md-8 col-sm-8 col-xs-8">
@@ -130,19 +126,19 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     },
 
     computed: {
-      // // 벨리데이션 체크 //
-      // // 메뉴명
-      // MenuName_EmptyValidation() {
-      //   return this.Check_Validation("MenuName");
-      // }, 
-      // // 메뉴경로
-      // MenuRoute_EmptyValidation() {
-      //   return this.Check_Validation("MenuRoute");
-      // }, 
-      // // 정렬순서
-      // NumberValidation() {
-      //   return this.Check_Validation("Sort_No");
-      // }
+    //   // 벨리데이션 체크 //
+    //   // 메뉴명
+    //   MenuName_EmptyValidation() {
+    //     return this.Check_Validation("MenuName");
+    //   }, 
+    //   // 메뉴경로
+    //   MenuRoute_EmptyValidation() {
+    //     return this.Check_Validation("MenuRoute");
+    //   }, 
+    //   // 정렬순서
+    //   NumberValidation() {
+    //     return this.Check_Validation("Sort_No");
+    //   }
     },
     data() {
 
@@ -174,7 +170,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
         // 메뉴경로의 필수 입력표시
         IsRequire_MenuRoute : true,
-
         // 전역변수
         gTreeCompare : true, // true : grid_focusChange이벤트에서 비교를 진행한다. / false: grid_focusChange이벤트에서 비교를 진행하지 않는다. (신규 메뉴 저장 후 포커스 유지를 위해 사용)
 
@@ -182,7 +177,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         Search_MenuName: "", // 메뉴명
         
         // 그리드 
-				gridProps: [],  								// 그리드 Column Setting 배열 변수
+        gridProps: [],  								// 그리드 Column Setting 배열 변수
         grd_Data: [],										// 그리드에 바인딩 할 Data 배열 변수
 
         Real_Node: [],                  // 최상위 노드(Win Tech)
@@ -198,6 +193,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         scrollY: false,
         scrollX: false,
         width:'350',
+        bodyheight : '400',
         columns: [
           { header: "메뉴 코드",     name: "MENU_CD" },
           { header: "메뉴명",        name: "MENU_NAME" },
@@ -223,32 +219,29 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     },
 
     mounted() {
-      Utility.fn_SetMenuPathVisible(this, true, true) // 첫번째 true : 메뉴부분 Visible, 두번째 true : 메뉴명 부분 Visible
       this.SetInit();
     },
 
     methods: {
-
+      
       async SetInit(){
-        await this.SetCombo();   // 콤보바인딩
         await this.btn_Search(); // 메인 그리드 조회
+        await this.SetCombo();   // 콤보바인딩
+        
       },
       async SetCombo(){
-        await this.SetDeviceCombo(); // 디바이스 콤보 바인딩
         await this.Set_AuthCombo();  // 권한 콤보 바인딩
-      },
-      // 디바이스 콤보 바인딩
-      async SetDeviceCombo(){
-        const Device_Type = await Utility.fn_GetCommonCode("A03");
-        this.cboDevice_type = Device_Type;
-        this.txt_Device_Type = "A";
       },
 
         // 권한 콤보 바인딩
       async Set_AuthCombo() {
-        const _Auth = await Utility.fn_GetCommonCode("A01");
-        this.cboMenu_Auth = _Auth;
-        this.txt_Menu_Auth = "A001";
+
+        var arr = [{ text: "관리자", value: 1 }];
+        arr[1] = { text: "일반 사용자",   value: 2};
+        // const _Auth = await Utility.fn_GetCommonCode("A01");
+        this.cboMenu_Auth = arr;
+
+        this.txt_Menu_Auth = 1;
       },
 
       // 벨리데이션 체크 (컨트롤 구분명)
@@ -446,24 +439,28 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
       // 메인 그리드 조회
       async btn_Search() {
-
-        const MenuData = await SEARCH_MENU(this.Search_MenuName);
-
-        // 조회된 데이터가 null이거나 undefined 인 경우
-        if(Utility.fn_IsNull(MenuData[0]["MENU_CD"])) {
-          this.$refs.tuiGrid.invoke("clear");  // 메인 그리드에 바인딩 된 데이터 초기화(빈 값 row 1개 생성 방지)
+        try{
+            const MenuData = await SEARCH_MENU(this.Search_MenuName);
+            // 조회된 데이터가 null이거나 undefined 인 경우
+            if(Utility.fn_IsNull(MenuData[0]["MENU_CD"])) {
+            this.$refs.tuiGrid.invoke("clear");  // 메인 그리드에 바인딩 된 데이터 초기화(빈 값 row 1개 생성 방지)
+            }
+            // 조회된 데이터가 있는 경우
+            else {
+            this.Tree_DataConvert(MenuData);                 // 트리형으로 변환
+            this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
+            this.$refs.tuiGrid.invoke("focus", 0, "MENU_CD");   // 포커스 적용
+            this.Search_Data = MenuData;
         }
-          
-        // 조회된 데이터가 있는 경우
-        else {
-          this.Tree_DataConvert(MenuData);                 // 트리형으로 변환
-          this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
-          this.$refs.tuiGrid.invoke("focus", 0, "MENU_CD");   // 포커스 적용
-          this.Search_Data = MenuData;
         }
+         catch (err) 
+        {
+          this.$bvModal.msgBoxOk(err, GlobalValue.Err_option);
+        }
+        
       },
 
-      // 그리드 추가 버튼
+      // 추가 버튼
       btn_Add() {
 
         // 조회한 노드가 존재할 경우
@@ -502,7 +499,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             PARENT_MENU_FULL_CD : Focus_Data_info.MENU_FULL_CD, // 부모 풀코드
             DEVICE_TYPE:"A",                                    // 디바이스타입
             SAVE_YN:"N",                                        // 저장여부
-            MENU_AUTH:"A003"                                    // 메뉴권한 (일반사용자)
+            MENU_AUTH: 2                                       // 메뉴권한 (일반사용자)
           };
 
           if (Focus_Data_info._children == undefined) {
@@ -528,7 +525,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             PARENT_MENU_FULL_CD : 0, // 부모 풀코드
             DEVICE_TYPE:"A",         // 디바이스 타입     
             SAVE_YN:"N",             // 저장여부
-            MENU_AUTH:"A003"         // 메뉴권한 (일반사용자)
+            MENU_AUTH: 2         // 메뉴권한 (일반사용자)
           };
 
         this.$refs.tuiGrid.invoke("resetData", Default_Data1);     // 그리드에 트리 적용
@@ -562,7 +559,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
           const data=[];
           data[0]= {data: JSON.stringify({ MENU_CD:this.txt_Menu_Code, MENU_NAME:this.txt_Menu_Name, MENU_PATH:this.txt_Menu_Route, SORT_NO:this.txt_Sort_No,
-                                          //  REMARK:this.txt_Remark, USE_YN:this.cb_Use_YN, USER_ID:Utility.fn_GetUserInfo("USER_ID"), MENU_FULL_CD:Focus_Data_info.MENU_FULL_CD, PARENT_MENU_CD:Focus_Data_info.PARENT_MENU_CD, PARENT_FULL_CD:Focus_Data_info.PARENT_MENU_FULL_CD })}
                                            REMARK:this.txt_Remark, USE_YN:this.cb_Use_YN, USER_ID:Utility.fn_GetUserInfo("USER_ID"), MENU_FULL_CD:Focus_Data_info.MENU_FULL_CD, 
                                            PARENT_MENU_CD:Focus_Data_info.PARENT_MENU_CD, PARENT_FULL_CD:Focus_Data_info.PARENT_MENU_FULL_CD, DEVICE_TYPE:this.txt_Device_Type,
                                            MENU_AUTH:this.txt_Menu_Auth})}
