@@ -13,14 +13,19 @@ Vue.use(VueRouter)
     path: '/SEMS_Menu_MNG',
     name: 'SEMS_Menu_Mng',
     component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Menu_Management.vue')
+  },
+  {
+    path: '/SEMS_Com_MNG',
+    name: 'SEMS_Com_MNG',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Code_Management.vue')
   }
   
 ]
 
 const router = new VueRouter({
-  mode: 'hash',
+  mode: 'history',
   base: process.env.BASE_URL,
-  routes
+  routes: routes
 })
 
 export default router
