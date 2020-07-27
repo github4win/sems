@@ -13,8 +13,9 @@ import VModal from 'vue-js-modal' // Modal
 //import './assets/less/Main.less'
 require('./assets/css/Screen.less') // Screen 반응형 사이즈 Css 구성 파일
 require('./assets/css/Style.less') // Style Css 구성 파일
-require('tui-chart/dist/tui-chart.css');  //Chart css구성 파일.\
-require('@toast-ui/vue-chart');  
+//require('tui-chart/dist/tui-chart.css');  //Chart css구성 파일.\
+//require('@toast-ui/vue-chart');  
+import 'tui-grid/dist/tui-grid.css';
 
 Vue.config.productionTip = false
 
