@@ -8,11 +8,11 @@ export default {
 
 
     // 개발
-    // buildUrl: 'https://localhost:44300/Service_SEMS.svc' //local wcf
+    buildUrl: 'https://localhost:44300/Service_SEMS.svc' //local wcf
    //buildUrl: 'http://192.168.0.21:54636/RestfulService.svc'  //local wcf
     
     // 운영 
-     buildUrl: 'https://commonservice.win-it.co.kr/Service_SEMS.svc'
+    //  buildUrl: 'https://commonservice.win-it.co.kr/Service_SEMS.svc'
    
     // 서버 (개발, 운영) 환경에 build하여 업로드 할 경우, 기본 api base url
 }
