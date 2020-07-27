@@ -3,13 +3,12 @@
     <div class="contents">
       <!-- 버튼 시작 -->
       <div class="common-btnwrap">
-          <b-button size="sm" variant="primary" @click="btn_Search">조회</b-button>
-					<b-button size="sm" variant="primary" @click="btn_Add">추가</b-button>
-					<b-button size="sm" variant="primary" @click="btn_Save">저장</b-button>
-					<b-button size="sm" variant="primary" @click="btn_Delete">삭제</b-button>
+          <b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Search">조회</b-button>
+					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Add">추가</b-button>
+					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Save">저장</b-button>
+					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Delete">삭제</b-button>
       </div>
       <!-- 버튼 끝-->
-
       <!-- 조회조건 시작 -->
       <div class="common-schwrap">
         <fieldset>
@@ -53,12 +52,12 @@
 						<div class="col-md-12 col-sm-12 col-xs-12 common-schwrap">
               <b-row>
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                  <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label"><span style="color: red;">*</span>메뉴코드: </label>
+                  <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">메뉴코드: </label>
                   <b-input class="col-md-8 col-sm-8 col-xs-8 Input-Text" :readonly="true" type="text" v-model="txt_Menu_Code"/>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label"><span style="color: red;">*</span>메뉴명: </label>
-                  <b-input class="col-md-8 col-sm-8 col-xs-8 Input-Text" maxlength="30" :state="MenuName_EmptyValidation"  type="text" v-model="txt_Menu_Name"/>
+                  <b-input id = "b-input_NAME" class="col-md-8 col-sm-8 col-xs-8 Input-Text" maxlength="30" :state="MenuName_EmptyValidation"  type="text" v-model="txt_Menu_Name"/>
                   <b-form-invalid-feedback :state="MenuName_EmptyValidation" class="col-lg-11 col-md-11 col-sm-11 col-xs-11" style="text-align: right">
                     메뉴명은 필수 입력입니다.
                   </b-form-invalid-feedback>
@@ -67,27 +66,27 @@
               <b-row>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label"><span v-if="IsRequire_MenuRoute" style="color: red;">*</span>메뉴경로: </label>
-                  <b-input class="col-md-8 col-sm-8 col-xs-8 Input-Text" maxlength="50" :state="MenuRoute_EmptyValidation" type="text" v-model="txt_Menu_Route"/>
+                  <b-input id = "b-input_PATH" class="col-md-8 col-sm-8 col-xs-8 Input-Text" maxlength="50" :state="MenuRoute_EmptyValidation" type="text" v-model="txt_Menu_Route"/>
                   <b-form-invalid-feedback :state="MenuRoute_EmptyValidation" class="col-lg-11 col-md-11 col-sm-11 col-xs-11" style="text-align: right">
                     메뉴경로는 필수 입력입니다.
                   </b-form-invalid-feedback>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">권한: </label>
-                  <b-form-select v-model="txt_Menu_Auth" :options="cboMenu_Auth" class="col-md-8 col-sm-8 col-xs-8" ></b-form-select>
+                  <b-form-select id = "b-form_AUTH" v-model="txt_Menu_Auth" :options="cboMenu_Auth" class="col-md-8 col-sm-8 col-xs-8" ></b-form-select>
                 </div>
               </b-row>
               <b-row>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">정렬순서: </label>
-                  <b-input class="col-md-8 col-sm-8 col-xs-8 Input-Text" :state="NumberValidation"  type="text" v-model="txt_Sort_No"/>
+                  <b-input id = "b-input_SORT" class="col-md-8 col-sm-8 col-xs-8 Input-Text" :state="NumberValidation"  type="text" v-model="txt_Sort_No"/>
                   <b-form-invalid-feedback :state="NumberValidation" class="col-lg-11 col-md-11 col-sm-11 col-xs-11;" style="text-align: right">
                     {{this.FeedBack_SortNo}}
                   </b-form-invalid-feedback>
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">비고: </label>
-                  <b-input class="col-md-8 col-sm-8 col-xs-8 Input-Text" maxlength="300" type="text" v-model="txt_Remark"/>
+                  <b-input id = "b-input_REMARK" class="col-md-8 col-sm-8 col-xs-8 Input-Text" maxlength="300" type="text" v-model="txt_Remark"/>
                 </div>
               </b-row>
               <b-row>
@@ -265,7 +264,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         else if(str == "MenuRoute"){
           
           // 비어 있는지 체크한다.
-          b_Check = Utility.fn_Check_EmptyValidation(this.txt_Menu_Route);
+          b_Check = (Utility.fn_Check_EmptyValidation(this.txt_Menu_Route));
 
           // 저장시 체크할 벨리데이션 결과값 플래그
           this.IsValidation_MenuRoute = b_Check;
@@ -324,7 +323,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           Data_Node = Search_Menu[idx];           // i번째 데이터 정보 저장
           
           // 최상위 행일경우 바로 추가
-          if (Data_Node.PARENT_MENU_ID == 0) { 
+          if (Data_Node.PARENT_MENU_ID == 1) { 
             this.Real_Node.push(Data_Node);       // Real_Node 배열의 끝에 Data_Node 추가
           }
           // 조회 버튼 클릭 시
@@ -353,7 +352,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       Find_Parent_Node(Parent_Code, Data_Set) {
         // 최상위 노드의 수만큼 반복
         for (let idx = 0; idx < Data_Set.length; idx++) { 
-
           // 찾고자 하는 부모 노드가 최상위 노드 또는 최상위 노드의 자식 노드일 경우
           if (Parent_Code == Data_Set[idx].MENU_ID) {
             return Data_Set[idx];   // 최상위 노드 또는 최상위 노드의 자식 노드 반환
@@ -475,7 +473,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           const Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);   // 포커스된 노드 정보
           const parent_row1 = this.$refs.tuiGrid.invoke('getParentRow', Focus_Data_Index); // 상위 행
 
-          if(!Utility.fn_IsNull(parent_row1)) {
+          if(!Utility.fn_IsNull(parent_row1) && (parent_row1.PARENT_MENU_ID == '0')){
             this.$bvModal.msgBoxOk("메뉴는 2단계 까지 구성이 가능합니다.", GlobalValue.Info_option);
             return;
           }
@@ -487,7 +485,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             MENU_NM: "",                                        // 메뉴명
             SORT_NO: 0,                                         // 정렬 순서
             REMARK: "",                                         // 비고
-            USE_YN: "",                                         // 사용 유무
+            USE_YN: "Y",                                         // 사용 유무
             PARENT_MENU_ID: Focus_Data_info.MENU_ID,            // 부모 코드
             SAVE_YN:"N",                                        // 저장여부
             MENU_AUTH: 2,                                       // 메뉴권한 (일반사용자)
@@ -511,7 +509,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             MENU_NM : "",           // 메뉴명
             SORT_NO: 0,              // 정렬 순서
             REMARK: "",              // 비고
-            USE_YN: "",              // 사용 유무
+            USE_YN: "Y",              // 사용 유무
             PARENT_MENU_ID: 0,       // 부모 코드
             SAVE_YN:"N",             // 저장여부
             MENU_AUTH: 2,            // 메뉴권한 (일반사용자)
@@ -548,11 +546,11 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           const Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);      // 포커스된 노드 정보
 
           const data=[];
-          data[0]= {data: JSON.stringify({ MENU_ID:this.txt_Menu_Code, MENU_NM:this.txt_Menu_Name, MENU_PATH:this.txt_Menu_Route, MENU_AUTH:this.txt_Menu_Auth, SORT_NO:this.txt_Sort_No,
-                                           REMARK:this.txt_Remark, USE_YN:this.cb_Use_YN, USER:Utility.fn_GetUserInfo("USER_ID"), PARENT_MENU_ID:Focus_Data_info.PARENT_MENU_ID, 
-                                           ACTIVE_MENU : this.txt_ACTIVE_MENU,
+          data[0]= {data: JSON.stringify({ MENU_ID:this.txt_Menu_Code, MENU_NAME:this.txt_Menu_Name, MENU_PATH:this.txt_Menu_Route, MENU_AUTH:this.txt_Menu_Auth, SORT_NO:this.txt_Sort_No,
+                                           REMARK:this.txt_Remark, USE_YN:this.cb_Use_YN, PARENT_MENU_ID:Focus_Data_info.PARENT_MENU_ID, 
+                                           ACTIVE_MENU : this.txt_ACTIVE_MENU , SAVE_YN :this.save_yn ,USER_ID:"admin"
                                            })}
-
+          
           //JSON.stringify            
           const Save_Data={data}; // 저장할 데이터를 담는 변수(메뉴코드, 메뉴명, 메뉴경로, 메뉴권한,정렬순서, 비고, 사용여부, 등록/수정자, 부모 메뉴코드, 메뉴구분)
 
@@ -572,7 +570,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
             // 조회하고 나서 포커스 변경 이벤트를 태우지 않기 위해 전역변수를 ture로 변경
             await this.btn_Search();     // 메인 그리드 조회
-
+            debugger
             if(!Utility.fn_IsNull(this.Real_Node)) {
               const thisview = this;
               const findednode = thisview.Tree_FindNode(this.Real_Node, saved_menucd);
@@ -596,15 +594,20 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
           // 포커스된 노드가 있을 경우
           if(!Utility.fn_IsNull(Utility.fn_ObjtoStr(Focus_Data_Index))) {
-
             // 포커스된 노드 정보
             const Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);
 
+            //루트 삭제불가
+            if(Focus_Data_info.MENU_ID == "0" && Focus_Data_info.MENU_ID != undefined ){
+              await this.$bvModal.msgBoxOk("루트를 삭제할 수 없습니다.", GlobalValue.Info_option);
+              return;
+            }
+
+            //자식메뉴가 있으면 삭제 불가
             if(Focus_Data_info._children != undefined) {
               await this.$bvModal.msgBoxOk("하위 메뉴를 먼저 삭제해주세요.", GlobalValue.Info_option);
               return;
             }
-
             // 메뉴 코드가 있을 경우에만 삭제가 가능하다.
             if(!Utility.fn_IsNull(Focus_Data_info.MENU_ID)) {
               const msgbox = await this.$bvModal.msgBoxConfirm("선택된 행을 삭제하시겠습니까?", GlobalValue.Info_option);
@@ -636,7 +639,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             else { 
               // 포커스된 행이 있는데 메뉴코드가 없는 행은 신규추가행이므로 바로 삭제한다.
               thisview.$refs.tuiGrid.invoke("removeTreeRow", Focus_Data_Index);
-
               // 포커스를 0번째 행으로 돌린다.
               if(Focus_Data_Index > 0) {
                 this.$refs.tuiGrid.invoke("focus", 0, "MENU_ID");   // 포커스 적용
@@ -673,6 +675,29 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         this.save_yn = DataRow_info.SAVE_YN;         // 저장여부
         this.txt_Menu_Auth = DataRow_info.MENU_AUTH; // 메뉴권한
         this.txt_Device_Type = DataRow_info.DEVICE_TYPE; // 장비타입
+        this.txt_ACTIVE_MENU = DataRow_info.ACTIVE_MENU; //메뉴 구분
+
+        //루트는 수정불가
+        if(this.txt_Menu_Code == "0")
+        {
+          document.getElementById("b-input_NAME").readOnly = true
+          document.getElementById("b-input_PATH").readOnly = true
+          document.getElementById("b-form_AUTH").disabled  = true
+          document.getElementById("b-input_SORT").readOnly = true
+          document.getElementById("b-input_REMARK").readOnly = true            
+          document.getElementById("checkbox-1").disabled = true
+            
+        }
+        else
+        {
+          document.getElementById("b-input_NAME").readOnly = false
+          document.getElementById("b-input_PATH").readOnly = false
+          document.getElementById("b-form_AUTH").disabled = false
+          document.getElementById("b-input_SORT").readOnly = false
+          document.getElementById("b-input_REMARK").readOnly = false
+          document.getElementById("checkbox-1").disabled = false           
+        }
+
       },
     }
 }
