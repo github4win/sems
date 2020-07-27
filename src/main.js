@@ -16,6 +16,7 @@ require('./assets/css/Style.less') // Style Css 구성 파일
 //require('tui-chart/dist/tui-chart.css');  //Chart css구성 파일.\
 //require('@toast-ui/vue-chart');  
 import 'tui-grid/dist/tui-grid.css';
+import "tui-pagination/dist/tui-pagination.css"; // tui-Grid Pagination Css
 
 Vue.config.productionTip = false
 
