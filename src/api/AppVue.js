@@ -8,10 +8,18 @@ export function getMenu() {
     })
 }
 
+// // 로그인
+// export function LoginCheck(MENU_AUTH) {
+//     return request({
+//         url: '/SEMS_MENU?data={AUTH:"'+ MENU_AUTH+'"}', 
+//         method: 'get'
+//     })
+// }
+
 // 로그인
-export function LoginCheck(MENU_AUTH) {
+export function LoginCheck(USER_ID,USER_PASS) {
     return request({
-        url: '/SEMS_MENU?data={AUTH:"'+ MENU_AUTH+'"}', 
+        url: '/SEMS_LOGIN?data={USER_ID:"'+ USER_ID+'", USER_PASS:"'+USER_PASS+'"}', 
         method: 'get'
     })
 }

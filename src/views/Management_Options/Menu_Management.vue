@@ -386,8 +386,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
         // 노드가 여러개가 아닌 하나일경우
         if(Node.length == undefined){
-          // 하위 노드가 있으면 하위노드를 재귀로 돌린다.
-          if(Node._children != undefined){
+          // 하위 노드가 있고, 해당 노드가 찾는 값이 아니면 하위노드를 재귀로 돌린다.
+          if(Node._children != undefined && Node.MENU_ID != Pkkey){
             for(let child_idx = 0; child_idx < Node._children.length; child_idx++){
               Result = this.Tree_FindNode(Node._children[child_idx], Pkkey);
 
@@ -409,8 +409,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             // n번째 노드
             const element = Node[idx];
 
-            // 하위 노드가 있으면 하위노드를 재귀로 돌린다.
-            if(element._children != undefined) {
+            // 하위 노드가 있고, 해당 노드가 찾는 값이 아니면 하위노드를 재귀로 돌린다.
+            if(element._children != undefined && element.MENU_ID != Pkkey) {
               for(let child_idx = 0; child_idx < element._children.length; child_idx++) {
                 Result = this.Tree_FindNode(element._children[child_idx], Pkkey);
 
@@ -523,7 +523,11 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
       // 메인 그리드 저장 버튼
       async btn_Save() {
-
+        // 로그인 체크
+        if(Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID"))){
+          await this.$bvModal.msgBoxOk("로그인 후 저장해 주세요.", GlobalValue.Info_option);
+          return
+        }
         // 메뉴명 입력 체크
         if(!this.IsValidation_MenuName) {
           await this.$bvModal.msgBoxOk(this.FeedBack_MenuName, GlobalValue.Info_option);
@@ -548,13 +552,12 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           const data=[];
           data[0]= {data: JSON.stringify({ MENU_ID:this.txt_Menu_Code, MENU_NAME:this.txt_Menu_Name, MENU_PATH:this.txt_Menu_Route, MENU_AUTH:this.txt_Menu_Auth, SORT_NO:this.txt_Sort_No,
                                            REMARK:this.txt_Remark, USE_YN:this.cb_Use_YN, PARENT_MENU_ID:Focus_Data_info.PARENT_MENU_ID, 
-                                           ACTIVE_MENU : this.txt_ACTIVE_MENU , SAVE_YN :this.save_yn ,USER_ID:"admin"
+                                           ACTIVE_MENU : this.txt_ACTIVE_MENU , SAVE_YN :this.save_yn , USER_ID : Utility.fn_GetUserInfo("USER_ID")
                                            })}
           
           //JSON.stringify            
           const Save_Data={data}; // 저장할 데이터를 담는 변수(메뉴코드, 메뉴명, 메뉴경로, 메뉴권한,정렬순서, 비고, 사용여부, 등록/수정자, 부모 메뉴코드, 메뉴구분)
 
-          
           // 저장
           const Result = await SAVE_MENU(Save_Data);
 
@@ -570,7 +573,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
             // 조회하고 나서 포커스 변경 이벤트를 태우지 않기 위해 전역변수를 ture로 변경
             await this.btn_Search();     // 메인 그리드 조회
-            debugger
             if(!Utility.fn_IsNull(this.Real_Node)) {
               const thisview = this;
               const findednode = thisview.Tree_FindNode(this.Real_Node, saved_menucd);
@@ -584,9 +586,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
       // 메인 그리드 삭제 버튼 
       async btn_Delete() {
-
         try {
-
+          debugger
           const thisview = this;
 
           // 포커스된 노드 Index
@@ -594,9 +595,13 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
           // 포커스된 노드가 있을 경우
           if(!Utility.fn_IsNull(Utility.fn_ObjtoStr(Focus_Data_Index))) {
+            // 로그인 체크
+            if(Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID"))){
+              await this.$bvModal.msgBoxOk("로그인 후 삭제해 주세요.", GlobalValue.Info_option);
+              return
+            }  
             // 포커스된 노드 정보
             const Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);
-
             //루트 삭제불가
             if(Focus_Data_info.MENU_ID == "0" && Focus_Data_info.MENU_ID != undefined ){
               await this.$bvModal.msgBoxOk("루트를 삭제할 수 없습니다.", GlobalValue.Info_option);
@@ -639,6 +644,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             else { 
               // 포커스된 행이 있는데 메뉴코드가 없는 행은 신규추가행이므로 바로 삭제한다.
               thisview.$refs.tuiGrid.invoke("removeTreeRow", Focus_Data_Index);
+
               // 포커스를 0번째 행으로 돌린다.
               if(Focus_Data_Index > 0) {
                 this.$refs.tuiGrid.invoke("focus", 0, "MENU_ID");   // 포커스 적용
@@ -650,7 +656,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           }
         }
         catch(err){
-          this.$bvModal.msgBoxOk(err, GlobalValue.Err_option);
+          this.btn_Search();
         }
       },
 
