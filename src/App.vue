@@ -175,7 +175,6 @@ export default {
     // 메뉴 조회
     getMenu() {
       getMenu(getToken("MENU_AUTH")).then(response => {
-        // debugger;
         var arr = []; // 배열 선언
         for (var i = 0; i < response.length; i++) 
         {
@@ -200,7 +199,6 @@ export default {
 
     // 대메뉴를 구한다.
     GetMainMenu: function() {
-      // debugger;
       var MainMenu = [];
       for (let i = 0; i < this.menuitems.length; i++) 
       {
@@ -214,7 +212,6 @@ export default {
 
     // 대메뉴에 속한 소메뉴를 구한다.
     GetChildMenu: function(group_idx) {
-      // debugger;
       var ChildMenu = [];
       for (let i = 0; i < this.menuitems.length; i++) 
       {

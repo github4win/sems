@@ -110,13 +110,14 @@
 
 <script>
 
+/* eslint-disable no-debugger */
 // import 영역
 import GlobalValue from "@/assets/js/GlobalValue.js";  // 전 화면 공통으로 사용하는 변수
 import Utility from "@/assets/js/CommonUtility.js"; // 전 화면 공통으로 사용하는 함수
 import { GridDefault } from "@/assets/js/GridDefault.js"; // 그리드 기본값 세팅, 그리드 EditOptions
 import { SEARCH_MENU, SAVE_MENU, DELETE_MENU} from "@/api/Management.js";
 import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
-/* eslint-disable no-debugger */
+
   export default {
 
     components: {
@@ -587,7 +588,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       // 메인 그리드 삭제 버튼 
       async btn_Delete() {
         try {
-          debugger
           const thisview = this;
 
           // 포커스된 노드 Index

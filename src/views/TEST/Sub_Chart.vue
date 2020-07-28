@@ -116,7 +116,6 @@ export default {
           },
         };
        tui.registerTheme('DateTheme', this.chart_theme_date);
-       debugger
     },
 
     // 조회조건 현위치 콤보 바인딩 이벤트
@@ -178,12 +177,10 @@ export default {
 
         //시간별 측정수치 값 조회(지역,유해물질)
         let chart_time_result = await SELECT_HRS(this.selected1,this.selected2)
-        debugger
         //---------------------------시간별 차트--------------------------------------------
         // 조회된 데이터가 null이거나 undefined 가 아닌 경우
         if(!Utility.fn_IsNull(chart_time_result[0].REG_TIME))
         {
-          debugger
           //조회결과값을 카테고리, data 변수에 담는다
           for(var i = 0; i<chart_time_result.length;i++)
           {
@@ -193,7 +190,6 @@ export default {
         }
         else
         {
-          debugger
           this.chart_time_categories[0] = 0
           this.chart_time_data[0] = 0
         }
@@ -245,7 +241,6 @@ export default {
 
         //시간별 차트 생성
         tui.lineChart(container,this.chartData_time,this.chartOptions_time);
-        debugger
 
         //일자별 측정수치 값 조회(지역,유해물질)
         let chart_date_result = await SELECT_DAY(this.selected1,this.selected2)

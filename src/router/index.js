@@ -18,8 +18,12 @@ Vue.use(VueRouter)
     path: '/SEMS_Com_MNG',
     name: 'SEMS_Com_MNG',
     component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Code_Management.vue')
+  },
+  {
+    path: '/SEMS_Danger_MNG',
+    name: 'SEMS_Danger_Mng',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Danger_Management.vue')
   }
-  
 ]
 
 const router = new VueRouter({
