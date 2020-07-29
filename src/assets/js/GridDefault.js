@@ -195,7 +195,17 @@ let NumberTextEditor = /** @class */ (function () {
 
 // 숫자형식에 천원단위로 콤마를 붙인다.
  function NumberComma(val) {
-    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var number_string = val.toString(); 
+    var number_parts = number_string.split('.'); 
+    var regexp = /\B(?=(\d{3})+(?!\d))/g; 
+    if (number_parts.length > 1) 
+    { 
+        return number_parts[0].replace( regexp, ',' ) + '.' + number_parts[1]; 
+    } 
+    else { 
+        return number_string.replace( regexp, ',' ); 
+    }
+    // return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
  }
 
  // 그리드의 체크된 데이터를 Array로 변환한다.

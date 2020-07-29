@@ -57,7 +57,7 @@
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label"><span style="color: red;">*</span>메뉴명: </label>
-                  <b-input id = "b-input_NAME" class="col-md-8 col-sm-8 col-xs-8 Input-Text" maxlength="30" :state="MenuName_EmptyValidation"  type="text" v-model="txt_Menu_Name"/>
+                  <b-input id = "b-input_NAME" class="col-md-8 col-sm-8 col-xs-8 Input-Text" maxlength="50" :state="MenuName_EmptyValidation"  type="text" v-model="txt_Menu_Name"/>
                   <b-form-invalid-feedback :state="MenuName_EmptyValidation" class="col-lg-11 col-md-11 col-sm-11 col-xs-11" style="text-align: right">
                     메뉴명은 필수 입력입니다.
                   </b-form-invalid-feedback>

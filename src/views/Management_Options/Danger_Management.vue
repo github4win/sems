@@ -95,22 +95,22 @@ export default {
 			columns: [
                 { header: "코드", name: "GAS_TYPE", hidden :true  },
 				{ header: "유해물질명", name: "GAS_NAME", width: 400,   align: "left",   ellipsis: true },
-                { header: "매우나쁨", name: "WEIGHT1",   width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)},
-                 ellipsis: true, editor:{ type : 'text',options:{ maxLength:10 }},
-                 onBeforeChange: function(ev){if(isNaN(parseInt(ev.nextValue))){return ev.stop()}else{return ev;}}},
-                { header: "나쁨", name: "WEIGHT2",   width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)}, 
-                 ellipsis: true, editor:{ type:'text', options:{ maxLength:10 }},
-                 onBeforeChange: function(ev){if(isNaN(parseInt(ev.nextValue))){return ev.stop()}else{return ev;}}},
-                { header: "보통", name: "WEIGHT3",   width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)}, 
-                 ellipsis: true, editor:{ type:'text', options:{ maxLength:10 }},
-                 onBeforeChange: function(ev){if(isNaN(parseInt(ev.nextValue))){return ev.stop()}else{return ev;}}},
-                { header: "좋음", name: "WEIGHT4",   width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)}, 
-                 ellipsis: true, editor:{ type:'text', options:{ maxLength:10 }},
-                 onBeforeChange: function(ev){if(isNaN(parseInt(ev.nextValue))){return ev.stop()}else{return ev;}}},
-                { header: "매우좋음", name: "WEIGHT5",   width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)}, 
-                 ellipsis: true, editor:{ type:'text', options:{ maxLength:10 }},
-                 onBeforeChange: function(ev){if(isNaN(parseInt(ev.nextValue))){return ev.stop()}else{return ev;}}},
-				{ header: "비고", name: "REMARK",   align: "right", editor:{ type:TextBoxEditor, options:{ maxLength:100 }}}
+                { header: "매우좋음", name: "WEIGHT1", width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)},
+                 ellipsis: true, editor:{ type : TextBoxEditor, options:{ maxLength:10 } },
+                 onBeforeChange: function(ev){if(isNaN(Number(ev.nextValue))){return ev.stop()}else{return ev;}}},
+                { header: "좋음", name: "WEIGHT2", width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)}, 
+                 ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:10 }},
+                 onBeforeChange: function(ev){if(isNaN(Number(ev.nextValue))){return ev.stop()}else{return ev;}}},
+                { header: "보통", name: "WEIGHT3", width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)}, 
+                 ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:10 }},
+                 onBeforeChange: function(ev){if(isNaN(Number(ev.nextValue))){return ev.stop()}else{return ev;}}},
+                { header: "나쁨", name: "WEIGHT4", width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)}, 
+                 ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:10 }},
+                 onBeforeChange: function(ev){if(isNaN(Number(ev.nextValue))){return ev.stop()}else{return ev;}}},
+                { header: "매우나쁨", name: "WEIGHT5", width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)}, 
+                 ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:10 }},
+                 onBeforeChange: function(ev){if(isNaN(Number(ev.nextValue))){return ev.stop()}else{return ev;}}},
+				{ header: "비고", name: "REMARK",   align: "right", editor:{ type:TextBoxEditor, options:{ maxLength:300 }}}
 			],
 			myTheme: {
 				name: "mygrid",
@@ -123,16 +123,16 @@ export default {
 		this.btn_Search()
 	},
 	methods: {
+		//메인 그리드 조회
 		async btn_Search() {
 			this.$refs.MainGrid.invoke('clear')
 			// 데이터 조회
-            const Search_Code = await SEARCH_DANGER(this.Search_GASName)
+            const Search_Code = await SEARCH_DANGER(this.Search_GASName.toString().trim())
             
             this.$refs.MainGrid.invoke('resetData', Search_Code)
-            
-			// 포커스 0번째 지정
-			this.$refs.MainGrid.invoke("focus", 0, "GAS_NAME");
 		},
+
+		//저장 버튼
 		async btn_Save() {
             // 로그인 체크
             if(Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID"))){
@@ -147,21 +147,24 @@ export default {
 
 			// 체크된 행이 없는 경우
 			if (CheckedRows.length == 0) {
-				this.$bvModal.msgBoxOk("선택된 코드세부정보가 없습니다.", GlobalValue.Info_option);
+				this.$bvModal.msgBoxOk("선택된 유해물질 정보가 없습니다.", GlobalValue.Info_option);
 				return;
 			}
+
+			const LastRowKey = CheckedRows[CheckedRows.length-1].rowKey;
+
 			let data = [];
 			for (let i = 0; i < CheckedRows.length; i++) {
 				data[i] = {
 					data: JSON.stringify ({
                         GAS_TYPE: CheckedRows[i].GAS_TYPE.toString(),// 코드
-                        WEIGHT1: CheckedRows[i].WEIGHT1.toString(),// 매우나쁨
-                        WEIGHT2: CheckedRows[i].WEIGHT2.toString(),// 나쁨
-                        WEIGHT3: CheckedRows[i].WEIGHT3.toString(),// 보통
-                        WEIGHT4: CheckedRows[i].WEIGHT4.toString(), // 좋음
-                        WEIGHT5: CheckedRows[i].WEIGHT5.toString(),// 매우좋음
-                        REMARK:  CheckedRows[i].REMARK.toString(),// 비고
-                        USER_ID: Utility.fn_GetUserInfo("USER_ID"),// 사용자 ID
+                        WEIGHT1: CheckedRows[i].WEIGHT1.toString(),  // 매우좋음
+                        WEIGHT2: CheckedRows[i].WEIGHT2.toString(),  // 좋음
+                        WEIGHT3: CheckedRows[i].WEIGHT3.toString(),  // 보통
+                        WEIGHT4: CheckedRows[i].WEIGHT4.toString(),  // 나쁨
+                        WEIGHT5: CheckedRows[i].WEIGHT5.toString(),  // 매우나쁨
+                        REMARK:  CheckedRows[i].REMARK.toString(),   // 비고
+                        USER_ID: Utility.fn_GetUserInfo("USER_ID"),  // 사용자 ID
 					})
 				}
             }
@@ -170,6 +173,22 @@ export default {
 
 			// 저장 결과 출력
 			if (Result[0].query_success == 'Y') {
+				await this.btn_Search(); //저장 후 재조회
+				
+				// 전체행의 갯수
+				const InsertAt = this.$refs.MainGrid.invoke("getRowCount");
+
+				// 페이지당 게시물의 갯수
+				const PerPage = this.$refs.MainGrid.$attrs.pageOptions.perPage;
+				
+				// 게시물이 페이지의 게시물갯수를 넘기면 다음페이지(해당페이지)로 이동한다.
+				if(InsertAt >= PerPage) {
+					const PageIndex = (Math.trunc(InsertAt / PerPage) + 1);
+					this.$refs.MainGrid.invoke("getPagination").movePageTo(PageIndex);
+				} 
+
+				this.$refs.MainGrid.invoke("focus", LastRowKey, "GAS_NAME"); 
+				
 				this.$bvModal.msgBoxOk("저장되었습니다.", GlobalValue.Info_option);
 			} else {
 				this.$bvModal.msgBoxOk(Result[0].query_err_msg, GlobalValue.Info_option);
@@ -177,6 +196,8 @@ export default {
 
 
 		},
+
+		//삭제버튼
         async btn_Delete() {
             // 로그인 체크
             if(Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID"))){
@@ -188,7 +209,7 @@ export default {
 
 			// 체크된 행이 없는 경우
 			if (CheckedRows.length == 0) {
-				this.$bvModal.msgBoxOk("선택된 코드세부정보가 없습니다.", GlobalValue.Info_option);
+				this.$bvModal.msgBoxOk("선택된 유해물질 정보가 없습니다.", GlobalValue.Info_option);
 				return;
 			}
 
@@ -215,8 +236,21 @@ export default {
 				return;
 			}
 			else { // 삭제 성공시
-                this.$bvModal.msgBoxOk("삭제되었습니다.", GlobalValue.Err_option);
-                this.btn_Search();
+				this.$bvModal.msgBoxOk("삭제되었습니다.", GlobalValue.Err_option);
+				await this.btn_Search();
+				// 전체행의 갯수
+				const InsertAt = this.$refs.MainGrid.invoke("getRowCount");
+
+				// 페이지당 게시물의 갯수
+				const PerPage = this.$refs.MainGrid.$attrs.pageOptions.perPage;
+				
+				// 게시물이 페이지의 게시물갯수를 넘기면 다음페이지(해당페이지)로 이동한다.
+				if(InsertAt >= PerPage) {
+					const PageIndex = (Math.trunc(InsertAt / PerPage) + 1);
+					this.$refs.MainGrid.invoke("getPagination").movePageTo(PageIndex);
+				} 
+
+				this.$refs.MainGrid.invoke("focus", LastRowKey, "GAS_NAME"); 
 			}
         },	
         Maingrid_focusChange(CurrentRow) {
@@ -245,11 +279,11 @@ export default {
 
 			// 그리드와 비교할 값 (그리드 컬럼명 : 값) (비교할 값은 MainGrid_focusChange에서 지정함)
 			const compare = { 
-				"WEIGHT1" :  this.Grd_Weight1,     //그리드 정보(매우나쁨)나쁨
-				"WEIGHT2" :  this.Grd_Weight2,     //그리드 정보(나쁨)
+				"WEIGHT1" :  this.Grd_Weight1,     //그리드 정보(매우좋음)
+				"WEIGHT2" :  this.Grd_Weight2,     //그리드 정보(좋음)
 				"WEIGHT3" :  this.Grd_Weight3,     //그리드 정보(보통)
-				"WEIGHT4" :  this.Grd_Weight4,     //그리드 정보(좋음)
-                "WEIGHT5" :  this.Grd_Weight5,     //그리드 정보(매우좋음)좋음
+				"WEIGHT4" :  this.Grd_Weight4,     //그리드 정보(나쁨)
+                "WEIGHT5" :  this.Grd_Weight5,     //그리드 정보(매우나쁨)
                 "REMARK"  :  this.Grd_REMARK       //그리드 정보(비고)
 			};
 
@@ -257,13 +291,7 @@ export default {
 			if(Utility.fn_IsRowItemChange(this.$refs.MainGrid, compare)) {
 				this.$refs.MainGrid.invoke("check", rowkey);
 			}
-        },
-        //그리드 칼럼에 숫자만 입력되게 한다.
-        Only_number(ev) 
-        {
-            console.log("Only_Number", ev);
-        }, 
-                                    
+        },                          
 	}
 }
 </script>

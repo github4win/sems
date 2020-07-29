@@ -44,7 +44,7 @@
             <b-nav-item-dropdown disabled no-caret="true">
               <template v-slot:button-content>{{menu.menuname}}</template>
               <!-- <b-dropdown-item href="#">EN</b-dropdown-item> -->
-              <b-dropdown-item v-for="submenu in GetChildMenu(menu.group)" v-bind:key="submenu.idx" :to="submenu.url">
+              <b-dropdown-item v-for="submenu in GetChildMenu(menu.group)" v-bind:key="submenu.idx" :to="submenu.url" style="width:180px">
                 {{submenu.menuname}}
               </b-dropdown-item>
             </b-nav-item-dropdown>
