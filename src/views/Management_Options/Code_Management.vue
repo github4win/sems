@@ -376,6 +376,7 @@ export default {
 
 			// 삭제
 			const Result = await DELETE_LEFT_GRID_VUE(Delete_Data);
+			console.log('Result', Result)
 
 			if (Result[0].query_success != 'Y') {
 				this.$bvModal.msgBoxOk(Result[0].query_err_msg, GlobalValue.Info_option);
@@ -530,7 +531,7 @@ export default {
 						GUBUN5: CheckedRows[i].GUBUN5.toString(),                 // 구분3
 						CODE_NO_KEY: CheckedRows[i].CODE_NO_KEY.toString(),   // 저장구분
 						// CODE_NO_KEY: CheckedRows[i].CODE_SUB_KEY.toString(),   // 저장구분
-						USER_ID: 'TEST',             // 사용자 ID
+						USER_ID: Utility.fn_GetUserInfo("USER_ID"),             // 사용자 ID
 					})
 				}
 			}

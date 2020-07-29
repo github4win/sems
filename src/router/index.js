@@ -23,6 +23,11 @@ Vue.use(VueRouter)
     path: '/SEMS_Danger_MNG',
     name: 'SEMS_Danger_Mng',
     component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Danger_Management.vue')
+  },
+  {
+    path: '/SEMS_Sensor_MNG',
+    name: 'SEMS_Sensor_MNG',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Sensor_Management.vue')
   }
 ]
 
