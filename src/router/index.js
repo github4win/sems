@@ -28,6 +28,11 @@ Vue.use(VueRouter)
     path: '/SEMS_Sensor_MNG',
     name: 'SEMS_Sensor_MNG',
     component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Sensor_Management.vue')
+  },
+  {
+    path: '/SEMS_Area_MNG',
+    name: 'SEMS_Area_MNG',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Area_Management.vue')
   }
 ]
 
