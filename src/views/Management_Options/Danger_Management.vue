@@ -151,6 +151,7 @@ export default {
 				return;
 			}
 
+			//가장 마지막으로 선택된 행의 번호
 			const LastRowKey = CheckedRows[CheckedRows.length-1].rowKey;
 
 			let data = [];
@@ -175,15 +176,12 @@ export default {
 			if (Result[0].query_success == 'Y') {
 				await this.btn_Search(); //저장 후 재조회
 				
-				// 전체행의 갯수
-				const InsertAt = this.$refs.MainGrid.invoke("getRowCount");
-
 				// 페이지당 게시물의 갯수
 				const PerPage = this.$refs.MainGrid.$attrs.pageOptions.perPage;
 				
-				// 게시물이 페이지의 게시물갯수를 넘기면 다음페이지(해당페이지)로 이동한다.
-				if(InsertAt >= PerPage) {
-					const PageIndex = (Math.trunc(InsertAt / PerPage) + 1);
+				// 마지막으로 체크된 자료가 페이지 수보다 크면 다음페이지(해당페이지)로 이동한다.
+				if(LastRowKey >= PerPage) {
+					const PageIndex = (Math.trunc(LastRowKey / PerPage) + 1);
 					this.$refs.MainGrid.invoke("getPagination").movePageTo(PageIndex);
 				} 
 
@@ -213,6 +211,9 @@ export default {
 				return;
 			}
 
+			//가장 마지막으로 선택된 행의 번호
+			const LastRowKey = CheckedRows[CheckedRows.length-1].rowKey;
+
 			let Delete_List = [];    // 화면 상 삭제할 행의 index
 
 			let data = [];
@@ -238,15 +239,13 @@ export default {
 			else { // 삭제 성공시
 				this.$bvModal.msgBoxOk("삭제되었습니다.", GlobalValue.Err_option);
 				await this.btn_Search();
-				// 전체행의 갯수
-				const InsertAt = this.$refs.MainGrid.invoke("getRowCount");
 
-				// 페이지당 게시물의 갯수
+				// 페이지당 자료의 갯수
 				const PerPage = this.$refs.MainGrid.$attrs.pageOptions.perPage;
 				
-				// 게시물이 페이지의 게시물갯수를 넘기면 다음페이지(해당페이지)로 이동한다.
-				if(InsertAt >= PerPage) {
-					const PageIndex = (Math.trunc(InsertAt / PerPage) + 1);
+				// 마지막으로 체크된 자료가 페이지 수보다 크면 다음페이지(해당페이지)로 이동한다.
+				if(LastRowKey >= PerPage) {
+					const PageIndex = (Math.trunc(LastRowKey / PerPage) + 1);
 					this.$refs.MainGrid.invoke("getPagination").movePageTo(PageIndex);
 				} 
 
