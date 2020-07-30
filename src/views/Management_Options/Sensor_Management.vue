@@ -121,88 +121,132 @@
 
             </div>
             <div class="col-md-12 col-sm-12 col-xs-12 common-schwrap">
-              <b-form-checkbox-group v-model="chkboxselected">
+              <b-form-checkbox-group v-model="chkboxselected" :disabled="chkboxGroup">
                 <b-row>
                   <div class="col-md-3 col-sm-3 col-xs-3">
-                    <b-form-checkbox
-                      v-model="chk_Box1"
-                      value="O"
-                      unchecked-value=""
-                    >일산화탄소(CO)</b-form-checkbox>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8">
+                      <b-form-checkbox
+                        v-model="chk_Box1"
+                        value="O"
+                        unchecked-value=""
+                      >일산화탄소(CO)</b-form-checkbox>
+                    </div>
                   </div>
                   <div class="col-md-3 col-sm-3 col-xs-3">
-                    <b-form-checkbox
-                      v-model="chk_Box2"
-                      value="R"
-                      unchecked-value=""
-                    >황화수소(H₂S)</b-form-checkbox>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8">
+                      <b-form-checkbox
+                        v-model="chk_Box2"
+                        value="R"
+                        unchecked-value=""
+                      >황화수소(H₂S)</b-form-checkbox>
+                    </div>
                   </div>
                   <div class="col-md-3 col-sm-3 col-xs-3">
-                    <b-form-checkbox
-                      v-model="chk_Box3"
-                      value="T"
-                      unchecked-value=""
-                    >암모니아(NH₃)</b-form-checkbox>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8">
+                      <b-form-checkbox
+                        v-model="chk_Box3"
+                        value="T"
+                        unchecked-value=""
+                      >암모니아(NH₃)</b-form-checkbox>
+                    </div>
                   </div>
                   <div class="col-md-3 col-sm-3 col-xs-3">
-                    <b-form-checkbox
-                      v-model="chk_Box4"
-                      value="V"
-                      unchecked-value=""
-                    >메탄(CH⁴)</b-form-checkbox>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8">
+                      <b-form-checkbox
+                        v-model="chk_Box4"
+                        value="V"
+                        unchecked-value=""
+                      >메탄(CH⁴)</b-form-checkbox>
+                    </div>
                   </div>
                 </b-row>
                 <b-row>
                   <div class="col-md-3 col-sm-3 col-xs-3">
-                    <b-form-checkbox
-                      v-model="chk_Box5"
-                      value="P"
-                      unchecked-value=""
-                    >질소산화물(NOx)</b-form-checkbox>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8">
+                      <b-form-checkbox
+                        v-model="chk_Box5"
+                        value="P"
+                        unchecked-value=""
+                      >질소산화물(NOx)</b-form-checkbox>
+                    </div>
                   </div>
                   <div class="col-md-3 col-sm-3 col-xs-3">
-                    <b-form-checkbox
-                      v-model="chk_Box6"
-                      value="S"
-                      unchecked-value=""
-                    >염소(Cl₂)</b-form-checkbox>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8">
+                      <b-form-checkbox
+                        v-model="chk_Box6"
+                        value="S"
+                        unchecked-value=""
+                      >염소(Cl₂)</b-form-checkbox>
+                    </div>
                   </div>
                   <div class="col-md-3 col-sm-3 col-xs-3">
-                    <b-form-checkbox
-                      v-model="chk_Box7"
-                      value="W"
-                      unchecked-value=""
-                    >아세톤(Aceton)</b-form-checkbox>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8">
+                      <b-form-checkbox
+                        v-model="chk_Box7"
+                        value="W"
+                        unchecked-value=""
+                      >아세톤(Aceton)</b-form-checkbox>
+                    </div>
                   </div>
                   <div class="col-md-3 col-sm-3 col-xs-3">
-                    <b-form-checkbox
-                      v-model="chk_Box8"
-                      value="25"
-                      unchecked-value=""
-                    >미세먼지</b-form-checkbox>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8">
+                      <b-form-checkbox
+                        v-model="chk_Box8"
+                        value="25"
+                        unchecked-value=""
+                      >미세먼지</b-form-checkbox>
+                    </div>
                   </div>
                 </b-row>
                 <b-row>
                   <div class="col-md-3 col-sm-3 col-xs-3">
-                    <b-form-checkbox
-                      v-model="chk_Box9"
-                      value="Q"
-                      unchecked-value=""
-                    >황산화물(SOx)</b-form-checkbox>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8">
+                      <b-form-checkbox
+                        v-model="chk_Box9"
+                        value="Q"
+                        unchecked-value=""
+                      >황산화물(SOx)</b-form-checkbox>
+                    </div>
                   </div>
                   <div class="col-md-3 col-sm-3 col-xs-3">
-                    <b-form-checkbox
-                      v-model="chk_Box10"
-                      value="U"
-                      unchecked-value=""
-                    >수소(H₂)</b-form-checkbox>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8">
+                      <b-form-checkbox
+                        v-model="chk_Box10"
+                        value="U"
+                        unchecked-value=""
+                      >수소(H₂)</b-form-checkbox>
+                    </div>
                   </div>
                   <div class="col-md-3 col-sm-3 col-xs-3">
-                    <b-form-checkbox
-                      v-model="chk_Box11"
-                      value="X"
-                      unchecked-value=""
-                    >에탄올(Ethanol)</b-form-checkbox>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    </div>
+                    <div class="col-md-8 col-sm-8 col-xs-8">
+                      <b-form-checkbox
+                        v-model="chk_Box11"
+                        value="X"
+                        unchecked-value=""
+                      >에탄올(Ethanol)</b-form-checkbox>
+                    </div>
                   </div>
                 </b-row>
                 <!-- <div class="mt-3">Selected: <strong>{{ chkboxselected }}</strong></div> -->
@@ -283,6 +327,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         chk_Box9: '',
         chk_Box10: '',
         chk_Box11: '',
+        chkboxGroup: true,
 
 
         chkboxselected: [],
@@ -666,6 +711,15 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             return;
           }
 
+          document.getElementById('b-input-IoT-No').readOnly = false
+          document.getElementById('b-input-IoT-Name').readOnly = false
+          document.getElementById('b-input-IoT-Date').readOnly = false
+          document.getElementById('b-form-IoT-Place').disabled = false
+          document.getElementById('b-input-IoT-Lati').readOnly = false
+          document.getElementById('b-input-IoT-Longi').readOnly = false
+          this.chkboxGroup = false
+
+
           let Focus_Children_Length;                                           // 포커스 노드의 자식 노드의 수
 
           const Default_Data = {                                               // 행 추가 시 기본 값 
@@ -750,7 +804,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
                 INS_LON: this.txt_IoT_Longi,
                 USE_YN: this.cb_Use_YN,
                 SAVE_TYPE: Focus_Data_info.SAVE_TYPE === undefined ? 'U' : Focus_Data_info.SAVE_TYPE,
-                USER: Utility.fn_GetUserInfo("USER_ID"),
+                USER: Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID")) === true ? '' : Utility.fn_GetUserInfo("USER_ID"),
                 GAS_TYPE: Gas_type
               })
             }
@@ -818,26 +872,70 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         // 포커스된 행의 정보
         let DataRow_info = this.$refs.tuiGrid.invoke("getRow", DataRow.rowKey);
         if (DataRow_info.IOT_NO == "") {
-          document.getElementById('b-input-IoT-No').readOnly = false
-          this.chkboxselected = split_GAS
-        } else {
-          document.getElementById('b-input-IoT-No').readOnly = true
-        }
-        this.txt_IoT_No = DataRow_info.IOT_NO
-        this.txt_IoT_Name = DataRow_info.IOT_NM
-        this.txt_IoT_Date = DataRow_info.INS_DATE
-        this.txt_IoT_Place = DataRow_info.INS_AREA
-        this.txt_IoT_Lati = DataRow_info.INS_LAT
-        this.txt_IoT_Longi = DataRow_info.INS_LON
-        this.cb_Use_YN = DataRow_info.USE_YN
-
-        if (DataRow_info.GAS_TYPE == "") {
           this.chkboxselected = []
+          console.log('DataRow_info', DataRow_info)
+          if (DataRow_info.NODE_TYPE == 'R' || DataRow_info.NODE_TYPE == 'G') {
+            // 구/군, 동/리 클릭 시 
+            document.getElementById('b-input-IoT-No').readOnly = true
+            document.getElementById('b-input-IoT-Name').readOnly = true
+            document.getElementById('b-input-IoT-Date').readOnly = true
+            document.getElementById('b-form-IoT-Place').disabled = true
+            document.getElementById('b-input-IoT-Lati').readOnly = true
+            document.getElementById('b-input-IoT-Longi').readOnly = true
+            this.txt_IoT_No = DataRow_info.IOT_TREE_NM
+            this.txt_IoT_Name = '.'
+            this.txt_IoT_Date = '.'
+            this.txt_IoT_Place = '.'
+            this.txt_IoT_Lati = '.'
+            this.txt_IoT_Longi = '.'
+            this.cb_Use_YN = ''
+            // 체크박스그룹 활성/비활성
+            this.chkboxGroup = true
+          } else {
+            // newRow로 생성할 때
+            document.getElementById('b-input-IoT-No').readOnly = false
+            document.getElementById('b-input-IoT-Name').readOnly = false
+            document.getElementById('b-input-IoT-Date').readOnly = false
+            document.getElementById('b-form-IoT-Place').disabled = false
+            document.getElementById('b-input-IoT-Lati').readOnly = false
+            document.getElementById('b-input-IoT-Longi').readOnly = false
+            this.txt_IoT_No = ''
+            this.txt_IoT_Name = ''
+            this.txt_IoT_Date = ''
+            this.txt_IoT_Place = ''
+            this.txt_IoT_Lati = ''
+            this.txt_IoT_Longi = ''
+            this.cb_Use_YN = ''
+            // 체크박스그룹 활성/비활성
+            this.chkboxGroup = false
+          }
         } else {
-          var split_GAS = []
-          split_GAS = DataRow_info.GAS_TYPE.split(',')
-          this.chkboxselected = split_GAS
+          // Focus데이터가 있을 때
+          document.getElementById('b-input-IoT-No').readOnly = true
+          document.getElementById('b-input-IoT-Name').readOnly = false
+          document.getElementById('b-input-IoT-Date').readOnly = false
+          document.getElementById('b-form-IoT-Place').disabled = false
+          document.getElementById('b-input-IoT-Lati').readOnly = false
+          document.getElementById('b-input-IoT-Longi').readOnly = false
+          this.txt_IoT_No = DataRow_info.IOT_NO
+          this.txt_IoT_Name = DataRow_info.IOT_NM
+          this.txt_IoT_Date = DataRow_info.INS_DATE
+          this.txt_IoT_Place = DataRow_info.INS_AREA
+          this.txt_IoT_Lati = DataRow_info.INS_LAT
+          this.txt_IoT_Longi = DataRow_info.INS_LON
+          this.cb_Use_YN = DataRow_info.USE_YN
+          // 체크박스그룹 활성/비활성
+          this.chkboxGroup = false
+
+          if (DataRow_info.GAS_TYPE == "") {
+            this.chkboxselected = []
+          } else {
+            var split_GAS = []
+            split_GAS = DataRow_info.GAS_TYPE.split(',')
+            this.chkboxselected = split_GAS
+          }
         }
+        
         
       },
     }
