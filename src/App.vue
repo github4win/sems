@@ -432,12 +432,14 @@ b-icon-capslock-fill {
 .tui-grid-no-scroll-x .tui-grid-border-line-bottom {
   background-color: #cbcbcb;
 }
-.tui-grid-body-container {
-  position: relative;
-  margin-top: -1px;
-  border-bottom: solid 1px#ccc !important;
-  height: 40px !important;
-}
+
+// 스크롤 문제가 발생해서 주석처리함 2020-07-31 CJH
+// .tui-grid-body-container {
+//   position: relative;
+//   margin-top: -1px;
+//   border-bottom: solid 1px#ccc !important;
+//   height: 40px !important;
+// }
 
 .tui-grid-cell {
   background-color: #fff;

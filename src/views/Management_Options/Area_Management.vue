@@ -26,17 +26,23 @@
 
       <!-- 컨텐츠 시작 -->
       <div style="margin-top:20px;"> 
-        <div class="Area_list col-md-3 col-sm-3 col-xs-3">
+        <div class="Area_list col-md-3 col-sm-3 col-xs-3" style="height: 300px">
           <label>지역 리스트</label>
+          <b-button size="sm" variant="primary" style="float:right; margin-bottom : 10px" @click="btn_expand">펴기</b-button>
+          <b-button size="sm" variant="primary" style="float:right; margin-right :10px; margin-bottom : 10px" @click="btn_collapse">접기</b-button>
+          <!-- <b-form-select class= "col-md-2 col-sm-3 col-xs-3" style="float:right; margin-right :10px; height: 28px;"
+            :options="expand_options" v-model="expand_level"></b-form-select> -->
+          
           <!-- 메인 그리드 시작 -->
           <grid
             id="grdMain"
             ref="tuiGrid"
             :data="this.grd_Data"
+            :scrollY="true"
             :columns="gridProps.columns"
             :header="gridProps.header"
-            :scrollY="gridProps.scrollY"
-            :scrollX="gridProps.scrollX"
+            :bodyHeight="gridProps.bodyheight"
+            :height="gridProps.height"
             :treeColumnOptions="gridProps.treeColumnOptions"
             :theme="gridProps.myTheme"
             @focusChange="grid_focusChange"
@@ -125,6 +131,10 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     data() {
 
       return {
+        //트리 레벨 콤보
+        expand_level : "",
+        expand_options : [],
+
         // 지역 세부정보 Model
         txt_Area_Code :"",    // 지역코드
         txt_Area_Name :"",    // 지역명
@@ -163,17 +173,19 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       this.gridProps = {
 
         data: this.grd_Data,
-        scrollY: false,
-        scrollX: false,
         width:'350',
-        bodyheight : '400',
+        height:500,
+        scrollX: false,
+        scrolly: false,
+        bodyheight : 500,
         columns: [
           { header: "지역 코드",     name: "AREA_CODE" },
           { header: "지역명",        name: "AREA_NAME" },
           { header: "정렬순서",      name: "SORT_NO",        hidden: true },
           { header: "비고",          name: "REMARK",         hidden: true },
-          { header: "사용여부",      name: "USE_YN",         hidden: true },
+          { header: "사용여부",      name: "USE_YN",          hidden:true },
           { header: "상위 코드",     name: "PARENT_CODE_ID", hidden: true },
+          { header: "노드 레벨",     name: "LEVEL", hidden: true },
         ],
         myTheme: {
           name: "mygrid",
@@ -193,8 +205,25 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     methods: {
       
       async SetInit(){
+        // this.SetCombo();
         await this.btn_Search(); //  조회
       },
+
+      // async SetCombo(){
+        
+      //   var temp_cbo = []
+
+      //   // 콤보박스에 값을 집어넣기 위해 루프
+      //   for (var i = 1; i < 6; i++) {
+      //     temp_cbo.push({
+      //       text: i,
+      //       value: i
+      //     })
+      //   }
+      //   // 콤보박스에 값을 집어넣음
+      //   this.expand_options = temp_cbo
+      //   this.expand_level = temp_cbo[0].value
+      // },
 
       // 벨리데이션 체크 (컨트롤 구분명)
       Check_Validation(str){
@@ -353,21 +382,27 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
       // 메인 그리드 조회
       async btn_Search() {
-        try{
-            debugger
+        try
+        {
             const AreaData = await SEARCH_AREA(this.Search_AreaName);
-            debugger
             // 조회된 데이터가 null이거나 undefined 인 경우
             if(Utility.fn_IsNull(AreaData[0]["AREA_CODE"])) {
             this.$refs.tuiGrid.invoke("clear");  // 메인 그리드에 바인딩 된 데이터 초기화(빈 값 row 1개 생성 방지)
             }
             // 조회된 데이터가 있는 경우
             else {
-            this.Tree_DataConvert(AreaData);                 // 트리형으로 변환
+            // 트리컬럼에 필요한 클래스를 입력한다.
+            const BindData = this.TreeColumn_Color(AreaData);
+
+            // 데이터를 트리에 바인딩한다.
+            this.Tree_DataConvert(BindData);      
+            // this.Tree_DataConvert(AreaData);                 // 트리형으로 변환
             this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
             this.$refs.tuiGrid.invoke("focus", 0, "AREA_CODE");   // 포커스 적용
-            this.Search_Data = AreaData;
-        }
+            this.Search_Data = AreaData; 
+            }
+
+
         }
          catch (err) 
         {
@@ -391,16 +426,15 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
               return;
             }
           }
-  
+
           const Focus_Data_Index = this.$refs.tuiGrid.invoke("getFocusedCell").rowKey;     // 포커스된 노드 Index
           const Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);   // 포커스된 노드 정보
           const parent_row1 = this.$refs.tuiGrid.invoke('getParentRow', Focus_Data_Index); // 상위 행
-
-          if(!Utility.fn_IsNull(parent_row1) && (parent_row1.PARENT_CODE == '0')){
-            this.$bvModal.msgBoxOk("지역는 2단계 까지 구성이 가능합니다.", GlobalValue.Info_option);
+         
+          if(!Utility.fn_IsNull(parent_row1) && (Focus_Data_info.LEVEL == 5)){
+            this.$bvModal.msgBoxOk("지역은 5단계 까지 구성이 가능합니다.", GlobalValue.Info_option);
             return;
           }
-
           let Focus_Children_Length;                                           // 포커스 노드의 자식 노드의 수
 
           const Default_Data = {                                 // 행 추가 시 기본 값 
@@ -410,29 +444,32 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             REMARK: "",                                          // 비고
             USE_YN: "Y",                                         // 사용 유무
             PARENT_CODE: Focus_Data_info.AREA_CODE,              // 부모 코드
-            SAVE_YN:"N",                                         // 저장여부
           };
 
           if (Focus_Data_info._children == undefined) {
             Focus_Children_Length = 0
+            this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
+            this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
+            // this.$refs.tuiGrid.invoke("focus", Focus_Data_info._children.rowKey, "AREA_CODE");   // 포커스 적용
           }
           else {
+            debugger
             Focus_Children_Length = Focus_Data_info._children.length;
+            this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
+            this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
           }
 
-          this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
-          this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
+          
         }
         else {
           const Default_Data1 = [];
-          Default_Data1[0] = {                                               // 행 추가 시 기본 값 
+          Default_Data1[0] = {         // 행 추가 시 기본 값 
             AREA_CODE: "",             // 지역 코드
-            AREA_NAME : "",           // 지역명
-            SORT_NO: 0,              // 정렬 순서
-            REMARK: "",              // 비고
-            USE_YN: "Y",              // 사용 유무
-            PARENT_CODE: 0,       // 부모 코드
-            SAVE_YN:"N",             // 저장여부
+            AREA_NAME : "",            // 지역명
+            SORT_NO: 0,                // 정렬 순서
+            REMARK: "",                // 비고
+            USE_YN: "Y",               // 사용 유무
+            PARENT_CODE: 0,            // 부모 코드
           };
 
         this.$refs.tuiGrid.invoke("resetData", Default_Data1);     // 그리드에 트리 적용
@@ -573,6 +610,29 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         }
       },
 
+      // 트리 확장 버튼
+      btn_expand() {
+        debugger
+        this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
+        // for(var i = 0; i<this.Real_Node.length ;i++) 
+        // {
+        //   if(this.Real_Node[i]._children != undefined && this.Real_Node[i].LEVEL < this.expand_level)
+        //   {
+        //     this.$refs.tuiGrid.invoke("expand",i);
+        //   }
+        //   else{
+        //     continue
+        //   }
+        // }
+      },
+
+
+      // 트리 축소 버튼
+      btn_collapse() {
+        this.$refs.tuiGrid.invoke("collapseAll");             // 트리 전체 축소(접기)
+      },
+
+
       // 그리드 포커스 변경 이벤트
       async grid_focusChange(DataRow) {
         // 그리드가 아님에도 타는 경우가 있어서 예외처리함
@@ -590,9 +650,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         this.txt_Remark = DataRow_info.REMARK;       // 비고
         this.cb_Use_YN =  DataRow_info.USE_YN;       // 사용여부
         this.txt_ACTIVE_Area = DataRow_info.ACTIVE_Area; //지역 구분
-
         //루트는 수정불가
-        if(this.txt_Area_Code == "0")
+        if(DataRow_info.PARENT_CODE == "")
         {
           document.getElementById("b-input_NAME").readOnly = true
           document.getElementById("b-input_SORT").readOnly = true
@@ -608,6 +667,54 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           document.getElementById("checkbox-1").disabled = false           
         }
 
+      },
+
+      TreeColumn_Color(datarow) {
+        // 상세정보 데이터가 없으면 그대로 종료
+        if(Utility.fn_IsNull(datarow)) {
+          return;
+        }
+        try
+        {
+          datarow.forEach(element => {
+          // 속성이 없으면 만들면서 진행한다.
+          if(element._attributes == undefined) {
+            element["_attributes"]={};
+          }
+
+          // 스타일 속성이 없으면 만들면서 진행한다.
+          if(element._attributes.className == undefined) {
+            element._attributes["className"] = {};
+          }
+
+          // 컬럼 속성이 없으면 만들면서 진행한다.
+          if(element._attributes.className.column == undefined) {
+            element._attributes.className["column"] = {};
+          }
+
+          if(element._attributes.className.column.AREA_NAME == undefined) {
+            element._attributes.className.column["AREA_NAME"] = [];
+          }
+          // 권한 세부정보 Cell Color Update
+          this.ColorUpdate(element);
+          })
+          return datarow;
+        }
+        catch(err)
+        {
+          this.$bvModal.msgBoxOk(err, GlobalValue.Err_option);
+        }
+
+      },
+
+      //권한세부정보의 Cell Color Update
+      ColorUpdate(DataRow){
+        if(DataRow.USE_YN == "Y") {
+          DataRow._attributes.className.column.AREA_NAME=["USE_Y"];
+        }
+        else {
+          DataRow._attributes.className.column.AREA_NAME=["USE_N"];
+        }
       },
     }
 }
@@ -632,5 +739,9 @@ label.Input-Area-Label {
     margin-right: 20px;
     padding-left: 0px;
 }
+</style>
 
+<style>
+  .USE_Y{background-color: #CEF6F5 !important;}
+  .USE_N{background-color: #F8E0E0 !important;}
 </style>
