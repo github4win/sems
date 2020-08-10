@@ -30,8 +30,9 @@
           <label>지역 리스트</label>
           <b-button size="sm" variant="primary" style="float:right; margin-bottom : 10px" @click="btn_expand">펴기</b-button>
           <b-button size="sm" variant="primary" style="float:right; margin-right :10px; margin-bottom : 10px" @click="btn_collapse">접기</b-button>
-          <!-- <b-form-select class= "col-md-2 col-sm-3 col-xs-3" style="float:right; margin-right :10px; height: 28px;"
-            :options="expand_options" v-model="expand_level"></b-form-select> -->
+          <b-form-select class= "col-md-2 col-sm-3 col-xs-3" style="float:right; margin-right :10px; height: 28px;"
+            :options="expand_options" v-model="expand_level"></b-form-select>
+          <label style="float:right; margin-right :10px"> LEVEL </label>
           
           <!-- 메인 그리드 시작 -->
           <grid
@@ -55,7 +56,7 @@
           <label>지역정보</label>
 					<br>
             <!-- 세부정보 상세 시작 -->
-						<div class="col-md-12 col-sm-12 col-xs-12 common-schwrap">
+						<div class="col-md-12 col-sm-12 col-xs-12 common-schwrap" style="margin-top: 10px;">
               <b-row>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">지역코드: </label>
@@ -164,7 +165,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         grd_Data: [],										// 그리드에 바인딩 할 Data 배열 변수
 
         Real_Node: [],                  // 최상위 노드(Win Tech)
-        Search_Data: "",                // 초기 조회한 데이터(전체 데이터)
+        Search_Data: [],                // 초기 조회한 데이터(전체 데이터)
       }
     },
 
@@ -173,7 +174,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       this.gridProps = {
 
         data: this.grd_Data,
-        width:'350',
+        width:350,
         height:500,
         scrollX: false,
         scrolly: false,
@@ -192,8 +193,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           value: GridDefault.GridValue()
         },
         treeColumnOptions:{
-          name:"AREA_CODE", // Key가 될 컬럼 Name (반드시 보여야 한다. hidden:false시 트리 구성 안됨)
-          // useCascadingCheckbox:true
+          name:"AREA_CODE", // Key가 될 컬럼 Name (반드시 보여야 한다. hidden:true시 트리 구성 안됨)
         },
       }
     },
@@ -205,25 +205,25 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     methods: {
       
       async SetInit(){
-        // this.SetCombo();
+        this.SetCombo();
         await this.btn_Search(); //  조회
       },
 
-      // async SetCombo(){
+      async SetCombo(){
         
-      //   var temp_cbo = []
+        var temp_cbo = []
 
-      //   // 콤보박스에 값을 집어넣기 위해 루프
-      //   for (var i = 1; i < 6; i++) {
-      //     temp_cbo.push({
-      //       text: i,
-      //       value: i
-      //     })
-      //   }
-      //   // 콤보박스에 값을 집어넣음
-      //   this.expand_options = temp_cbo
-      //   this.expand_level = temp_cbo[0].value
-      // },
+        // 콤보박스에 값을 집어넣기 위해 루프
+        for (var i = 1; i < 6; i++) {
+          temp_cbo.push({
+            text: i,
+            value: i
+          })
+        }
+        // 콤보박스에 값을 집어넣음
+        this.expand_options = temp_cbo
+        this.expand_level = temp_cbo[0].value
+      },
 
       // 벨리데이션 체크 (컨트롤 구분명)
       Check_Validation(str){
@@ -453,7 +453,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             // this.$refs.tuiGrid.invoke("focus", Focus_Data_info._children.rowKey, "AREA_CODE");   // 포커스 적용
           }
           else {
-            debugger
             Focus_Children_Length = Focus_Data_info._children.length;
             this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
             this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
@@ -612,24 +611,34 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
       // 트리 확장 버튼
       btn_expand() {
-        debugger
-        this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
-        // for(var i = 0; i<this.Real_Node.length ;i++) 
-        // {
-        //   if(this.Real_Node[i]._children != undefined && this.Real_Node[i].LEVEL < this.expand_level)
-        //   {
-        //     this.$refs.tuiGrid.invoke("expand",i);
-        //   }
-        //   else{
-        //     continue
-        //   }
-        // }
+        // this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
+
+        for(var i = 0; i<this.Search_Data.length ;i++) 
+        {
+          if(this.Search_Data[i].LEVEL <= this.expand_level)
+          {
+            this.$refs.tuiGrid.invoke("expand",i-1);
+          }
+          else{
+            continue
+          }
+        }
       },
 
 
       // 트리 축소 버튼
       btn_collapse() {
-        this.$refs.tuiGrid.invoke("collapseAll");             // 트리 전체 축소(접기)
+        // this.$refs.tuiGrid.invoke("collapseAll");             // 트리 전체 축소(접기)
+        for(var i = 0; i<this.Search_Data.length ;i++) 
+        {
+          if(this.Search_Data[i].LEVEL >= this.expand_level)
+          {
+            this.$refs.tuiGrid.invoke("collapse",i);
+          }
+          else{
+            continue
+          }
+        }
       },
 
 
