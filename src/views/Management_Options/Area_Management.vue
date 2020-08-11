@@ -39,7 +39,7 @@
             id="grdMain"
             ref="tuiGrid"
             :data="this.grd_Data"
-            :scrollY="true"
+            :scrollY="gridProps.scrollY"
             :columns="gridProps.columns"
             :header="gridProps.header"
             :bodyHeight="gridProps.bodyheight"
@@ -177,7 +177,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         width:350,
         height:500,
         scrollX: false,
-        scrolly: false,
+        scrolly: true,
         bodyheight : 500,
         columns: [
           { header: "지역 코드",     name: "AREA_CODE" },
@@ -395,8 +395,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             const BindData = this.TreeColumn_Color(AreaData);
 
             // 데이터를 트리에 바인딩한다.
-            this.Tree_DataConvert(BindData);      
-            // this.Tree_DataConvert(AreaData);                 // 트리형으로 변환
+            this.Tree_DataConvert(BindData);       // 트리형으로 변환
             this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
             this.$refs.tuiGrid.invoke("focus", 0, "AREA_CODE");   // 포커스 적용
             this.Search_Data = AreaData; 
@@ -521,7 +520,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             // 저장성공한 지역코드
             const saved_Areacd = Result[0].query_err_msg;
 
-            // 조회하고 나서 포커스 변경 이벤트를 태우지 않기 위해 전역변수를 ture로 변경
             await this.btn_Search();     // 메인 그리드 조회
             if(!Utility.fn_IsNull(this.Real_Node)) {
               const thisview = this;

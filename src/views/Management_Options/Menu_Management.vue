@@ -35,6 +35,7 @@
             :data="this.grd_Data"
             :columns="gridProps.columns"
             :header="gridProps.header"
+            :bodyHeight="gridProps.bodyheight"
             :scrollY="gridProps.scrollY"
             :scrollX="gridProps.scrollX"
             :treeColumnOptions="gridProps.treeColumnOptions"
@@ -188,10 +189,10 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       this.gridProps = {
 
         data: this.grd_Data,
-        scrollY: false,
+        scrollY: true,
         scrollX: false,
         width:'350',
-        bodyheight : '400',
+        bodyheight : 500,
         columns: [
           { header: "메뉴 코드",     name: "MENU_ID" },
           { header: "메뉴명",        name: "MENU_NM" },
