@@ -92,6 +92,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-empty */
 /* eslint-disable no-redeclare */
+/* eslint-disable no-mixed-spaces-and-tabs */
 // import 영역
 import GlobalValue from "@/assets/js/GlobalValue.js";  // 전 화면 공통으로 사용하는 변수
 import { GridDefault, TextBoxEditor, NumberTextEditor } from "@/assets/js/GridDefault.js"; // 그리드 기본값 세팅, 그리드 EditOptions
@@ -185,6 +186,8 @@ export default {
 		}
 	},
 	mounted() {
+		document.getElementById("div_Path_title").style.display = "block";
+      	Utility.fn_SetMenuPath(this); // 메뉴 Path 표시
 		this.btn_Search()
 
 		// 각 그리드에 페이지네이션을 가져온다.
