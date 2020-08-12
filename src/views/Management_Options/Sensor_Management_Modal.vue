@@ -2,9 +2,15 @@
   <div>
     <div class="contents">
       <!-- 버튼 시작 -->
+     
       <div class="common-btnwrap">
-        <b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Select">선택</b-button>
-					
+        <label style="float:left; margin-right: 5px;" class="control-label">지역</label>
+        <b-input style="float:left; margin-right: 5px; height: 28px;" class="col-md-3 col-sm-3 col-xs-3" type="text" v-model="Search_AreaName"></b-input>
+        <b-button style="float:left;" size="sm" variant="primary" @click="btn_Search">조회</b-button>	
+        <b-button size="sm" variant="primary" style="float:right; margin-right : 5px" @click="btn_expand">펴기</b-button>	
+        <b-button size="sm" variant="primary" style="float:right; margin-right : 5px" @click="btn_collapse">접기</b-button>
+        <b-form-select class= "col-md-2 col-sm-3 col-xs-3" style="float:right; margin-right :10px; height: 28px;"
+            :options="expand_options" v-model="expand_level"></b-form-select>
       </div>
       <!-- 컨텐츠 시작 -->
       <div class="col-md-12 col-sm-12 col-xs-12">
@@ -18,6 +24,7 @@
           :scrollY="gridProps.scrollY"
           :scrollX="gridProps.scrollX"
           :treeColumnOptions="gridProps.treeColumnOptions"
+          :bodyHeight="gridProps.bodyheight"
           :theme="gridProps.myTheme"
           @dblclick="getSelectRow"
         ></grid>
@@ -25,6 +32,9 @@
       </div>
       <!-- 컨텐츠 끝 -->
     </div>
+     <div class="common-btnwrap">
+        <b-button size="sm" variant="primary" style="margin-top: 10px;margin-right : 10px" @click="btn_Select">선택</b-button>					
+      </div>
   </div>
 </template>
 
@@ -60,6 +70,29 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     data() {
 
       return {
+        expand_level: 4,
+        expand_options: [
+          {
+            text: 1,
+            value: 1
+          },
+          {
+            text: 2,
+            value: 2
+          },
+          {
+            text: 3,
+            value: 3
+          },
+          {
+            text: 4,
+            value: 4
+          },
+          {
+            text: 5,
+            value: 5
+          }
+        ],
         // 지역 세부정보 Model
         txt_Area_Code :"",    // 지역코드
         txt_Area_Name :"",    // 지역명
@@ -98,10 +131,10 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       this.gridProps = {
 
         data: this.grd_Data,
-        scrollY: false,
+        scrollY: true,
         scrollX: false,
         width:'350',
-        bodyheight : '400',
+        bodyheight : 400,
         columns: [
           { header: "지역 코드",     name: "AREA_CODE" },
           { header: "지역명",        name: "AREA_NAME" },
@@ -126,11 +159,47 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     },
 
     methods: {
+      btn_expand() {
+        for(var i = 0; i<this.Search_Data.length ;i++) 
+        {
+          if(this.Search_Data[i].LEVEL <= this.expand_level)
+          {
+            this.$refs.tuiGrid.invoke("expand",i-1);
+          }
+          else{
+            continue
+          }
+        }
+      },
+      btn_collapse() {
+        for(var i = 0; i<this.Search_Data.length ;i++) 
+        {
+          if(this.Search_Data[i].LEVEL >= this.expand_level)
+          {
+            this.$refs.tuiGrid.invoke("collapse",i);
+          }
+          else{
+            continue
+          }
+        }
+      },
       getSelectRow(data) {
         var selectValue = this.$refs.tuiGrid.invoke('getRow', data.rowKey)
-        console.log('data', selectValue)
-        this.$emit('PopupOK', selectValue)
-        this.Close()
+        selectValue.paramGubun = this.Params.searchID
+        if (this.Params.searchID == '1') {
+          this.$emit('PopupOK', selectValue)
+          this.Close()
+        } else {
+          console.log('data', selectValue)
+          if (selectValue.LEVEL == 5) {
+            this.$emit('PopupOK', selectValue)
+            this.Close()
+          } else {
+            this.$bvModal.msgBoxOk('동 만 선택할 수 있습니다.', GlobalValue.Info_option)
+          }
+          
+        }
+        
       },      
       async SetInit(){
         await this.btn_Search(); //  조회

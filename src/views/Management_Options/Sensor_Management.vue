@@ -20,8 +20,8 @@
               </div>
             </div>
             
-            <b-button size="sm" variant="primary" @click="getSearch">선택</b-button>
-            <b-modal id="SearchModal" title="선택" hide-footer centered>
+            <b-button size="sm" variant="primary" @click="getSearch('1')">선택</b-button>
+            <b-modal id="SearchModal" title="지역선택" hide-footer centered>
               <sensor-management-modal v-on:PopupOK="PopupOK" v-bind:params="popup_Param"></sensor-management-modal>
             </b-modal>
             <!-- <div class="col-md-3 col-sm-6">
@@ -63,6 +63,7 @@
             :scrollY="gridProps.scrollY"
             :scrollX="gridProps.scrollX"
             :treeColumnOptions="gridProps.treeColumnOptions"
+            :bodyHeight="gridProps.bodyheight"
             :theme="gridProps.myTheme"
             @focusChange="grid_focusChange"
           ></grid>
@@ -98,7 +99,8 @@
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label"><span style="color: red;">*</span>설치지역: </label>
-                  <b-form-select id="b-form-IoT-Place" v-model="txt_IoT_Place" :state="Iot_Place_EmptyValidation" :options="cboPlace" class="col-md-8 col-sm-8 col-xs-8" ></b-form-select>
+                  <b-form-select id="b-form-IoT-Place" v-model="txt_IoT_Place" :state="Iot_Place_EmptyValidation" :options="cboPlace" class="col-md-7 col-sm-7 col-xs-7" ></b-form-select>
+                  <b-button style="height:38px; margin-left:8px" :disabled="btniotplace"  size="sm" variant="primary" @click="getSearch('2')">선택</b-button>
                   <b-form-invalid-feedback :state="Iot_Place_EmptyValidation" class="col-lg-11 col-md-11 col-sm-11 col-xs-11" style="text-align: right">
                     설치지역은 필수 입력입니다.
                   </b-form-invalid-feedback>
@@ -314,6 +316,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     data() {
 
       return {
+        btniotplace: true,
         gugun_value: '',
         gugun_options: [],
         dongri_value: '',
@@ -401,7 +404,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         scrollY: true,
         scrollX: false,
         width:'350',
-        bodyheight : '400',
+        bodyheight : 550,
         columns: [
           { header: "Iot 센서리스트",     name: "IOT_TREE_NM" },
           { header: "정렬순서",           name: "KEY_FIELD",        hidden: true },
@@ -448,8 +451,13 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       },
       PopupOK(param) {
         console.log('param', param)
-        this.popupLoc = param.AREA_NAME
-        this.Search_Tree_Grid(undefined, param.AREA_CODE)
+        if (param.paramGubun == '1') {
+          this.popupLoc = param.AREA_NAME
+          this.Search_Tree_Grid(undefined, param.AREA_CODE)
+        } else {
+          this.txt_IoT_Place = param.AREA_CODE
+        }
+        
       },
       async SearchInfo(param) {
         const cbo_Place = await SEARCH_COMBO3(param)
@@ -463,8 +471,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         }
         this.cboPlace = temp_cbo
       },
-      getSearch() {
-        this.popup_Param = {ModalID: 'SearchModal'}
+      getSearch(param) {
+        this.popup_Param = {ModalID: 'SearchModal', searchID: param}
         this.$bvModal.show('SearchModal')
       },
       // clearTxtBox() {
@@ -773,7 +781,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           document.getElementById('b-input-IoT-No').readOnly = false
           document.getElementById('b-input-IoT-Name').readOnly = false
           document.getElementById('b-input-IoT-Date').readOnly = false
-          document.getElementById('b-form-IoT-Place').disabled = false
+          document.getElementById('b-form-IoT-Place').disabled = true
           document.getElementById('b-input-IoT-Lati').readOnly = false
           document.getElementById('b-input-IoT-Longi').readOnly = false
           this.chkboxGroup = false
@@ -868,7 +876,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
                 INS_LON: this.txt_IoT_Longi,
                 USE_YN: this.cb_Use_YN,
                 SAVE_TYPE: Focus_Data_info.SAVE_TYPE === undefined ? 'U' : Focus_Data_info.SAVE_TYPE,
-                USER: Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID")) === true ? '1TEST' : Utility.fn_GetUserInfo("USER_ID"),
+                USER: Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID")) === true ? '' : Utility.fn_GetUserInfo("USER_ID"),
                 GAS_TYPE: Gas_type
               })
             }
@@ -882,7 +890,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
               INS_LON: this.txt_IoT_Longi,
               USE_YN: this.cb_Use_YN,
               SAVE_TYPE: Focus_Data_info.SAVE_TYPE === undefined ? 'U' : Focus_Data_info.SAVE_TYPE,
-              USER: Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID")) === true ? '1TEST' : Utility.fn_GetUserInfo("USER_ID"),
+              USER: Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID")) === true ? '' : Utility.fn_GetUserInfo("USER_ID"),
               GAS_TYPE: Gas_type
             }
 
@@ -961,6 +969,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             document.getElementById('b-form-IoT-Place').disabled = true
             document.getElementById('b-input-IoT-Lati').readOnly = true
             document.getElementById('b-input-IoT-Longi').readOnly = true
+            this.btniotplace = true
             this.txt_IoT_No = DataRow_info.IOT_TREE_NM
             this.txt_IoT_Name = '.'
             this.txt_IoT_Date = '.'
@@ -975,9 +984,10 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             document.getElementById('b-input-IoT-No').readOnly = false
             document.getElementById('b-input-IoT-Name').readOnly = false
             document.getElementById('b-input-IoT-Date').readOnly = false
-            document.getElementById('b-form-IoT-Place').disabled = false
+            document.getElementById('b-form-IoT-Place').disabled = true
             document.getElementById('b-input-IoT-Lati').readOnly = false
             document.getElementById('b-input-IoT-Longi').readOnly = false
+            this.btniotplace = false
             this.txt_IoT_No = ''
             this.txt_IoT_Name = ''
             this.txt_IoT_Date = ''
@@ -993,9 +1003,10 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           document.getElementById('b-input-IoT-No').readOnly = true
           document.getElementById('b-input-IoT-Name').readOnly = false
           document.getElementById('b-input-IoT-Date').readOnly = false
-          document.getElementById('b-form-IoT-Place').disabled = false
+          document.getElementById('b-form-IoT-Place').disabled = true
           document.getElementById('b-input-IoT-Lati').readOnly = false
           document.getElementById('b-input-IoT-Longi').readOnly = false
+          this.btniotplace = false
           this.txt_IoT_No = DataRow_info.IOT_NO
           this.txt_IoT_Name = DataRow_info.IOT_NM
           this.txt_IoT_Date = DataRow_info.INS_DATE
