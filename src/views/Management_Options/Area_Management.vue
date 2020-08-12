@@ -33,7 +33,7 @@
           <b-button size="sm" variant="primary" style="float:right; margin-right :10px; margin-bottom : 10px" @click="btn_collapse">접기</b-button>
           <b-form-select class= "col-md-2 col-sm-3 col-xs-3" style="float:right; margin-right :10px; height: 28px;"
             :options="expand_options" v-model="expand_level"></b-form-select>
-          <label style="float:right; margin-right :10px"> LEVEL </label>
+          <label style="float:right; margin-right :10px"> Lv </label>
           <img class="USE_IMG" src="../../assets/image/Use_Y.png">
           <label style="font-size: 10pt; margin-top : 10px; margin-left :10px; margin-right :10px"> 사용 </label>
           <img class="USE_IMG" src="../../assets/image/Use_N.png">
@@ -47,7 +47,6 @@
             :columns="gridProps.columns"
             :header="gridProps.header"
             :bodyHeight="gridProps.bodyheight"
-            :height="gridProps.height"
             :treeColumnOptions="gridProps.treeColumnOptions"
             :theme="gridProps.myTheme"
             @focusChange="grid_focusChange"
@@ -182,7 +181,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
         data: this.grd_Data,
         width:350,
-        height:500,
         scrollX: false,
         scrolly: true,
         bodyheight : 500,
@@ -207,6 +205,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
     mounted() {
       this.SetInit();
+      document.getElementById("div_Path_title").style.display = "block";
+      Utility.fn_SetMenuPath(this); // 메뉴 Path 표시
     },
 
     methods: {
@@ -214,6 +214,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       async SetInit(){
         this.SetCombo();
         await this.btn_Search(); //  조회
+        this.btn_expand();  // 트리 펼치기
       },
 
       async SetCombo(){
@@ -403,12 +404,11 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
             // 데이터를 트리에 바인딩한다.
             this.Tree_DataConvert(BindData);       // 트리형으로 변환
-            this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
+            await this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
             this.$refs.tuiGrid.invoke("focus", 0, "AREA_CODE");   // 포커스 적용
             this.Search_Data = AreaData; 
+            this.btn_collapse();
             }
-
-
         }
          catch (err) 
         {
@@ -457,7 +457,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           else {
             Focus_Children_Length = Focus_Data_info._children.length;
           }
-          debugger
           this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
           this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
           this.$refs.tuiGrid.invoke("focus", Focus_Data_info._attributes.tree.childRowKeys[Focus_Data_info._attributes.tree.childRowKeys.length-1], "AREA_CODE");   // 포커스 적용
@@ -524,10 +523,13 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             const saved_Areacd = Result[0].query_err_msg;
 
             await this.btn_Search();     // 메인 그리드 조회
+            this.$refs.tuiGrid.invoke("expandAll");
             if(!Utility.fn_IsNull(this.Real_Node)) {
               const thisview = this;
               const findednode = thisview.Tree_FindNode(this.Real_Node, saved_Areacd);
+              this.$refs.tuiGrid.invoke("expandAll");
               this.$refs.tuiGrid.invoke("focus", findednode.rowKey, "AREA_CODE");   // 포커스 적용
+              this.btn_collapse();
             }
 
             this.$bvModal.msgBoxOk("저장되었습니다.", GlobalValue.Info_option);

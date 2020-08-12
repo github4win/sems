@@ -121,6 +121,8 @@ export default {
 	},
 	mounted() {
 		this.btn_Search()
+		document.getElementById("div_Path_title").style.display = "block";
+        Utility.fn_SetMenuPath(this); // 메뉴 Path 표시
 	},
 	methods: {
 		//메인 그리드 조회

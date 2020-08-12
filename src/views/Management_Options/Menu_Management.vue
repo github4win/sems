@@ -216,6 +216,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
     mounted() {
       this.SetInit();
+      document.getElementById("div_Path_title").style.display = "block";
+      Utility.fn_SetMenuPath(this); // 메뉴 Path 표시
     },
 
     methods: {
