@@ -80,7 +80,7 @@
               <b-row>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">정렬순서: </label>
-                  <b-input id = "b-input_SORT" class="col-md-8 col-sm-8 col-xs-8 Input-Text" :state="NumberValidation"  type="text" v-model="txt_Sort_No"/>
+                  <b-input id = "b-input_SORT" class="col-md-8 col-sm-8 col-xs-8 Input-Text" :state="NumberValidation" maxlength="5"  type="text" v-model="txt_Sort_No"/>
                   <b-form-invalid-feedback :state="NumberValidation" class="col-lg-11 col-md-11 col-sm-11 col-xs-11;" style="text-align: right">
                     {{this.FeedBack_SortNo}}
                   </b-form-invalid-feedback>
@@ -499,10 +499,10 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           }
           else {
             Focus_Children_Length = Focus_Data_info._children.length;
-          }
-
+          }          
           this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
           this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
+          this.$refs.tuiGrid.invoke("focus", Focus_Data_info._attributes.tree.childRowKeys[Focus_Data_info._attributes.tree.childRowKeys.length-1], "AREA_CODE");   // 포커스 적용
         }
         else {
           const Default_Data1 = [];

@@ -28,12 +28,16 @@
       <div style="margin-top:20px;"> 
         <div class="Area_list col-md-3 col-sm-3 col-xs-3" style="height: 300px">
           <label>지역 리스트</label>
+          <br>
           <b-button size="sm" variant="primary" style="float:right; margin-bottom : 10px" @click="btn_expand">펴기</b-button>
           <b-button size="sm" variant="primary" style="float:right; margin-right :10px; margin-bottom : 10px" @click="btn_collapse">접기</b-button>
           <b-form-select class= "col-md-2 col-sm-3 col-xs-3" style="float:right; margin-right :10px; height: 28px;"
             :options="expand_options" v-model="expand_level"></b-form-select>
           <label style="float:right; margin-right :10px"> LEVEL </label>
-          
+          <img class="USE_IMG" src="../../assets/image/Use_Y.png">
+          <label style="font-size: 10pt; margin-top : 10px; margin-left :10px; margin-right :10px"> 사용 </label>
+          <img class="USE_IMG" src="../../assets/image/Use_N.png">
+          <label style="font-size: 10pt; margin-left : 10px; margin-right :10px"> 미사용 </label>
           <!-- 메인 그리드 시작 -->
           <grid
             id="grdMain"
@@ -64,7 +68,7 @@
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label"><span style="color: red;">*</span>지역명: </label>
-                  <b-input id = "b-input_NAME" class="col-md-8 col-sm-8 col-xs-8 Input-Text" maxlength="50" :state="AreaName_EmptyValidation"  type="text" v-model="txt_Area_Name"/>
+                  <b-input id = "b-input_NAME" class="col-md-8 col-sm-8 col-xs-8 Input-Text" maxlength="30" :state="AreaName_EmptyValidation"  type="text" v-model="txt_Area_Name"/>
                   <b-form-invalid-feedback :state="AreaName_EmptyValidation" class="col-lg-11 col-md-11 col-sm-11 col-xs-11" style="text-align: right">
                     지역명은 필수 입력입니다.
                   </b-form-invalid-feedback>
@@ -73,7 +77,7 @@
               <b-row>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">정렬순서: </label>
-                  <b-input id = "b-input_SORT" class="col-md-8 col-sm-8 col-xs-8 Input-Text" :state="NumberValidation"  type="text" v-model="txt_Sort_No"/>
+                  <b-input id = "b-input_SORT" maxlength="5" class="col-md-8 col-sm-8 col-xs-8 Input-Text" :state="NumberValidation"  type="text" v-model="txt_Sort_No"/>
                   <b-form-invalid-feedback :state="NumberValidation" class="col-lg-11 col-md-11 col-sm-11 col-xs-11;" style="text-align: right">
                     {{this.FeedBack_SortNo}}
                   </b-form-invalid-feedback>
@@ -166,6 +170,9 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
         Real_Node: [],                  // 최상위 노드(Win Tech)
         Search_Data: [],                // 초기 조회한 데이터(전체 데이터)
+
+        UseProps: { blank: true, blankColor: '#CEF6F5', width: 75, height: 75, class: 'm1' },
+        notUsenProps: { blank: true, blankColor: '#F8E0E0', width: 75, height: 75, class: 'm1' }
       }
     },
 
@@ -222,7 +229,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         }
         // 콤보박스에 값을 집어넣음
         this.expand_options = temp_cbo
-        this.expand_level = temp_cbo[0].value
+        this.expand_level = temp_cbo[4].value
       },
 
       // 벨리데이션 체크 (컨트롤 구분명)
@@ -427,7 +434,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           }
 
           const Focus_Data_Index = this.$refs.tuiGrid.invoke("getFocusedCell").rowKey;     // 포커스된 노드 Index
-          const Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);   // 포커스된 노드 정보
+            var Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);   // 포커스된 노드 정보
           const parent_row1 = this.$refs.tuiGrid.invoke('getParentRow', Focus_Data_Index); // 상위 행
          
           if(!Utility.fn_IsNull(parent_row1) && (Focus_Data_info.LEVEL == 5)){
@@ -444,20 +451,16 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             USE_YN: "Y",                                         // 사용 유무
             PARENT_CODE: Focus_Data_info.AREA_CODE,              // 부모 코드
           };
-
           if (Focus_Data_info._children == undefined) {
             Focus_Children_Length = 0
-            this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
-            this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
-            // this.$refs.tuiGrid.invoke("focus", Focus_Data_info._children.rowKey, "AREA_CODE");   // 포커스 적용
           }
           else {
             Focus_Children_Length = Focus_Data_info._children.length;
-            this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
-            this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
           }
-
-          
+          debugger
+          this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
+          this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
+          this.$refs.tuiGrid.invoke("focus", Focus_Data_info._attributes.tree.childRowKeys[Focus_Data_info._attributes.tree.childRowKeys.length-1], "AREA_CODE");   // 포커스 적용
         }
         else {
           const Default_Data1 = [];
@@ -550,7 +553,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             // 포커스된 노드 정보
             const Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);
             //루트 삭제불가
-            if(Focus_Data_info.AREA_CODE == "0" && Focus_Data_info.AREA_CODE != undefined ){
+            if(Focus_Data_info.AREA_CODE == "AREA0001" && Focus_Data_info.AREA_CODE != undefined ){
               await this.$bvModal.msgBoxOk("루트를 삭제할 수 없습니다.", GlobalValue.Info_option);
               return;
             }
@@ -751,4 +754,10 @@ label.Input-Area-Label {
 <style>
   .USE_Y{background-color: #CEF6F5 !important;}
   .USE_N{background-color: #F8E0E0 !important;}
+
+  .USE_IMG{
+  margin-top:2px; 
+  width:20px; 
+  height:20px
+  }
 </style>
