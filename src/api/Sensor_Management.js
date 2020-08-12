@@ -32,6 +32,14 @@ export function SEARCH_TREE(AREA1, AREA2) {
   });
 }
 
+// 트리데이터 조회
+export function SEARCH_TREE_AREA(AREA1) {
+  return request({
+    url: '/SELECT_TREE_AREA?data={AREA_NAME:"' + AREA1 + '"}',
+    method: 'get'
+  });
+}
+
 // 센서데이터 저장
 export function SAVE_SENSOR(data) {
   return request({

@@ -6,6 +6,7 @@
 					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Add">추가</b-button>
 					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Save">저장</b-button>
 					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Delete">삭제</b-button>
+					<!-- <b-button size="sm" variant="primary" style="margin-right : 10px" @click="Search_Tree_Grid">test</b-button> -->
       </div>
       <!-- 버튼 끝-->
       <!-- 조회조건 시작 -->
@@ -13,9 +14,19 @@
         <fieldset>
           <div class="row">
             <div class="col-md-3 col-sm-6">
+              <label class="col-md-4 col-sm-4 col-xs-4 control-label">지역</label>
+              <div class="col-md-8 col-sm-8 col-xs-8">
+                <b-input id="b-input-area" type="text" disabled v-model="popupLoc"></b-input>
+              </div>
+            </div>
+            
+            <b-button size="sm" variant="primary" @click="getSearch">선택</b-button>
+            <b-modal id="SearchModal" title="선택" hide-footer centered>
+              <sensor-management-modal v-on:PopupOK="PopupOK" v-bind:params="popup_Param"></sensor-management-modal>
+            </b-modal>
+            <!-- <div class="col-md-3 col-sm-6">
               <label class="col-md-4 col-sm-4 col-xs-4 control-label">구/군</label>
               <div class="col-md-8 col-sm-8 col-xs-8">
-                <!-- <b-form-input class="input" v-model="Search_MenuName"></b-form-input> -->
                 <b-form-select 
                   v-model="gugun_value"
                   :options="gugun_options"
@@ -26,14 +37,13 @@
             <div class="col-md-3 col-sm-6">
               <label class="col-md-4 col-sm-4 col-xs-4 control-label">동/리</label>
               <div class="col-md-8 col-sm-8 col-xs-8">
-                <!-- <b-form-input class="input" v-model="Search_MenuName"></b-form-input> -->
                 <b-form-select 
                   v-model="dongri_value"
                   :options="dongri_options"
                   @change="cboDongri_change"
                 ></b-form-select>
               </div>
-            </div>
+            </div> -->
           </div>
         </fieldset>
       </div>
@@ -271,13 +281,15 @@ import GlobalValue from "@/assets/js/GlobalValue.js";  // 전 화면 공통으�
 import Utility from "@/assets/js/CommonUtility.js"; // 전 화면 공통으로 사용하는 함수
 import { GridDefault } from "@/assets/js/GridDefault.js"; // 그리드 기본값 세팅, 그리드 EditOptions
 import { SEARCH_MENU, SAVE_MENU, DELETE_MENU} from "@/api/Management.js";
-import { SEARCH_COMBO1, SEARCH_COMBO2, SEARCH_TREE, SEARCH_COMBO3, SAVE_SENSOR, DELETE_SENSOR } from '@/api/Sensor_Management.js'
+import { SEARCH_COMBO1, SEARCH_COMBO2, SEARCH_TREE, SEARCH_COMBO3, SAVE_SENSOR, DELETE_SENSOR, SEARCH_TREE_AREA } from '@/api/Sensor_Management.js'
+import SensorManagementModal from './Sensor_Management_Modal.vue'
 import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
   export default {
 
     components: {
       grid: Grid,
+      SensorManagementModal
     },
 
     computed: {
@@ -375,6 +387,9 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
         Real_Node: [],                  // 최상위 노드(Win Tech)
         Search_Data: "",                // 초기 조회한 데이터(전체 데이터)
+
+        popup_Param: '',
+        popupLoc: '대한민국'
       }
     },
 
@@ -383,7 +398,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       this.gridProps = {
 
         data: this.grd_Data,
-        scrollY: false,
+        scrollY: true,
         scrollX: false,
         width:'350',
         bodyheight : '400',
@@ -404,12 +419,53 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     },
 
     mounted() {
+      document.getElementById("div_Path_title").style.display = "block";
+      Utility.fn_SetMenuPath(this); // 메뉴 Path 표시
       this.SetInit();
     },
 
     methods: {
-      test(data) {
-
+      Search_Tree_Grid(gubun, param) {
+        SEARCH_TREE_AREA(param).then(Tree_Data => {
+          
+          if (Utility.fn_IsNull(Tree_Data[0]["KEY_FIELD"])) {
+            this.$refs.tuiGrid.invoke("clear");  // 메인 그리드에 바인딩 된 데이터 초기화(빈 값 row 1개 생성 방지)
+          } else {
+            this.Tree_DataConvert(Tree_Data);                 // 트리형으로 변환
+            this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
+            this.$refs.tuiGrid.invoke("focus", 0, "IOT_TREE_NM");   // 포커스 적용
+            this.Search_Data = Tree_Data;
+            if (gubun != undefined) {
+              for (var i = 0; i < Tree_Data.length; i++) {
+                if (gubun == Tree_Data[i].IOT_NO) {
+                  this.$refs.tuiGrid.invoke("focus", Tree_Data[i].rowKey, "IOT_TREE_NM");   // 포커스 적용
+                }
+              }
+            }
+          }
+          
+        })
+      },
+      PopupOK(param) {
+        console.log('param', param)
+        this.popupLoc = param.AREA_NAME
+        this.Search_Tree_Grid(undefined, param.AREA_CODE)
+      },
+      async SearchInfo(param) {
+        const cbo_Place = await SEARCH_COMBO3(param)
+        console.log('cbo_Place', cbo_Place)
+        var temp_cbo = []
+        for (var i = 0; i < cbo_Place.length; i++) {
+          temp_cbo.push({
+            text: cbo_Place[i].CODE_NAME,
+            value: cbo_Place[i].CODE_NO
+          })
+        }
+        this.cboPlace = temp_cbo
+      },
+      getSearch() {
+        this.popup_Param = {ModalID: 'SearchModal'}
+        this.$bvModal.show('SearchModal')
       },
       // clearTxtBox() {
       //   this.txt_IoT_No = ''
@@ -472,7 +528,9 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       },
       
       async SetInit(gubun){
-        await this.SetCombo(gubun);   // 콤보바인딩
+        this.Search_Tree_Grid(gubun, 'AREA0001')
+        this.SearchInfo('')
+        // await this.SetCombo(gubun);   // 콤보바인딩
         
       },
       async SetCombo(gubun){
@@ -503,7 +561,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         const FocusRow = Utility.fn_Grid_Focus_Row(this.$refs.tuiGrid);
         
         // if (FocusRow == '') {
-        //   console.log('FocusRow', FocusRow)
         //   this.IsValidation_IotNo = false
         // } else {
           // 메뉴명
@@ -702,7 +759,9 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           const Focus_Data_Index = this.$refs.tuiGrid.invoke("getFocusedCell").rowKey;     // 포커스된 노드 Index
           const Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);   // 포커스된 노드 정보
           const parent_row1 = this.$refs.tuiGrid.invoke('getParentRow', Focus_Data_Index); // 상위 행
-          if (parent_row1 == null) {
+          console.log('Focus_Data_info', Focus_Data_info)
+          console.log('parent_row1', parent_row1)
+          if (parent_row1 == null || Focus_Data_info.AREA_FULL_CODE.length < 40) {
             this.$bvModal.msgBoxOk("하위노드를 추가할 수 없습니다.", GlobalValue.Info_option);
             return
           }
@@ -734,7 +793,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             KEY_FIELD: "",
             PARENT_FIELD: "",
             GAS_TYPE: "",
-            SAVE_TYPE: "N"            // 저장타입 (N:NEW, U:UPDATE)
+            SAVE_TYPE: "N",            // 저장타입 (N:NEW, U:UPDATE),
+            AREA_FULL_CODE: ''
           };
 
           this.chkboxselected = []
@@ -745,9 +805,13 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           else {
             Focus_Children_Length = Focus_Data_info._children.length;
           }
-
           this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
           this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
+          this.$refs.tuiGrid.invoke("focus", Focus_Data_info._attributes.tree.childRowKeys[Focus_Data_info._attributes.tree.childRowKeys.length-1], "IOT_TREE_NM");   // 포커스 적용 이걸로 수정
+
+          this.SearchInfo(Focus_Data_info.PARENT_FIELD)
+          console.log('')
+          
         }
         else {
           const Default_Data1 = [];
@@ -764,7 +828,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           };
 
         this.$refs.tuiGrid.invoke("resetData", Default_Data1);     // 그리드에 트리 적용
-        this.$refs.tuiGrid.invoke("focus", 0, "MENU_ID");   // 포커스 적용
+        this.$refs.tuiGrid.invoke("focus", 0, "IOT_TREE_NM");   // 포커스 적용
         }
       },
 
@@ -804,10 +868,25 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
                 INS_LON: this.txt_IoT_Longi,
                 USE_YN: this.cb_Use_YN,
                 SAVE_TYPE: Focus_Data_info.SAVE_TYPE === undefined ? 'U' : Focus_Data_info.SAVE_TYPE,
-                USER: Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID")) === true ? '' : Utility.fn_GetUserInfo("USER_ID"),
+                USER: Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID")) === true ? '1TEST' : Utility.fn_GetUserInfo("USER_ID"),
                 GAS_TYPE: Gas_type
               })
             }
+
+            var test = {
+              IOT_NO: this.txt_IoT_No,
+              IOT_NM: this.txt_IoT_Name,
+              INS_DATE: this.txt_IoT_Date.replace(/-/g, ''),
+              INS_AREA: this.txt_IoT_Place,
+              INS_LAT: this.txt_IoT_Lati,
+              INS_LON: this.txt_IoT_Longi,
+              USE_YN: this.cb_Use_YN,
+              SAVE_TYPE: Focus_Data_info.SAVE_TYPE === undefined ? 'U' : Focus_Data_info.SAVE_TYPE,
+              USER: Utility.fn_IsNull(Utility.fn_GetUserInfo("USER_ID")) === true ? '1TEST' : Utility.fn_GetUserInfo("USER_ID"),
+              GAS_TYPE: Gas_type
+            }
+
+            console.log('test', test)
 
             const Save_Data = {data}
 
@@ -832,7 +911,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       async btn_Delete() {
         const Focus_Data_Index = this.$refs.tuiGrid.invoke("getFocusedCell").rowKey;        // 포커스된 노드 Index
         const Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index); 
-        console.log('Focus_Data_info', Focus_Data_info) 
+
         if (Focus_Data_info.NODE_TYPE == 'G' || Focus_Data_info.NODE_TYPE == 'R') {
           this.$bvModal.msgBoxOk('구/군, 동/리는 삭제할 수 없습니다.', GlobalValue.Info_option)
         } else {
@@ -871,10 +950,10 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
         // 포커스된 행의 정보
         let DataRow_info = this.$refs.tuiGrid.invoke("getRow", DataRow.rowKey);
+          console.log('DataRow_info', DataRow_info)
         if (DataRow_info.IOT_NO == "") {
           this.chkboxselected = []
-          console.log('DataRow_info', DataRow_info)
-          if (DataRow_info.NODE_TYPE == 'R' || DataRow_info.NODE_TYPE == 'G') {
+          if (DataRow_info.NODE_TYPE == 'R' || DataRow_info.NODE_TYPE == 'G' || DataRow_info.AREA_FULL_CODE != '') {
             // 구/군, 동/리 클릭 시 
             document.getElementById('b-input-IoT-No').readOnly = true
             document.getElementById('b-input-IoT-Name').readOnly = true
