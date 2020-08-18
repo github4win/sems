@@ -571,7 +571,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           else{ // 저장 성공시
             // 저장성공한 메뉴코드
             const saved_menucd = Result[0].query_err_msg;
-            console.log(saved_menucd);
+            
             await this.btn_Search();     // 메인 그리드 조회
             if(!Utility.fn_IsNull(this.Real_Node)) {
               const thisview = this;

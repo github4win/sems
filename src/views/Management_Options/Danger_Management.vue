@@ -259,7 +259,6 @@ export default {
 			if(CurrentRow.rowKey == null)
 				return;
 
-			console.log(Utility.fn_Grid_Focus_Row(this.$refs.MainGrid))
 			// 데이터 수정 후 다른 행으로 넘어갈때 이전행의 정보를 비교해서 값이 변경되었는지 체크하기 위해서 이전행을 가져온다.
 			const FocusRow = this.$refs.MainGrid.invoke("getRow", CurrentRow.prevRowKey);
 

@@ -4,12 +4,12 @@
       <!-- 사이드 메뉴바 시작 -->
       <b-nav id="sidebar" class="nav-Sidebar">
         <!-- 사이드 메뉴바 뒤로가기 버튼 -->
-        <div id="dismiss" class="div-Back">
+        <div id="dismiss" class="div-Back" style="margin-top : 5px;">
           <i class="fas fa-arrow-left"></i>
         </div>
         <!-- 사이드 메뉴바 헤더-->
         <div class="sidebar-header">
-          <h2>유해물질 모니터링</h2>
+          <h2>유해물질 <br>모니터링</h2>
         </div>
 
         <!-- 사이드 메뉴바 메뉴 부분 -->
@@ -116,12 +116,25 @@ export default {
       menuitems: [], // 메뉴 바인딩
       title: "", // 메뉴 타이틀
       input_id: "", // 로그인 ID
-      input_pw: "" // 로그인 PW
+      input_pw: "", // 로그인 PW
+
+      Device_Type :"" // 장비 타입 2020-08-18 CJH 추가
     };
   },
   mounted() {
     this.onload(), // 로그인/ 로그아웃 체크 (새로고침시 휘발성을 방지)
     // this.smoothscrolling(); // 스크롤 최상으로 올리기
+
+    this.getMenu(); // 메뉴를 조회한다
+    
+    // 디바이스의 타입을 가져온다. 2020-08-18 CJH 추가
+    this.Device_Type = Utility.fn_ScreenSize();    
+    
+    //모바일 화면에서는 사이드 메뉴바 숨김
+    if (this.Device_Type == '"Mobile_H"' || this.Device_Type == '"Mobile_V"')
+    {
+      document.getElementById("btn_menu").style.display = "none";
+    }
 
     // 사이드바 메뉴 동작 구현
     $("#dismiss, .overlay").on("click", function() {
@@ -141,7 +154,9 @@ export default {
       $("a[aria-expanded=true]").attr("aria-expanded", "false");
     });
 
-    this.getMenu(); // 메뉴를 조회한다
+ 
+    
+
   },
 
   // 브라우저에서 해당 url을 벗어날때 실행되는 이벤트
@@ -189,11 +204,21 @@ export default {
             menuname: response[i]["MENU_NM"],
             child: response[i]["CHILD"],
             group: response[i]["GROUP"],
-            url: response[i]["MENU_PATH"]
+            url: response[i]["MENU_PATH"],
+            auth: response[i]["MENU_AUTH"] // 2020-08-18 CJH  메뉴 접근권한 추가
           };
         }
-        this.menuitems = arr;
-        //this.$router.push({ path: "/Rent_Book" }); // 도서 대여화면을 초기 화면으로 보여준다.
+        // this.menuitems = arr;
+
+        // 2020-08-18 로그인 한 경우에만 메뉴목록이 나타나도록 수정
+        this.menuitems = [];
+        if (getToken("USER_ID") != null) 
+        {
+          this.menuitems = arr;
+        }
+
+        // 2020-08-18 CJH 주석에서 모니터링 화면으로 수정
+        this.$router.push({ path: "/" }); // 초기 화면으로 보여준다.
       });
     },
 
@@ -202,7 +227,8 @@ export default {
       var MainMenu = [];
       for (let i = 0; i < this.menuitems.length; i++) 
       {
-        if (this.menuitems[i].child === "N") 
+        //2020-08-18 CJH 로그인 유저 권한에 따라 메뉴목록 차이나도록 수정
+        if (this.menuitems[i].child === "N" && (getToken("MENU_AUTH") == 1 || (this.menuitems[i].auth == getToken("MENU_AUTH")))) 
         {
           MainMenu.push(this.menuitems[i]);
         }
@@ -210,12 +236,13 @@ export default {
       return MainMenu;
     },
 
-    // 대메뉴에 속한 소메뉴를 구한다.
+    // 대메뉴에 속한 소메뉴를 구한다. 
     GetChildMenu: function(group_idx) {
       var ChildMenu = [];
       for (let i = 0; i < this.menuitems.length; i++) 
       {
-        if (this.menuitems[i].group == group_idx && this.menuitems[i].child === "Y") 
+        //2020-08-18 CJH 로그인 유저 권한에 따라 메뉴목록 차이나도록 수정
+        if (this.menuitems[i].group == group_idx && this.menuitems[i].child === "Y" && (getToken("MENU_AUTH") == 1 || (this.menuitems[i].auth == getToken("MENU_AUTH"))))
         {
           ChildMenu.push(this.menuitems[i]);
         }
@@ -317,7 +344,7 @@ export default {
             this.$bvModal.hide("modal-prevent-closing"); // 로그인 모달창을 닫아준다.
             setToken("USER_ID", logcheck[0].USER_ID); // Cookie에 사용자 ID 저장
             setToken("USER_NM", logcheck[0].USER_NM); // Cookie에 사용자 이름 저장
-            setToken("MENU_AUTH", logcheck[0].MENU_AUTH); // Cookie에 사용자 메뉴 권한 저장
+            setToken("MENU_AUTH", logcheck[0].AUTH_CD); // Cookie에 사용자 메뉴 권한 저장 (MENU_AUTH --> AUTH_CD 로 수정 2020-08-18 CJH)
             this.getMenu(); // 로그인한 계정 메뉴 권한에 맞는 메뉴 조회
           }
         } 
