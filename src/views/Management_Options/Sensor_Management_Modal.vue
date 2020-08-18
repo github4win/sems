@@ -7,8 +7,7 @@
         <label style="float:left; margin-right: 5px;" class="control-label">지역</label>
         <b-input style="float:left; margin-right: 5px; height: 28px;" class="col-md-3 col-sm-3 col-xs-3" type="text" v-model="Search_AreaName"  @keypress.enter="btn_Search"></b-input>
         <b-button style="float:left;" size="sm" variant="primary" @click="btn_Search">조회</b-button>	
-        <b-button size="sm" variant="primary" style="float:right; margin-right : 5px" @click="btn_expand">펴기</b-button>	
-        <b-button size="sm" variant="primary" style="float:right; margin-right : 5px" @click="btn_collapse">접기</b-button>
+        <b-button size="sm" variant="primary" style="float:right; margin-right : 5px" @click="btn_expand">적용</b-button>	
         <b-form-select class= "col-md-2 col-sm-3 col-xs-3" style="float:right; margin-right :10px; height: 28px;"
             :options="expand_options" v-model="expand_level"></b-form-select>
       </div>
@@ -136,7 +135,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         width:'350',
         bodyheight : 400,
         columns: [
-          { header: "지역 코드",     name: "AREA_CODE" },
+          { header: "지역 코드",     name: "AREA_CODE" , hidden: true},
           { header: "지역명",        name: "AREA_NAME" },
           { header: "정렬순서",      name: "SORT_NO",        hidden: true },
           { header: "비고",          name: "REMARK",         hidden: true },
@@ -148,7 +147,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           value: GridDefault.GridValue()
         },
         treeColumnOptions:{
-          name:"AREA_CODE", // Key가 될 컬럼 Name (반드시 보여야 한다. hidden:false시 트리 구성 안됨)
+          name:"AREA_NAME", // Key가 될 컬럼 Name (반드시 보여야 한다. hidden:false시 트리 구성 안됨)
           // useCascadingCheckbox:true
         },
       }
@@ -160,23 +159,15 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
     methods: {
       btn_expand() {
+        // 전체접기
+        this.$refs.tuiGrid.invoke('collapseAll')
+
+        // 설정값 만큼 노드 펼침
         for(var i = 0; i<this.Search_Data.length ;i++) 
         {
           if(this.Search_Data[i].LEVEL <= this.expand_level)
           {
             this.$refs.tuiGrid.invoke("expand",i-1);
-          }
-          else{
-            continue
-          }
-        }
-      },
-      btn_collapse() {
-        for(var i = 0; i<this.Search_Data.length ;i++) 
-        {
-          if(this.Search_Data[i].LEVEL >= this.expand_level)
-          {
-            this.$refs.tuiGrid.invoke("collapse",i);
           }
           else{
             continue
@@ -190,12 +181,11 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           this.$emit('PopupOK', selectValue)
           this.Close()
         } else {
-          console.log('data', selectValue)
           if (selectValue.LEVEL == 5) {
             this.$emit('PopupOK', selectValue)
             this.Close()
           } else {
-            this.$bvModal.msgBoxOk('동 만 선택할 수 있습니다.', GlobalValue.Info_option)
+            this.$bvModal.msgBoxOk('센서관리 지역은 동 으로 제한되어 있습니다.', GlobalValue.Info_option)
           }
           
         }

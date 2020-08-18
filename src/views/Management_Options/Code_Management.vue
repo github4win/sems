@@ -15,7 +15,7 @@
             <div class="col-md-3 col-sm-6">
               <label class="col-md-4 col-sm-4 col-xs-4 control-label">코드명:</label>
               <div class="col-md-8 col-sm-8 col-xs-8">
-                <b-form-input class="input" v-model="Search_CodeName"></b-form-input>
+                <b-form-input class="input" v-model="Search_CodeName" @keypress.enter="btn_Search"></b-form-input>
               </div>
             </div>
           </div>
@@ -28,9 +28,9 @@
         <!-- 코드리스트 영역 시작 -->
         <div class="code_list col-md-3 col-sm-3 col-xs-3">
           <label style="float:left;">코드리스트</label>
-          <div style="text-align: right;">
-            <b-button size="sm" variant="primary" @click="btn_MainAdd">추가</b-button>
-            <b-button size="sm" variant="primary" @click="btn_MainSave">저장</b-button>
+          <div class="common-btnwrap">
+            <b-button size="sm" variant="primary" @click="btn_MainAdd" style="margin-right:5px;">추가</b-button>
+            <b-button size="sm" variant="primary" @click="btn_MainSave" style="margin-right:5px;">저장</b-button>
             <b-button size="sm" variant="primary" style="margin: 0px;" @click="btn_MainDelete">삭제</b-button>
           </div>
           <!-- 메인 그리드 시작 -->
@@ -56,9 +56,9 @@
         <!-- 코드세부정보 영역 시작 -->
         <div class="code_list_item col-md-9 col-sm-9 col-xs-9">      
           <label style="float:left;">코드세부정보</label>
-          <div style="text-align:right;">
-            <b-button size="sm" variant="primary" @click="btn_SubAdd">추가</b-button>
-            <b-button size="sm" variant="primary" @click="btn_SubSave">저장</b-button>
+          <div class="common-btnwrap">
+            <b-button size="sm" variant="primary" @click="btn_SubAdd" style="margin-right:5px;">추가</b-button>
+            <b-button size="sm" variant="primary" @click="btn_SubSave" style="margin-right:5px;">저장</b-button>
             <b-button size="sm" variant="primary" style="margin: 0px;" @click="btn_SubDelete">삭제</b-button>
           </div>
           <!-- 서브 그리드 시작 -->
