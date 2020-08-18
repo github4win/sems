@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 메뉴 조회
 export function SEARCH_AREA(AREA_NAME) {
     return request({
-    url: '/SEARCH_Area?data={AREA_NAME:"' + AREA_NAME + '"}',
+    url: '/SEARCH_AREA?data={AREA_NAME:"' + AREA_NAME + '"}',
     method: 'get'
     });
   }
@@ -11,7 +11,7 @@ export function SEARCH_AREA(AREA_NAME) {
 // 메뉴 저장
 export function SAVE_AREA(data) {
     return request({
-        url: '/SAVE_Area',
+        url: '/SAVE_AREA',
         data: data,
         method: 'POST'
     })
