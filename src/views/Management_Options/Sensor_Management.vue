@@ -654,24 +654,24 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             else {
               this.FeedBack_IotPlace = "설치지역은 필수 입력입니다.";
             }
-          } else if (str == "Iot_Lati") {
-            b_Check = Utility.fn_Check_EmptyValidation(this.txt_IoT_Lati);
-            this.IsValidation_IotLati = b_Check;
-            if(b_Check) {
-              this.FeedBack_IotLati = "";
-            }
-            else {
-              this.FeedBack_IotLati = "위도는 필수 입력입니다.";
-            }
-          } else if (str == "Iot_Longi") {
-            b_Check = Utility.fn_Check_EmptyValidation(this.txt_IoT_Longi);
-            this.IsValidation_IotLongi = b_Check;
-            if(b_Check) {
-              this.FeedBack_IotLongi = "";
-            }
-            else {
-              this.FeedBack_IotLongi = "경도는 필수 입력입니다.";
-            }
+          // } else if (str == "Iot_Lati") {
+          //   b_Check = Utility.fn_Check_EmptyValidation(this.txt_IoT_Lati);
+          //   this.IsValidation_IotLati = b_Check;
+          //   if(b_Check) {
+          //     this.FeedBack_IotLati = "";
+          //   }
+          //   else {
+          //     this.FeedBack_IotLati = "위도는 필수 입력입니다.";
+          //   }
+          // } else if (str == "Iot_Longi") {
+          //   b_Check = Utility.fn_Check_EmptyValidation(this.txt_IoT_Longi);
+          //   this.IsValidation_IotLongi = b_Check;
+          //   if(b_Check) {
+          //     this.FeedBack_IotLongi = "";
+          //   }
+          //   else {
+          //     this.FeedBack_IotLongi = "경도는 필수 입력입니다.";
+          //   }
           } 
         // }
 
