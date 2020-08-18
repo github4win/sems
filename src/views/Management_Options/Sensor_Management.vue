@@ -3,10 +3,10 @@
     <div class="contents">
       <!-- 버튼 시작 -->
       <div class="common-btnwrap">
-					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Add">추가</b-button>
-					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Save">저장</b-button>
-					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Delete">삭제</b-button>
-					<!-- <b-button size="sm" variant="primary" style="margin-right : 10px" @click="Search_Tree_Grid">test</b-button> -->
+        <b-button size="sm" variant="primary" style="margin-right : 5px" @click="btn_Add">추가</b-button>
+        <b-button size="sm" variant="primary" style="margin-right : 5px" @click="btn_Save">저장</b-button>
+        <b-button size="sm" variant="primary"  @click="btn_Delete">삭제</b-button>
+        <!-- <b-button size="sm" variant="primary" style="margin-right : 10px" @click="Search_Tree_Grid">test</b-button> -->
       </div>
       <!-- 버튼 끝-->
       <!-- 조회조건 시작 -->
@@ -53,6 +53,9 @@
       <div style="margin-top:20px;"> 
         <div class="menu_list col-md-3 col-sm-3 col-xs-3">
           <label>IoT 센서리스트</label>
+          <b-button size="sm" variant="primary" style="float: right; margin-right: 5px; margin-bottom:5px;" @click="btn_expand">적용</b-button>	
+          <b-form-select class= "col-md-2 col-sm-3 col-xs-3" style="float:right; margin-right :10px; height: 28px; margin-bottom:5px;"
+            :options="expand_options" v-model="expand_level"></b-form-select>
           <!-- 메인 그리드 시작 -->
           <grid
             id="grdMain"
@@ -75,7 +78,7 @@
           <label>IoT 센서 세부정보</label>
 					<br>
             <!-- 세부정보 상세 시작 -->
-						<div class="col-md-12 col-sm-12 col-xs-12 common-schwrap">
+						<div class="col-md-12 col-sm-12 col-xs-12 common-schwrap" style="margin-top:5px;">
               <b-row>
                 <div class="col-md-6 col-sm-6 col-xs-6">
                   <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label"><span style="color: red;">*</span>IoT No.: </label>
@@ -108,18 +111,20 @@
               </b-row>
               <b-row>
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                  <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label"><span style="color: red;">*</span>설치위치(위도): </label>
-                  <b-input id="b-input-IoT-Lati" class="col-md-8 col-sm-8 col-xs-8 Input-Text" :state="Iot_Lati_EmptyValidation"  type="text" v-model="txt_IoT_Lati"  autocomplete="off"/>
+                  <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">설치위치(위도): </label>
+                  <b-input id="b-input-IoT-Lati" class="col-md-8 col-sm-8 col-xs-8 Input-Text"  type="text" v-model="txt_IoT_Lati"  autocomplete="off"/>
+                  <!-- <b-input id="b-input-IoT-Lati" class="col-md-8 col-sm-8 col-xs-8 Input-Text" :state="Iot_Lati_EmptyValidation"  type="text" v-model="txt_IoT_Lati"  autocomplete="off"/>
                   <b-form-invalid-feedback :state="Iot_Lati_EmptyValidation" class="col-lg-11 col-md-11 col-sm-11 col-xs-11" style="text-align: right">
                     위도는 필수 입력입니다.
-                  </b-form-invalid-feedback>
+                  </b-form-invalid-feedback> -->
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-6">
-                  <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label"><span style="color: red;">*</span>설치지역(경도): </label>
-                  <b-input id="b-input-IoT-Longi" class="col-md-8 col-sm-8 col-xs-8 Input-Text" :state="Iot_Longi_EmptyValidation" maxlength="300" type="text" v-model="txt_IoT_Longi"  autocomplete="off"/>
+                  <label class="col-md-3 col-sm-3 col-xs-3 Input-Area-Label">설치지역(경도): </label>
+                  <b-input id="b-input-IoT-Longi" class="col-md-8 col-sm-8 col-xs-8 Input-Text" maxlength="300" type="text" v-model="txt_IoT_Longi"  autocomplete="off"/>
+                  <!-- <b-input id="b-input-IoT-Longi" class="col-md-8 col-sm-8 col-xs-8 Input-Text" :state="Iot_Longi_EmptyValidation" maxlength="300" type="text" v-model="txt_IoT_Longi"  autocomplete="off"/>
                   <b-form-invalid-feedback :state="Iot_Longi_EmptyValidation" class="col-lg-11 col-md-11 col-sm-11 col-xs-11" style="text-align: right">
                     경도는 필수 입력입니다.
-                  </b-form-invalid-feedback>
+                  </b-form-invalid-feedback> -->
                 </div>
               </b-row>
               <b-row>
@@ -317,6 +322,34 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     data() {
 
       return {
+        convert_Data: [],
+        expand_level: 6,
+        expand_options: [
+          {
+            text: 1,
+            value: 1
+          },
+          {
+            text: 2,
+            value: 2
+          },
+          {
+            text: 3,
+            value: 3
+          },
+          {
+            text: 4,
+            value: 4
+          },
+          {
+            text: 5,
+            value: 5
+          },
+          {
+            text: 6,
+            value: 6
+          }
+        ],
         btniotplace: true,
         gugun_value: '',
         gugun_options: [],
@@ -409,7 +442,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         columns: [
           { header: "Iot 센서리스트",     name: "IOT_TREE_NM" },
           { header: "정렬순서",           name: "KEY_FIELD",        hidden: true },
-          { header: "정렬순서",           name: "PARENT_FIELD", hidden: true}
+          { header: "정렬순서",           name: "PARENT_FIELD", hidden: true},
+          { header: "정렬순서",           name: "USE_YN", hidden: true}
         ],
         myTheme: {
           name: "mygrid",
@@ -429,15 +463,28 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     },
 
     methods: {
+      btn_expand() {
+        // 전체접기
+        this.$refs.tuiGrid.invoke('collapseAll')
+        console.log('this.Search_Data', this.convert_Data)
+        // 설정값 만큼 노드 펼침
+        for (var i = 0; i < this.convert_Data.length; i++) {
+          if (this.convert_Data[i].LVL <= this.expand_level) {
+            this.$refs.tuiGrid.invoke("expand", i - 1);
+          } else {
+            continue
+          }
+        }
+      },
       Search_Tree_Grid(gubun, param) {
         SEARCH_TREE_AREA(param).then(Tree_Data => {
-          
           if (Utility.fn_IsNull(Tree_Data[0]["KEY_FIELD"])) {
             this.$refs.tuiGrid.invoke("clear");  // 메인 그리드에 바인딩 된 데이터 초기화(빈 값 row 1개 생성 방지)
           } else {
             this.Tree_DataConvert(Tree_Data);                 // 트리형으로 변환
             this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
             this.$refs.tuiGrid.invoke("focus", 0, "IOT_TREE_NM");   // 포커스 적용
+            this.convert_Data = this.$refs.tuiGrid.invoke('getData')
             this.Search_Data = Tree_Data;
             if (gubun != undefined) {
               for (var i = 0; i < Tree_Data.length; i++) {
@@ -768,7 +815,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           const parent_row1 = this.$refs.tuiGrid.invoke('getParentRow', Focus_Data_Index); // 상위 행
 
           if (parent_row1 == null || Focus_Data_info.AREA_FULL_CODE.length < 40) {
-            this.$bvModal.msgBoxOk("하위노드를 추가할 수 없습니다.", GlobalValue.Info_option);
+            this.$bvModal.msgBoxOk("센서관리 지역은 동 으로 제한되어 있습니다.", GlobalValue.Info_option);
             return
           }
           if(parent_row1.NODE_TYPE == 'G') {
@@ -954,6 +1001,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
         // 포커스된 행의 정보
         let DataRow_info = this.$refs.tuiGrid.invoke("getRow", DataRow.rowKey);
+        
+        console.log('DataRow_info', DataRow_info)
         if (DataRow_info.IOT_NO == "") {
           this.chkboxselected = []
           if (DataRow_info.NODE_TYPE == 'R' || DataRow_info.NODE_TYPE == 'G' || DataRow_info.AREA_FULL_CODE != '') {
@@ -975,6 +1024,12 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             // 체크박스그룹 활성/비활성
             this.chkboxGroup = true
           } else {
+            var date = new Date()
+            var yyyy = date.getFullYear()
+            var mm = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1)  : (date.getMonth() + 1)
+            var dd = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+            var yyyymmdd = yyyy + '-' + mm + '-' + dd
+            console.log('yyyymmdd', yyyymmdd)
             // newRow로 생성할 때
             document.getElementById('b-input-IoT-No').readOnly = false
             document.getElementById('b-input-IoT-Name').readOnly = false
@@ -985,11 +1040,11 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             this.btniotplace = false
             this.txt_IoT_No = ''
             this.txt_IoT_Name = ''
-            this.txt_IoT_Date = ''
+            this.txt_IoT_Date = yyyymmdd
             this.txt_IoT_Place = ''
             this.txt_IoT_Lati = ''
             this.txt_IoT_Longi = ''
-            this.cb_Use_YN = ''
+            this.cb_Use_YN = 'Y'
             // 체크박스그룹 활성/비활성
             this.chkboxGroup = false
           }
