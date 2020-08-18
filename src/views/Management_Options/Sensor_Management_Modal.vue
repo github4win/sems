@@ -5,7 +5,7 @@
      
       <div class="common-btnwrap">
         <label style="float:left; margin-right: 5px;" class="control-label">지역</label>
-        <b-input style="float:left; margin-right: 5px; height: 28px;" class="col-md-3 col-sm-3 col-xs-3" type="text" v-model="Search_AreaName"></b-input>
+        <b-input style="float:left; margin-right: 5px; height: 28px;" class="col-md-3 col-sm-3 col-xs-3" type="text" v-model="Search_AreaName"  @keypress.enter="btn_Search"></b-input>
         <b-button style="float:left;" size="sm" variant="primary" @click="btn_Search">조회</b-button>	
         <b-button size="sm" variant="primary" style="float:right; margin-right : 5px" @click="btn_expand">펴기</b-button>	
         <b-button size="sm" variant="primary" style="float:right; margin-right : 5px" @click="btn_collapse">접기</b-button>
@@ -70,7 +70,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
     data() {
 
       return {
-        expand_level: 4,
+        expand_level: 5,
         expand_options: [
           {
             text: 1,
