@@ -896,12 +896,12 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         } else if (!this.IsValidation_IotPlace) {
           await this.$bvModal.msgBoxOk(this.FeedBack_IotPlace, GlobalValue.Info_option)
           return
-        } else if (!this.IsValidation_IotLati) {
-          await this.$bvModal.msgBoxOk(this.FeedBack_IotLati, GlobalValue.Info_option)
-          return
-        } else if (!this.IsValidation_IotLongi) {
-          await this.$bvModal.msgBoxOk(this.FeedBack_IotLongi, GlobalValue.Info_option)
-          return
+        // } else if (!this.IsValidation_IotLati) {
+        //   await this.$bvModal.msgBoxOk(this.FeedBack_IotLati, GlobalValue.Info_option)
+        //   return
+        // } else if (!this.IsValidation_IotLongi) {
+        //   await this.$bvModal.msgBoxOk(this.FeedBack_IotLongi, GlobalValue.Info_option)
+        //   return
         } else {
           const msgBox = await this.$bvModal.msgBoxConfirm('저장하시겠습니까?', GlobalValue.Info_option)
 
