@@ -271,7 +271,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       },
       // 조회 데이터 트리형 변환
       Tree_DataConvert(Search_Area) {
-
         // 조회된 데이터를 가지고 있을 변수
         this.Real_Node = [];    
         
@@ -281,7 +280,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           Data_Node = Search_Area[idx];           // i번째 데이터 정보 저장
           
           // 최상위 행일경우 바로 추가
-          if (Data_Node.PARENT_CODE == 1) { 
+          if (Data_Node.PARENT_CODE == "") { 
             this.Real_Node.push(Data_Node);       // Real_Node 배열의 끝에 Data_Node 추가
           }
           // 조회 버튼 클릭 시
