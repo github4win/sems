@@ -451,7 +451,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         })
       },
       PopupOK(param) {
-        console.log('param', param)
         if (param.paramGubun == '1') {
           this.popupLoc = param.AREA_NAME
           this.Search_Tree_Grid(undefined, param.AREA_CODE)
@@ -462,7 +461,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       },
       async SearchInfo(param) {
         const cbo_Place = await SEARCH_COMBO3(param)
-        console.log('cbo_Place', cbo_Place)
         var temp_cbo = []
         for (var i = 0; i < cbo_Place.length; i++) {
           temp_cbo.push({
@@ -645,7 +643,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           let Data_Node = [];                     // i번째 데이터를 담을 배열 선언
           Data_Node = Search_Menu[idx];           // i번째 데이터 정보 저장
           // 최상위 행일경우 바로 추가
-          if (Data_Node.NODE_TYPE == 'R') { 
+          if (Data_Node.AREA_FULL_CODE.length == 8) { 
             this.Real_Node.push(Data_Node);       // Real_Node 배열의 끝에 Data_Node 추가
           }
           // 조회 버튼 클릭 시
@@ -768,8 +766,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           const Focus_Data_Index = this.$refs.tuiGrid.invoke("getFocusedCell").rowKey;     // 포커스된 노드 Index
           const Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);   // 포커스된 노드 정보
           const parent_row1 = this.$refs.tuiGrid.invoke('getParentRow', Focus_Data_Index); // 상위 행
-          console.log('Focus_Data_info', Focus_Data_info)
-          console.log('parent_row1', parent_row1)
+
           if (parent_row1 == null || Focus_Data_info.AREA_FULL_CODE.length < 40) {
             this.$bvModal.msgBoxOk("하위노드를 추가할 수 없습니다.", GlobalValue.Info_option);
             return
@@ -819,7 +816,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           this.$refs.tuiGrid.invoke("focus", Focus_Data_info._attributes.tree.childRowKeys[Focus_Data_info._attributes.tree.childRowKeys.length-1], "IOT_TREE_NM");   // 포커스 적용 이걸로 수정
 
           this.SearchInfo(Focus_Data_info.PARENT_FIELD)
-          console.log('')
           
         }
         else {
@@ -895,7 +891,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
               GAS_TYPE: Gas_type
             }
 
-            console.log('test', test)
 
             const Save_Data = {data}
 
@@ -959,7 +954,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
         // 포커스된 행의 정보
         let DataRow_info = this.$refs.tuiGrid.invoke("getRow", DataRow.rowKey);
-          console.log('DataRow_info', DataRow_info)
         if (DataRow_info.IOT_NO == "") {
           this.chkboxselected = []
           if (DataRow_info.NODE_TYPE == 'R' || DataRow_info.NODE_TYPE == 'G' || DataRow_info.AREA_FULL_CODE != '') {
