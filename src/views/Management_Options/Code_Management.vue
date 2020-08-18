@@ -15,7 +15,7 @@
             <div class="col-md-3 col-sm-6">
               <label class="col-md-4 col-sm-4 col-xs-4 control-label">코드명:</label>
               <div class="col-md-8 col-sm-8 col-xs-8">
-                <b-form-input class="input" v-model="Search_CodeName"></b-form-input>
+                <b-form-input class="input" v-model="Search_CodeName" @keypress.enter="btn_Search"></b-form-input>
               </div>
             </div>
           </div>
