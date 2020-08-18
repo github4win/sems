@@ -3,10 +3,10 @@
     <div class="contents">
       <!-- 버튼 시작 -->
       <div class="common-btnwrap">
-          <b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Search">조회</b-button>
-					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Add">추가</b-button>
-					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Save">저장</b-button>
-					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Delete">삭제</b-button>
+          <b-button size="sm" variant="primary" style="margin-right : 5px" @click="btn_Search">조회</b-button>
+					<b-button size="sm" variant="primary" style="margin-right : 5px" @click="btn_Add">추가</b-button>
+					<b-button size="sm" variant="primary" style="margin-right : 5px" @click="btn_Save">저장</b-button>
+					<b-button size="sm" variant="primary" @click="btn_Delete">삭제</b-button>
       </div>
       <!-- 버튼 끝-->
       <!-- 조회조건 시작 -->
@@ -16,7 +16,7 @@
             <div class="col-md-3 col-sm-6">
               <label class="col-md-4 col-sm-4 col-xs-4 control-label">지역명:</label>
               <div class="col-md-8 col-sm-8 col-xs-8">
-                <b-form-input class="input" v-model="Search_AreaName"></b-form-input>
+                <b-form-input class="input" v-model="Search_AreaName" @keypress.enter="btn_Search"></b-form-input>
               </div>
             </div>
           </div>
@@ -29,8 +29,7 @@
         <div class="Area_list col-md-3 col-sm-3 col-xs-3" style="height: 300px">
           <label>지역 리스트</label>
           <br>
-          <b-button size="sm" variant="primary" style="float:right; margin-bottom : 10px" @click="btn_expand">펴기</b-button>
-          <b-button size="sm" variant="primary" style="float:right; margin-right :10px; margin-bottom : 10px" @click="btn_collapse">접기</b-button>
+          <b-button size="sm" variant="primary" style="float:right; margin-bottom : 10px" @click="btn_expand">적용</b-button>
           <b-form-select class= "col-md-2 col-sm-3 col-xs-3" style="float:right; margin-right :10px; height: 28px;"
             :options="expand_options" v-model="expand_level"></b-form-select>
           <label style="float:right; margin-right :10px"> Lv </label>
@@ -185,7 +184,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         scrolly: true,
         bodyheight : 500,
         columns: [
-          { header: "지역 코드",     name: "AREA_CODE" },
+          { header: "지역 코드",     name: "AREA_CODE" ,hidden: true },
           { header: "지역명",        name: "AREA_NAME" },
           { header: "정렬순서",      name: "SORT_NO",        hidden: true },
           { header: "비고",          name: "REMARK",         hidden: true },
@@ -198,7 +197,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           value: GridDefault.GridValue()
         },
         treeColumnOptions:{
-          name:"AREA_CODE", // Key가 될 컬럼 Name (반드시 보여야 한다. hidden:true시 트리 구성 안됨)
+          name:"AREA_NAME", // Key가 될 컬럼 Name (반드시 보여야 한다. hidden:true시 트리 구성 안됨)
         },
       }
     },
@@ -398,15 +397,16 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             }
             // 조회된 데이터가 있는 경우
             else {
+
             // 트리컬럼에 필요한 클래스를 입력한다.
             const BindData = this.TreeColumn_Color(AreaData);
 
             // 데이터를 트리에 바인딩한다.
             this.Tree_DataConvert(BindData);       // 트리형으로 변환
             await this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
-            this.$refs.tuiGrid.invoke("focus", 0, "AREA_CODE");   // 포커스 적용
+            this.$refs.tuiGrid.invoke("focus", 0, "AREA_NAME");   // 포커스 적용
             this.Search_Data = AreaData; 
-            this.btn_collapse();
+            // this.btn_collapse();
             }
         }
          catch (err) 
@@ -458,7 +458,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           }
           this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
           this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
-          this.$refs.tuiGrid.invoke("focus", Focus_Data_info._attributes.tree.childRowKeys[Focus_Data_info._attributes.tree.childRowKeys.length-1], "AREA_CODE");   // 포커스 적용
+          this.$refs.tuiGrid.invoke("focus", Focus_Data_info._attributes.tree.childRowKeys[Focus_Data_info._attributes.tree.childRowKeys.length-1], "AREA_NAME");   // 포커스 적용
         }
         else {
           const Default_Data1 = [];
@@ -472,7 +472,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           };
 
         this.$refs.tuiGrid.invoke("resetData", Default_Data1);     // 그리드에 트리 적용
-        this.$refs.tuiGrid.invoke("focus", 0, "AREA_CODE");   // 포커스 적용
+        this.$refs.tuiGrid.invoke("focus", 0, "AREA_NAME");   // 포커스 적용
         }
       },
 
@@ -512,7 +512,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           const Result = await SAVE_AREA(Save_Data);
 
           // 저장실패시 DB에 기술한 에러메세지를 나타낸다.
-          if(Result[0].query_success == "N") {
+          if(Result[0].query_success != "Y") {
             await this.$bvModal.msgBoxOk(Result[0].query_err_msg, GlobalValue.Err_option);
             return;
           }
@@ -522,13 +522,11 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             const saved_Areacd = Result[0].query_err_msg;
 
             await this.btn_Search();     // 메인 그리드 조회
-            this.$refs.tuiGrid.invoke("expandAll");
             if(!Utility.fn_IsNull(this.Real_Node)) {
               const thisview = this;
               const findednode = thisview.Tree_FindNode(this.Real_Node, saved_Areacd);
               this.$refs.tuiGrid.invoke("expandAll");
-              this.$refs.tuiGrid.invoke("focus", findednode.rowKey, "AREA_CODE");   // 포커스 적용
-              this.btn_collapse();
+              this.$refs.tuiGrid.invoke("focus", findednode.rowKey, "AREA_NAME");   // 포커스 적용
             }
 
             this.$bvModal.msgBoxOk("저장되었습니다.", GlobalValue.Info_option);
@@ -598,7 +596,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
               // 포커스를 0번째 행으로 돌린다.
               if(Focus_Data_Index > 0) {
-                this.$refs.tuiGrid.invoke("focus", 0, "AREA_CODE");   // 포커스 적용
+                this.$refs.tuiGrid.invoke("focus", 0, "AREA_NAME");   // 포커스 적용
               }
             }
           }
@@ -614,7 +612,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       // 트리 확장 버튼
       btn_expand() {
         // this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
-
+        this.$refs.tuiGrid.invoke("collapseAll");             // 트리 전체 축소(접기)
         for(var i = 0; i<this.Search_Data.length ;i++) 
         {
           if(this.Search_Data[i].LEVEL <= this.expand_level)
@@ -628,20 +626,20 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       },
 
 
-      // 트리 축소 버튼
-      btn_collapse() {
-        // this.$refs.tuiGrid.invoke("collapseAll");             // 트리 전체 축소(접기)
-        for(var i = 0; i<this.Search_Data.length ;i++) 
-        {
-          if(this.Search_Data[i].LEVEL >= this.expand_level)
-          {
-            this.$refs.tuiGrid.invoke("collapse",i);
-          }
-          else{
-            continue
-          }
-        }
-      },
+      // // 트리 축소 버튼
+      // btn_collapse() {
+      //   // this.$refs.tuiGrid.invoke("collapseAll");             // 트리 전체 축소(접기)
+      //   for(var i = 0; i<this.Search_Data.length ;i++) 
+      //   {
+      //     if(this.Search_Data[i].LEVEL >= this.expand_level)
+      //     {
+      //       this.$refs.tuiGrid.invoke("collapse",i);
+      //     }
+      //     else{
+      //       continue
+      //     }
+      //   }
+      // },
 
 
       // 그리드 포커스 변경 이벤트

@@ -259,6 +259,7 @@ export default {
 			if(CurrentRow.rowKey == null)
 				return;
 
+			console.log(Utility.fn_Grid_Focus_Row(this.$refs.MainGrid))
 			// 데이터 수정 후 다른 행으로 넘어갈때 이전행의 정보를 비교해서 값이 변경되었는지 체크하기 위해서 이전행을 가져온다.
 			const FocusRow = this.$refs.MainGrid.invoke("getRow", CurrentRow.prevRowKey);
 
@@ -276,7 +277,10 @@ export default {
 
 		},
 		MainGrid_EditFinish(EditInfo) {
+			// const gridPagination = grid.invoke("getPagination"); // 그리드의 페이지네이션
+			// var CurrentRowKey = (gridPagination._currentPage - 1) * PerPage + CurrentRow.rowkey;
 			const rowkey = EditInfo.rowKey
+
 
 			// 그리드와 비교할 값 (그리드 컬럼명 : 값) (비교할 값은 MainGrid_focusChange에서 지정함)
 			const compare = { 

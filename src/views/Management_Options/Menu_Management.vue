@@ -3,10 +3,10 @@
     <div class="contents">
       <!-- 버튼 시작 -->
       <div class="common-btnwrap">
-          <b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Search">조회</b-button>
-					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Add">추가</b-button>
-					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Save">저장</b-button>
-					<b-button size="sm" variant="primary" style="margin-right : 10px" @click="btn_Delete">삭제</b-button>
+          <b-button size="sm" variant="primary" style="margin-right : 5px" @click="btn_Search">조회</b-button>
+					<b-button size="sm" variant="primary" style="margin-right : 5px" @click="btn_Add">추가</b-button>
+					<b-button size="sm" variant="primary" style="margin-right : 5px" @click="btn_Save">저장</b-button>
+					<b-button size="sm" variant="primary" @click="btn_Delete">삭제</b-button>
       </div>
       <!-- 버튼 끝-->
       <!-- 조회조건 시작 -->
@@ -16,7 +16,7 @@
             <div class="col-md-3 col-sm-6">
               <label class="col-md-4 col-sm-4 col-xs-4 control-label">메뉴명:</label>
               <div class="col-md-8 col-sm-8 col-xs-8">
-                <b-form-input class="input" v-model="Search_MenuName"></b-form-input>
+                <b-form-input class="input" v-model="Search_MenuName" @keypress.enter="btn_Search" ></b-form-input>
               </div>
             </div>
           </div>
@@ -194,7 +194,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         width:'350',
         bodyheight : 500,
         columns: [
-          { header: "메뉴 코드",     name: "MENU_ID" },
+          { header: "메뉴 코드",     name: "MENU_ID", hidden:true },
           { header: "메뉴명",        name: "MENU_NM" },
           { header: "정렬순서",      name: "SORT_NO",        hidden: true },
           { header: "비고",          name: "REMARK",         hidden: true },
@@ -208,8 +208,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           value: GridDefault.GridValue()
         },
         treeColumnOptions:{
-          name:"MENU_ID", // Key가 될 컬럼 Name (반드시 보여야 한다. hidden:false시 트리 구성 안됨)
-          // useCascadingCheckbox:true
+          name:"MENU_NM", // Key가 될 컬럼 Name (반드시 보여야 한다. hidden:false시 트리 구성 안됨)
         },
       }
     },
@@ -445,8 +444,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             // 조회된 데이터가 있는 경우
             else {
             this.Tree_DataConvert(MenuData);                 // 트리형으로 변환
-            this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
-            this.$refs.tuiGrid.invoke("focus", 0, "MENU_ID");   // 포커스 적용
+            await this.$refs.tuiGrid.invoke("expandAll");             // 트리 전체 확장(펼치기)
+            this.$refs.tuiGrid.invoke("focus", 0, "MENU_NM");   // 포커스 적용
             this.Search_Data = MenuData;
         }
         }
@@ -504,7 +503,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           }          
           this.$refs.tuiGrid.invoke("appendTreeRow", Default_Data, {offset: Focus_Children_Length, focus: true, parentRowKey: Focus_Data_Index}); 
           this.$refs.tuiGrid.invoke("expand", Focus_Data_Index, false);
-          this.$refs.tuiGrid.invoke("focus", Focus_Data_info._attributes.tree.childRowKeys[Focus_Data_info._attributes.tree.childRowKeys.length-1], "AREA_CODE");   // 포커스 적용
+          this.$refs.tuiGrid.invoke("focus", Focus_Data_info._attributes.tree.childRowKeys[Focus_Data_info._attributes.tree.childRowKeys.length-1], "MENU_NM");   // 포커스 적용
         }
         else {
           const Default_Data1 = [];
@@ -521,7 +520,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
           };
 
         this.$refs.tuiGrid.invoke("resetData", Default_Data1);     // 그리드에 트리 적용
-        this.$refs.tuiGrid.invoke("focus", 0, "MENU_ID");   // 포커스 적용
+        this.$refs.tuiGrid.invoke("focus", 0, "MENU_NM");   // 포커스 적용
         }
       },
 
@@ -564,23 +563,21 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
           // 저장
           const Result = await SAVE_MENU(Save_Data);
-
           // 저장실패시 DB에 기술한 에러메세지를 나타낸다.
-          if(Result[0].query_success == "N") {
+          if(Result[0].query_success != "Y") {
             await this.$bvModal.msgBoxOk(Result[0].query_err_msg, GlobalValue.Err_option);
             return;
           }
           else{ // 저장 성공시
-
             // 저장성공한 메뉴코드
             const saved_menucd = Result[0].query_err_msg;
-
-            // 조회하고 나서 포커스 변경 이벤트를 태우지 않기 위해 전역변수를 ture로 변경
+            console.log(saved_menucd);
             await this.btn_Search();     // 메인 그리드 조회
             if(!Utility.fn_IsNull(this.Real_Node)) {
               const thisview = this;
               const findednode = thisview.Tree_FindNode(this.Real_Node, saved_menucd);
-              this.$refs.tuiGrid.invoke("focus", findednode.rowKey, "MENU_ID");   // 포커스 적용
+              this.$refs.tuiGrid.invoke("expandAll");
+              this.$refs.tuiGrid.invoke("focus", findednode.rowKey, "MENU_NM");   // 포커스 적용
             }
 
             this.$bvModal.msgBoxOk("저장되었습니다.", GlobalValue.Info_option);
@@ -650,7 +647,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
               // 포커스를 0번째 행으로 돌린다.
               if(Focus_Data_Index > 0) {
-                this.$refs.tuiGrid.invoke("focus", 0, "MENU_ID");   // 포커스 적용
+                this.$refs.tuiGrid.invoke("focus", 0, "MENU_NM");   // 포커스 적용
               }
             }
           }
