@@ -127,14 +127,8 @@ export default {
 
     this.getMenu(); // 메뉴를 조회한다
     
-    // 디바이스의 타입을 가져온다. 2020-08-18 CJH 추가
-    this.Device_Type = Utility.fn_ScreenSize();    
-    
-    //모바일 화면에서는 사이드 메뉴바 숨김
-    if (this.Device_Type == '"Mobile_H"' || this.Device_Type == '"Mobile_V"')
-    {
-      document.getElementById("btn_menu").style.display = "none";
-    }
+    //사이드바 메뉴 사용안함 2020-08-19 CJH 
+    document.getElementById("btn_menu").style.display = "none";
 
     // 사이드바 메뉴 동작 구현
     $("#dismiss, .overlay").on("click", function() {
@@ -153,9 +147,9 @@ export default {
       $(".collapse.in").toggleClass("in");
       $("a[aria-expanded=true]").attr("aria-expanded", "false");
     });
-
- 
-    
+  
+    //사이즈 변경시 발생되는 이벤트
+    this.resize();
 
   },
 
@@ -180,11 +174,57 @@ export default {
       }
     },
 
-    // Screen 사이즈 변경시 발생되는 이벤트
-    resize: () => {
+    // // Screen 사이즈 변경시 발생되는 이벤트
+    // resize: () => {
+    //   window.onresize = () => {
+    //     this.CmpReset();
+    //     document.querySelector("wrapper", ":before");
+    //   };
+    // },
+
+    //2020-08-19 CJH 수정
+    resize() {
       window.onresize = () => {
-        document.querySelector("wrapper", ":before");
+        this.CmpReset();
       };
+    },
+
+    //장비 타입에 따라 로그인 버튼 보이기 2020-08-19 CJH 추가
+    CmpReset: function(){
+      this.Device_Type = Utility.fn_ScreenSize();
+       // 사용자 디바이스가 Mobile (세로모드)인 경우
+      if (this.Device_Type == '"Mobile_V"' || this.Device_Type == "Mobile_V")
+      {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("logout").style.display = "none";
+      }
+      // 사용자 디바이스가 Mobile (가로모드)인 경우
+      else if (this.Device_Type == '"Mobile_H"' || this.Device_Type == "Mobile_H")
+      {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("logout").style.display = "none";
+      }
+      // 사용자 디바이스가 Tablet인 경우
+      else if (this.Device_Type == '"Tablet"' || this.Device_Type == "Tablet")
+      {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("logout").style.display = "none";
+      }
+      //그 외 Dsketop 모니터 또는 Dsketop 모니터보다 큰 경우
+      else
+      {
+        if (getToken("USER_ID") != null) 
+        {
+          document.getElementById("login").style.display = "none";
+          document.getElementById("logout").style.display = "block";
+        }
+        else
+        {
+          document.getElementById("login").style.display = "block";
+          document.getElementById("logout").style.display = "none";
+        }
+
+      }
     },
 
     // 메뉴 조회
