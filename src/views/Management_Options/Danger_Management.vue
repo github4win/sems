@@ -36,7 +36,8 @@
           <grid
             id="grdMain"
             ref="MainGrid"
-			tabMode="move" 
+			tabMode="move"
+			editingEvent="click" 
             :data="this.Grd_Data"
             :columns="Grid_Props.columns"
             :header="Grid_Props.header"
@@ -49,6 +50,7 @@
             @focusChange = "Maingrid_focusChange"
 			@editingStart = "Maingrid_EditStart"
             @editingFinish="MainGrid_EditFinish"
+			@input="test"
           ></grid>
           <!-- 서브 그리드 끝 -->
         </div>
@@ -134,6 +136,10 @@ export default {
         Utility.fn_SetMenuPath(this); // 메뉴 Path 표시
 	},
 	methods: {
+		test(ev){
+			alert("ttt")
+			console.log("ev",ev)
+		},
 		//메인 그리드 조회
 		async btn_Search() {
 			this.$refs.MainGrid.invoke('clear')
