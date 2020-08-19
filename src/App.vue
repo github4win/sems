@@ -208,8 +208,7 @@ export default {
             auth: response[i]["MENU_AUTH"] // 2020-08-18 CJH  메뉴 접근권한 추가
           };
         }
-        // this.menuitems = arr;
-
+        
         // 2020-08-18 로그인 한 경우에만 메뉴목록이 나타나도록 수정
         this.menuitems = [];
         if (getToken("USER_ID") != null) 

@@ -36,6 +36,7 @@
           <grid
             id="grdMain"
             ref="MainGrid"
+			tabMode="move" 
             :data="this.Grd_Data"
             :columns="Grid_Props.columns"
             :header="Grid_Props.header"
@@ -46,6 +47,7 @@
             :theme="Grid_Props.myTheme"
             :pageOptions="Grid_Props.pageOptions"
             @focusChange = "Maingrid_focusChange"
+			@editingStart = "Maingrid_EditStart"
             @editingFinish="MainGrid_EditFinish"
           ></grid>
           <!-- 서브 그리드 끝 -->
@@ -95,9 +97,16 @@ export default {
 			columns: [
                 { header: "코드", name: "GAS_TYPE", hidden :true  },
 				{ header: "유해물질명", name: "GAS_NAME", width: 400,   align: "left",   ellipsis: true },
-                { header: "매우좋음", name: "WEIGHT1", width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)},
-                 ellipsis: true, editor:{ type : TextBoxEditor, options:{ maxLength:10 } },
-                 onBeforeChange: function(ev){if(isNaN(Number(ev.nextValue))){return ev.stop()}else{return ev;}}},
+				{ header: "매우좋음", name: "WEIGHT1", width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)},  
+					ellipsis: true, editor:{ type : TextBoxEditor, options:{ maxLength:10 },},
+					onBeforeChange: function(ev){
+						if(isNaN(Number(ev.nextValue))){
+							return ev.stop()}
+						else{
+							console.log("onBeforeChage",ev);
+							return ev;}
+						}
+				},
                 { header: "좋음", name: "WEIGHT2", width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)}, 
                  ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:10 }},
                  onBeforeChange: function(ev){if(isNaN(Number(ev.nextValue))){return ev.stop()}else{return ev;}}},
@@ -253,7 +262,7 @@ export default {
 
 				this.$refs.MainGrid.invoke("focus", LastRowKey, "GAS_NAME"); 
 			}
-        },	
+		},	
         Maingrid_focusChange(CurrentRow) {
 			// 그리드가 아님에도 타는 경우가 있어서 예외처리함
 			if(CurrentRow.rowKey == null)
@@ -275,12 +284,17 @@ export default {
             this.Grd_REMARK     = FocusRow.REMARK
 
 		},
+		Maingrid_EditStart(EditInfo){
+			const gridPagination = this.$refs.MainGrid.invoke("getPagination"); // 그리드의 페이지네이
+			EditInfo.rowKey = EditInfo.instance.store.focus.originalRowIndex;
+
+			console.log("EditStart",EditInfo);
+			return EditInfo;
+		},
 		MainGrid_EditFinish(EditInfo) {
-			// const gridPagination = grid.invoke("getPagination"); // 그리드의 페이지네이션
-			// var CurrentRowKey = (gridPagination._currentPage - 1) * PerPage + CurrentRow.rowkey;
-			const rowkey = EditInfo.rowKey
-
-
+			EditInfo.rowKey = EditInfo.instance.store.focus.originalRowIndex;
+			console.log("EditFinish",EditInfo);
+			
 			// 그리드와 비교할 값 (그리드 컬럼명 : 값) (비교할 값은 MainGrid_focusChange에서 지정함)
 			const compare = { 
 				"WEIGHT1" :  this.Grd_Weight1,     //그리드 정보(매우좋음)
@@ -293,8 +307,10 @@ export default {
 
 			// 그리드의 데이터와 비교해서 다른게 있을 경우 체크함.
 			if(Utility.fn_IsRowItemChange(this.$refs.MainGrid, compare)) {
-				this.$refs.MainGrid.invoke("check", rowkey);
+				this.$refs.MainGrid.invoke("check", EditInfo.rowKey);
+				// this.$refs.MainGrid.invoke("setValue", EditInfo.rowKey,EditInfo.value);
 			}
+			return EditInfo;
         },                          
 	}
 }
