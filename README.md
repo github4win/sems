@@ -69,3 +69,27 @@ npm install --save moment
 moment(시간).format('형식') 형태로 사용.
 참고 사이트: https://github.com/jinyowo/JS-Calendar/wiki/**-moment.js-(%EB%82%A0%EC%A7%9C%EA%B4%80%EB%A0%A8-%EC%9E%91%EC%97%85%EC%9D%84-%EC%9C%84%ED%95%9C-%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC)
 
+### 2020년 08월 20일 CJH 작성
+TuiGrid입력시 Tab 또는 Enter Key를 누르면 항상 첫페이지의 Rowkey로 계산되므로 아래 로직을 추가해서 수정함.
+수정기준 버전 4.14 (4.14 이전버전에서는 없을 수도 있음)
+
+node_modules\tui-grid\dist\tui-grid.js 파일
+
+19085 줄 추가
+
+변경전)
+  focus_1.startEditing(store, rowKey, columnName);
+
+변경후)
+  rowKey = (store.data.pageOptions.page-1) * store.data.pageOptions.perPage + rowKey;
+  focus_1.startEditing(store, rowKey, columnName);
+
+19109 줄 추가
+
+변경전)
+  focus_1.startEditing(store, nextRowKey, nextColumnName);
+변경후)
+  nextRowKey = (store.data.pageOptions.page-1) * store.data.pageOptions.perPage + nextRowKey;
+  focus_1.startEditing(store, nextRowKey, nextColumnName);
+
+

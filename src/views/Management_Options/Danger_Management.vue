@@ -17,7 +17,7 @@
             <div class="col-md-3 col-sm-6">
               <label class="col-md-4 col-sm-4 col-xs-4 control-label">유해물질명:</label>
               <div class="col-md-8 col-sm-8 col-xs-8">
-                <b-form-input class="input" v-model="Search_GASName"></b-form-input>
+                <b-form-input class="input" v-model="Search_GASName" @keypress.enter="btn_Search"></b-form-input>
               </div>
             </div>
           </div>
@@ -36,8 +36,6 @@
           <grid
             id="grdMain"
             ref="MainGrid"
-			tabMode="move"
-			editingEvent="click" 
             :data="this.Grd_Data"
             :columns="Grid_Props.columns"
             :header="Grid_Props.header"
@@ -47,10 +45,8 @@
             :scrollX="Grid_Props.scrollX"
             :theme="Grid_Props.myTheme"
             :pageOptions="Grid_Props.pageOptions"
-            @focusChange = "Maingrid_focusChange"
 			@editingStart = "Maingrid_EditStart"
             @editingFinish="MainGrid_EditFinish"
-			@input="test"
           ></grid>
           <!-- 서브 그리드 끝 -->
         </div>
@@ -80,7 +76,7 @@ export default {
 		return {
 			Search_GASName: '',  //검색조건 유해물질 명
 			Grid_Props: [],      //그리드 정보
-            Grd_Data: [],     //그리드 데이터
+            Grd_Data: [],        //그리드 데이터
 			Grd_Weight1: '',     //그리드 정보(매우나쁨)
 			Grd_Weight2: '',     //그리드 정보(나쁨)
 			Grd_Weight3: '',     //그리드 정보(보통)
@@ -105,13 +101,11 @@ export default {
 						if(isNaN(Number(ev.nextValue))){
 							return ev.stop()}
 						else{
-							console.log("onBeforeChage",ev);
 							return ev;}
 						}
 				},
                 { header: "좋음", name: "WEIGHT2", width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)}, 
-                 ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:10 }},
-                 onBeforeChange: function(ev){if(isNaN(Number(ev.nextValue))){return ev.stop()}else{return ev;}}},
+                 ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:10 }}},
                 { header: "보통", name: "WEIGHT3", width: 120,  align: "right", formatter: function(cell) { return NumberComma(cell.value)}, 
                  ellipsis: true, editor:{ type:TextBoxEditor, options:{ maxLength:10 }},
                  onBeforeChange: function(ev){if(isNaN(Number(ev.nextValue))){return ev.stop()}else{return ev;}}},
@@ -136,10 +130,6 @@ export default {
         Utility.fn_SetMenuPath(this); // 메뉴 Path 표시
 	},
 	methods: {
-		test(ev){
-			alert("ttt")
-			console.log("ev",ev)
-		},
 		//메인 그리드 조회
 		async btn_Search() {
 			this.$refs.MainGrid.invoke('clear')
@@ -269,37 +259,27 @@ export default {
 				this.$refs.MainGrid.invoke("focus", LastRowKey, "GAS_NAME"); 
 			}
 		},	
-        Maingrid_focusChange(CurrentRow) {
-			// 그리드가 아님에도 타는 경우가 있어서 예외처리함
-			if(CurrentRow.rowKey == null)
-				return;
+		Maingrid_EditStart(EditInfo){
+			EditInfo.rowKey = EditInfo.instance.store.focus.originalRowIndex;
 
-			// 데이터 수정 후 다른 행으로 넘어갈때 이전행의 정보를 비교해서 값이 변경되었는지 체크하기 위해서 이전행을 가져온다.
-			const FocusRow = this.$refs.MainGrid.invoke("getRow", CurrentRow.prevRowKey);
+			// 포커스된 행의 정보를 가져온다
+			const FocusRow = this.$refs.MainGrid.invoke("getRow", EditInfo.rowKey);
 
 			if(Utility.fn_IsNull(FocusRow))
 				return;
 			
 			// 데이터 수정시 비교하기 위한 데이터 수집 (MainGrid_EditFinish에서 비교함)
-			
 			this.Grd_Weight1    = FocusRow.WEIGHT1
 			this.Grd_Weight2    = FocusRow.WEIGHT2
 			this.Grd_Weight3    = FocusRow.WEIGHT3
 			this.Grd_Weight4    = FocusRow.WEIGHT4
             this.Grd_Weight5    = FocusRow.WEIGHT5
-            this.Grd_REMARK     = FocusRow.REMARK
-
-		},
-		Maingrid_EditStart(EditInfo){
-			const gridPagination = this.$refs.MainGrid.invoke("getPagination"); // 그리드의 페이지네이
-			EditInfo.rowKey = EditInfo.instance.store.focus.originalRowIndex;
-
-			console.log("EditStart",EditInfo);
+			this.Grd_REMARK     = FocusRow.REMARK
+			
 			return EditInfo;
 		},
 		MainGrid_EditFinish(EditInfo) {
 			EditInfo.rowKey = EditInfo.instance.store.focus.originalRowIndex;
-			console.log("EditFinish",EditInfo);
 			
 			// 그리드와 비교할 값 (그리드 컬럼명 : 값) (비교할 값은 MainGrid_focusChange에서 지정함)
 			const compare = { 
