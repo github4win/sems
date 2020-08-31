@@ -33,6 +33,11 @@ Vue.use(VueRouter)
     path: '/SEMS_Area_MNG',
     name: 'SEMS_Area_MNG',
     component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Area_Management.vue')
+  },
+  {
+    path: '/grid_test',
+    name: 'grid_test',
+    component: () => import(/* webpackChunkName: "about" */ '../views/TEST/grid_test.vue')
   }
 ]
 
