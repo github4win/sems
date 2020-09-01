@@ -185,7 +185,7 @@ export default {
 
 			// 그리드 헤더 옵션
 			var HeaderOptions = {
-				height: 160,
+				height: 180,
 				complexColumns: [
 					{
 						header: this.thisMonth,
@@ -198,9 +198,15 @@ export default {
 			// 선택한 값으로 헤더, 컬럼 설정
 			this.$refs.MainGrid.invoke('setHeader', HeaderOptions)
 			this.$refs.MainGrid.invoke('setColumns', this.Month_col)
-			
+			this.btn_Search()
 		},
 		getEndDate(data) {
+			this.Month_col.push(
+				{
+					header: '이름',
+					name: 'USER_ID'
+				}
+			)
 			// 날짜
 			var date = new Date()
 
@@ -243,11 +249,12 @@ export default {
 					dayText = (i + 1)
 				}
 				var text = 'col_' + yyyy.toString() + '_' + mm.toString() + '_' + dayText.toString()
-				this.Month_complex.push(text)
+				var text1 = 'EMP' + (i+1)
+				this.Month_complex.push(text1)
 				this.Month_col.push(
 					{
 						header: (i + 1).toString(),
-						name: text
+						name: text1
 					}
 				)
 			}
@@ -256,9 +263,14 @@ export default {
 		async btn_Search() {
 			this.$refs.MainGrid.invoke('clear')
 			// 데이터 조회
-            // const Search_Code = await SEARCH_COL_MONTH()
-            
-            this.$refs.MainGrid.invoke('resetData', Search_Code)
+			const Search_Code = await SEARCH_COL_MONTH(this.txt_Month)
+			var data_convert = []
+			if (Search_Code[0].USER_ID == '') {
+
+			} else {
+				this.$refs.MainGrid.invoke('resetData', Search_Code)
+			}
+			
 		},
 
 		//저장 버튼
@@ -276,24 +288,37 @@ export default {
 			var colData = this.$refs.MainGrid.invoke('getColumns')
 			// var rowData = this.$refs.MainGrid.invoke('getData')
 			var rowData = this.$refs.MainGrid.invoke("getCheckedRows");
-			// console.log('CheckedRows', CheckedRows)
+
 			// let str = '';
 			let user_id = ''
 			var data = []
+
+			var yyyy = new Date().getFullYear()
+			var mm = this.txt_Month < 10 ? '0' + this.txt_Month : this.txt_Month
+
 			for (var i = 0; i < rowData.length; i++) {
 				let str = '';
 				for (var j = 0; j < colData.length; j++) {
 					var val = rowData[i][colData[j].name]
-					if (str == '') {
-						str = colData[j].name.replace('col_','') + '^' + val
-						user_id = 'test'
+					var colNM = ''
+					if (colData[j].name == 'USER_ID') {
+						colNM = 'USER_ID'
 					} else {
-						str = str + '|'+ colData[j].name.replace('col_','') + '^' + val
+						colNM = j < 10 ? 'col_' + yyyy + '_' + mm + '_0' + j : 'col_' + yyyy + '_' + mm + '_' + j
+					}
+					
+					if (str == '') {
+						str = colNM.replace('col_','') + '^' + val
+						// str = colData[j].name.replace('col_','') + '^' + val
+						user_id = rowData[i].USER_ID
+					} else {
+						str = str + '|'+ colNM.replace('col_','') + '^' + val
+						// str = str + '|'+ colData[j].name.replace('col_','') + '^' + val
 					}
 				}
 				data[i] = {
 					data: JSON.stringify({
-						USER_ID: user_id + (i + 1),
+						USER_ID: user_id,
 						PARAM: str
 					})
 				}
@@ -309,7 +334,6 @@ export default {
 			// 		}
 			// 	}	
 			// }
-			console.log('str', data)
 			// var data = []
 			// data[0] = {
 			// 	data: JSON.stringify({
@@ -317,10 +341,9 @@ export default {
 			// 	})
 			// }
 			const Save_Data = { data };
-			// console.log('Save_Data', Save_Data)
+
 			const Result = await save_col_data(Save_Data)
-			console.log('data', colData)
-			console.log('data', rowData)
+			this.btn_Search()
 
 		},
 

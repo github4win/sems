@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 // 공지사항 세부내용 조회
-export function SEARCH_COL_MONTH(NOT_ID) {
+export function SEARCH_COL_MONTH(MONTH_PARAM) {
     return request({
-        url: '/SEARCH_COL_MONTH?data={NOT_ID:"'+ NOT_ID +'"}',
+        url: '/SEARCH_COL_MONTH?data={MONTH_PARAM:"'+ MONTH_PARAM +'"}',
         method: 'get'
     })
 }
