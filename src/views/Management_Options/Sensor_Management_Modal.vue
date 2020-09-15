@@ -45,7 +45,7 @@
 import GlobalValue from "@/assets/js/GlobalValue.js";  // 전 화면 공통으로 사용하는 변수
 import Utility from "@/assets/js/CommonUtility.js"; // 전 화면 공통으로 사용하는 함수
 import { GridDefault } from "@/assets/js/GridDefault.js"; // 그리드 기본값 세팅, 그리드 EditOptions
-import { SEARCH_AREA, SAVE_AREA, DELETE_AREA} from "@/api/Area_Management.js";
+import { SEARCH_AREA_POP, SAVE_AREA, DELETE_AREA} from "@/api/Area_Management.js";
 import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
   export default {
@@ -65,7 +65,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         return this.Check_Validation("Sort_No");
       }
     },
-    props: ["Params"],
+    props: ["params"],
     data() {
 
       return {
@@ -176,9 +176,10 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       },
       getSelectRow(data) {
         var selectValue = this.$refs.tuiGrid.invoke('getRow', data.rowKey)
-        selectValue.paramGubun = this.Params.searchID
-        if (this.Params.searchID == '1') {
+        selectValue.paramGubun = this.params.searchID
+        if (this.params.searchID == '1') {
           this.$emit('PopupOK', selectValue)
+          console.log("SelectValue",selectValue)
           this.Close()
         } else {
           if (selectValue.LEVEL == 5) {
@@ -197,7 +198,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       // 메인 그리드 조회
       async btn_Search() {
         try{
-            const AreaData = await SEARCH_AREA(this.Search_AreaName);
+            const AreaData = await SEARCH_AREA_POP(this.Search_AreaName);
             // 조회된 데이터가 null이거나 undefined 인 경우
             if(Utility.fn_IsNull(AreaData[0]["AREA_CODE"])) {
             this.$refs.tuiGrid.invoke("clear");  // 메인 그리드에 바인딩 된 데이터 초기화(빈 값 row 1개 생성 방지)

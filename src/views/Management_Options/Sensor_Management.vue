@@ -499,7 +499,8 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       },
       PopupOK(param) {
         if (param.paramGubun == '1') {
-          this.popupLoc = param.AREA_NAME
+          debugger
+          this.popupLoc = param.AREA_FULL_NAME
           this.Search_Tree_Grid(undefined, param.AREA_CODE)
         } else {
           this.txt_IoT_Place = param.AREA_CODE

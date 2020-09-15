@@ -257,7 +257,7 @@ export default {
         }
 
         // 2020-08-18 CJH 주석에서 모니터링 화면으로 수정
-        this.$router.push({ path: "/" }); // 초기 화면으로 보여준다.
+        this.$router.push({ path: "/SEMS_DANGER_MNT" }); // 초기 화면으로 보여준다.
       });
     },
 

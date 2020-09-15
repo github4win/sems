@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+// 유해물질 목록 조회
+export function SEARCH_DANGER_LIST() {
+  return request({
+    url: '/SEARCH_DANGER_LIST',
+    method: 'get'
+  });
+}
+
 // 구/군 콤보박스 조회
 export function SEARCH_COMBO1() {
   return request({

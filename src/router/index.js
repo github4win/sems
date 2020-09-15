@@ -10,6 +10,11 @@ Vue.use(VueRouter)
     component: () => import(/* webpackChunkName: "about" */ '../views/TEST/SEMS_Monitoring.vue')
   },
   {
+    path: '/SEMS_DANGER_MNT',
+    name: 'SEMS_Danger_Monitoring',
+    component: () => import(/* webpackChunkName: "about" */ '../views/TEST/Danger_Monitoring.vue')
+  },
+  {
     path: '/SEMS_Menu_MNG',
     name: 'SEMS_Menu_Mng',
     component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Menu_Management.vue')
