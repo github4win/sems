@@ -12,7 +12,7 @@
         <fieldset>
           <div class="row">
             <div class="col-md-3 col-sm-6">
-              <label class="col-md-3 col-sm-3 col-xs-3 control-label" ><span style="color: red;">*</span>지역: </label>
+              <label class="col-md-3 col-sm-3 col-xs-3 control-label" >지역: </label>
                   <b-form-input id="b-form-IoT-Place" v-model="txt_IoT_Place" :state="Iot_Place_EmptyValidation" :disabled = 'true' class="col-md-7 col-sm-7 col-xs-7" ></b-form-input>
                   <b-button style="width: 60px; margin-left:8px" variant="primary" @click="getSearch('1')">선택</b-button>
             </div>
@@ -20,14 +20,14 @@
               <sensor-management-modal v-on:PopupOK="PopupOK" v-bind:params="popup_Param"></sensor-management-modal>
             </b-modal>
             <div class="col-md-1 col-sm-1">
-              <label class="col-md-5 col-sm-3 col-xs-3 control-label">구분: </label>
-                <b-form-select id="cboGubun" v-model="Gubun" class="col-md-7 col-sm-6 form-control" @change="cboChagned">
+              <label class="col-md-6 col-sm-3 col-xs-3 control-label">구분: </label>
+                <b-form-select id="cboGubun" v-model="Gubun" class="col-md-6 col-sm-6 form-control" @change="cboChagned">
                     <option value="DATE">기간</option>
                     <option value="TIME">시간</option>
                 </b-form-select>
             </div>
             <div class="col-md-2 col-sm-6">
-              <div class="col-md-19 col-sm-8 col-xs-8" style="float: right">                                
+              <div class="col-md-8 col-sm-8 col-xs-8" style="float: right">                                
                  <input type="date" id="REG_SDATE" v-model="LB_REG_SDATE_DATE" class="form-control">
               </div>
             </div>
@@ -80,11 +80,13 @@
                   style="margin-left :50px; margin-right : 100px; margin-bottom: 5px; margin-top:10px"
                 >{{ option.text }}</b-form-checkbox>
               </b-form-checkbox-group>
-              
-              <!-- <Sub_Chart></Sub_Chart> -->
             </div>
-            <!-- 세부정보 상세 끝 -->
-          </div>
+        </div>
+        <div>
+          <label style="font-size : 15pt" v-text="Chart_Tittle"> </label>
+        </div>
+        <div id = "chart-date" v-if="Gubun == 'DATE'"></div>
+        <div id = "chart-time" v-if="Gubun == 'TIME'"></div>
         <!-- 세부정보 끝 -->
       </div> 
       <!-- 컨텐츠 끝 -->
@@ -93,19 +95,16 @@
 </template>
 
 <script>
-// /* eslint-disable no-debugger */
-// /* eslint-disable no-unused-vars */
-// /* eslint-disable no-redeclare */
-// /* eslint-disable no-empty */
+/*eslint-disable no-unused-vars, no-empty*/ // 변수 선언 후 사용하지 않거나, 무의미한 띄어쓰기가 코드에 들어간 경우 에러를 내뱉는 경우를 방지
 // import 영역
-// import GlobalValue from "@/assets/js/GlobalValue.js";  // 전 화면 공통으로 사용하는 변수
+import GlobalValue from "@/assets/js/GlobalValue.js";  // 전 화면 공통으로 사용하는 변수
 import Utility from "@/assets/js/CommonUtility.js"; // 전 화면 공통으로 사용하는 함수
 import { GridDefault } from "@/assets/js/GridDefault.js"; // 그리드 기본값 세팅, 그리드 EditOptions
-// import { SEARCH_MENU, SAVE_MENU, DELETE_MENU} from "@/api/Management.js";
 import { SEARCH_DANGER_LIST,  SEARCH_TREE_AREA } from '@/api/Sensor_Management.js'
+import { SELECT_DANGER_MNT_DATE,SELECT_DANGER_MNT_TIME} from "@/api/Danger_Monitoring.js";  //시간별 측정수치, 일자별 측정수치
 import SensorManagementModal from '../Management_Options/Sensor_Management_Modal.vue'
 import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
-// import Sub_Chart from "./Sub_Chart.vue"
+import tui from 'tui-chart'; 
 import moment from 'moment'
 
   export default {
@@ -125,12 +124,12 @@ import moment from 'moment'
     data() {
 
       return {
-        Gubun : "DATE",
-        LB_REG_SDATE_DATE : "",
-        LB_REG_EDATE_DATE : "",
-        convert_Data: [],
+        Gubun : "DATE",          //구분 기본값 :기간
+        LB_REG_SDATE_DATE : "",  //시작기간 
+        LB_REG_EDATE_DATE : "",  //종료기간
+        convert_Data: [],        //트리형으로 변환활 데이터
 
-        expand_level: 6,
+        expand_level: 6,         //선택된 레벨
         expand_options: [
           {text: 1,value: 1},
           {text: 2,value: 2},
@@ -138,34 +137,40 @@ import moment from 'moment'
           {text: 4,value: 4},
           {text: 5,value: 5},
           {text: 6,value: 6}
-        ],
+        ],                    //레벨 선택 콤보
 
-        txt_IoT_Place: '',
+        txt_IoT_Place: '',  //선택된 지역 텍스트
+        txt_IOT_NO: '',     //선택된 센서 코드
+        popup_Param: '',    //팝업창 파라미터  
   
-        // 체크박스 값
-        chk_options :[],
-
-        chkboxselected: [],
-
-
-        save_yn : "",         // 저장 여부
+        chk_options :[],    // 유해물질 리스트
+        chkboxselected: [], //선택된 체크항목
 
         // 메뉴경로의 필수 입력표시
         IsRequire_MenuRoute : true,
-        // 전역변수
-        gTreeCompare : true, // true : grid_focusChange이벤트에서 비교를 진행한다. / false: grid_focusChange이벤트에서 비교를 진행하지 않는다. (신규 메뉴 저장 후 포커스 유지를 위해 사용)
-
-        // 조회조건
-        Search_MenuName: "", // 메뉴명
         
         // 그리드 
         gridProps: [],  								// 그리드 Column Setting 배열 변수
         grd_Data: [],										// 그리드에 바인딩 할 Data 배열 변수
-
         Real_Node: [],                  // 최상위 노드(Win Tech)
         Search_Data: "",                // 초기 조회한 데이터(전체 데이터)
 
-        popup_Param: '',
+        //차트
+        Chart_Tittle : '일자별 현황', // 차트 제목
+        
+        chart_series : [],             //차트 series (선택된 유해물질)
+
+        chartData_time : {},           //시간별 차트 데이터(카테고리+data)
+        chartOptions_time : {},        //시간별 차트 옵션
+        chart_time_categories : [{}],  //시간별 차트 x축
+        chart_time_data : [{}],        //시간별 차트 data
+        chart_theme_time : [{}],       //시간별 차트 테마
+        
+        chartData_date : {},           //일자별 차트 데이터(카테고리+data)
+        chartOptions_date : {},        //일자별 차트 옵션
+        chart_date_categories : [{}],  //일자별 차트 x축
+        chart_date_data : [{}],        //일자별 차트 data
+        chart_theme_date : [{}],       //일자별 차트 테마
       }
     },
 
@@ -203,6 +208,15 @@ import moment from 'moment'
     },
 
     methods: {
+      //초기화
+      async SetInit(gubun){
+        this.txt_IoT_Place = "대한민국"
+        this.setDate();
+        this.Search_Tree_Grid(gubun, 'AREA0001')
+        await this.SetCombo();   // 콤보바인딩
+      },
+
+      //초기 날짜 설정
       setDate(){
           //텍스트 타입에 달력으로 표시하기 위함
           if(this.Gubun == "DATE"){
@@ -218,14 +232,19 @@ import moment from 'moment'
       },
       //기간, 시간 변경시 종료날짜 활성화/비활성화
       cboChagned(value){
+  
           if(value == "DATE"){
               document.getElementById("EDATE_DIV").hidden = false;
+              this.Chart_Tittle = "일자별 현황"
           }
           else{
               document.getElementById("EDATE_DIV").hidden = true;
+              this.Chart_Tittle = "시간별 현황"
           }
           this.setDate();
       },
+      
+      //선택된 레벨만큼 트리 열기
       btn_expand() {
         // 전체접기
         this.$refs.tuiGrid.invoke('collapseAll')
@@ -240,9 +259,6 @@ import moment from 'moment'
         }
       },
 
-      btn_Search(){
-
-      },
       //트리 조회
       Search_Tree_Grid(gubun, param) {
         SEARCH_TREE_AREA(param).then(Tree_Data => {
@@ -277,15 +293,7 @@ import moment from 'moment'
         this.$bvModal.show('SearchModal')
       },
 
-      //초기화
-      async SetInit(gubun){
-        this.txt_IoT_Place = "대한민국"
-        this.setDate();
-        this.Search_Tree_Grid(gubun, 'AREA0001')
-        await this.SetCombo();   // 콤보바인딩
-        
-      },
-
+      // 콤보박스 설정
       async SetCombo(){
         // 데이터 조회
         const cboDanger= await SEARCH_DANGER_LIST()
@@ -429,15 +437,201 @@ import moment from 'moment'
 
         // 포커스된 행의 정보
         let DataRow_info = this.$refs.tuiGrid.invoke("getRow", DataRow.rowKey);
-  
-        if (DataRow_info.GAS_TYPE != "") {
-            var split_GAS = []
-            split_GAS = DataRow_info.GAS_TYPE.split(',')
-            this.chkboxselected = split_GAS 
+
+        if (DataRow_info.GAS_TYPE == "") {
+          this.chkboxselected = []
         }
-        
+        else {
+          var split_GAS = []
+          split_GAS = DataRow_info.GAS_TYPE.split(',')
+          this.chkboxselected = split_GAS
+        }
+        this.txt_IOT_NO = DataRow_info.IOT_NO
+        this.setchartData()
       },
-    }
+      btn_Search(){
+        
+
+      },
+      // 차트 조회
+      async setchartData() {
+        try
+        {
+          //기존의 내용을 지운다.
+          $('#chart-time').empty();
+          $('#chart-date').empty();
+          
+          //시간별 차트 생성
+          if(this.Gubun == "TIME")
+          {
+                        //시간별 측정수치 값 조회(지역,유해물질)
+          let chart_time_result = await SELECT_DANGER_MNT_TIME(this.txt_IOT_NO,this.chkboxselected,this.LB_REG_SDATE_DATE)
+
+          //---------------------------시간별 차트--------------------------------------------
+          // 조회된 데이터가 null이거나 undefined 가 아닌 경우
+          if(!Utility.fn_IsNull(chart_time_result[0].REG_TIME))
+          {
+            //조회결과값을 카테고리, data 변수에 담는다
+            for(var i = 0; i<chart_time_result.length;i++)
+            {
+              this.chart_time_categories[i] = chart_time_result[i].REG_TIME
+              this.chart_time_data[i] = chart_time_result[i].H_VALUE
+            }
+          }
+          else
+          {
+            this.chart_time_categories[0] = 0
+            this.chart_time_data[0] = 0
+          }
+
+          //차트에 추가될 시리즈 이름 = 선택된 유해물질 이름
+          this.chart_series = this.chkboxselected;
+
+          //시간별 차트 데이터 바인딩
+          this.chartData_time= {
+          categories : this.chart_time_categories,
+          series: this.chart_series ,
+            
+            
+          } 
+
+          //시간별 차트 옵션
+          this.chartOptions_time ={           
+            chart: 
+            {
+              width: 230,
+              height: 300,
+              title: '시간별 측정수치',
+              format: '1,000'
+            },
+            plot: 
+            {
+              showLine : false,   //x,y축 선 표시x
+            },
+            xAxis: 
+            {
+              tickInterval: 'auto'   //x축 간격: 자동
+            },
+            series :
+            {
+              zoomable: true    //마우스 드래그로 확대보기 기능
+            },
+            legend : {
+              visible : false  //범례 숨김
+            },
+            theme : 'TimeTheme'
+          }
+
+          //차트 생성위치
+          var container = document.getElementById('chart-time');
+
+          //시간별 차트 생성
+          tui.lineChart(container,this.chartData_time,this.chartOptions_time);
+          }
+          
+          //일자별 차트 생성
+          else{
+          //일자별 측정수치 값 조회(지역,유해물질) 데이터 확인을 위해 임시로 IOT_NO :'001' 을 집어넣음
+          let chart_date_result = await SELECT_DANGER_MNT_DATE('001',this.chkboxselected,this.LB_REG_SDATE_DATE,this.LB_REG_EDATE_DATE)
+
+          console.log("Data_result",chart_date_result)
+          
+          //차트 시작일자, 종료일자 지정
+          var First_date =  moment(chart_date_result[0].REG_DATE)
+          var Last_date = moment(chart_date_result[chart_date_result.length-1].REG_DATE)
+
+          // 조회된 데이터가 null이거나 undefined 가 아닌 경우
+          if(!Utility.fn_IsNull(chart_date_result[0].REG_DATE))
+          {
+            var ca = 0;  //카테고리 갯수 변수
+            var ser = 0;  //시리즈 갯수 변수
+          
+            //조회결과값을 카테고리, data 변수에 담는다
+            for(var j = 0; j<chart_date_result.length;j++)
+            {
+              this.chart_date_data[j] = chart_date_result[j].H_VALUE
+            
+              //카테고리(x축값) 중복 확인
+              if(this.chart_date_categories.includes(moment(chart_date_result[j].REG_DATE).format('MM-DD')))
+              {
+                continue;
+              }
+              else{
+                this.chart_date_categories[ca] = moment(chart_date_result[j].REG_DATE).format('MM-DD');
+                ca++;
+              }
+              debugger
+              //시리즈 중복확인
+              if(this.chart_series.GAS_TYPE != undefined && this.chart_series.GAS_TYPE.includes(chart_date_result[j].GAS_TYPE))
+              {
+                debugger
+                for(var se = 0 ; se <= this.chart_series.length ; se++){
+                  if(this.chart_series[se].GAS_TYPE == chart_date_result[j].GAS_TYPE){
+                    ser = se
+                    this.chart_series[ser].DATA += chart_date_result[j].H_VALUE
+                  }
+                }
+              }
+              else{
+                  this.chart_series[ser].name = chart_date_result[j].GAS_NAME
+                  this.chart_series[ser].GAS_TYPE = chart_date_result[j].GAS_TYPE
+                  this.chart_series[ser].DATA = chart_date_result[j].H_VALUE
+              }
+            }
+          }
+           
+
+          //일자별 차트 데이터 바인딩
+          this.chartData_date= {
+          categories : this.chart_date_categories,
+          series: this.chart_series
+          } 
+
+          //일자별 차트 옵션
+          this.chartOptions_date ={
+            chart: 
+            {
+              width: 230,
+              height: 300,
+              title: '일자별 측정수치',
+              format: '1,000'
+            },
+            plot: 
+            {
+              showLine : false,   //x,y축 선 표시x
+            },
+            xAxis: 
+            {
+              tickInterval: 'auto'   //x축 간격: 자동
+            },
+            series :
+            {
+              zoomable: true            //마우스 드래그로 확대보기 기능
+            },
+            legend : 
+            {
+              visible : false   //범례 숨김
+            },
+            theme : 'DateTheme'
+          }
+
+          //차트 생성위치
+          container = document.getElementById('chart-date')
+          
+          $('#chart-date').empty();
+          //일자별 차트 생성
+          tui.lineChart(container,this.chartData_date,this.chartOptions_date)
+          }
+
+
+        }
+        catch(err)
+        {
+          this.$bvModal.msgBoxOk(err, GlobalValue.Err_option);
+        }
+      }
+
+  }
 }
 
 </script>
