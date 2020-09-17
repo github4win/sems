@@ -107,7 +107,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 import tui from 'tui-chart'; 
 import moment from 'moment'
 
-  export default {
+export default {
 
     components: {
       grid: Grid,
@@ -158,7 +158,7 @@ import moment from 'moment'
         //차트
         Chart_Tittle : '일자별 현황', // 차트 제목
         
-        chart_series : [],             //차트 series (선택된 유해물질)
+        chart_series : [{}],           //차트 series (선택된 유해물질)
 
         chartData_time : {},           //시간별 차트 데이터(카테고리+data)
         chartOptions_time : {},        //시간별 차트 옵션
@@ -434,10 +434,10 @@ import moment from 'moment'
         // 그리드가 아님에도 타는 경우가 있어서 예외처리함
         if(DataRow.rowKey == null)
           return;
-
         // 포커스된 행의 정보
         let DataRow_info = this.$refs.tuiGrid.invoke("getRow", DataRow.rowKey);
 
+        //선택된 센서에 등록된 유해물질 정보 체크 
         if (DataRow_info.GAS_TYPE == "") {
           this.chkboxselected = []
         }
@@ -446,9 +446,18 @@ import moment from 'moment'
           split_GAS = DataRow_info.GAS_TYPE.split(',')
           this.chkboxselected = split_GAS
         }
-        this.txt_IOT_NO = DataRow_info.IOT_NO
-        this.setchartData()
+
+        this.txt_IOT_NO = DataRow_info.IOT_NO  //차트 조회용 센서번호
+        console.log("DataRow_Info", DataRow_info); 
+        
+        //센서 선택시 차트 조회
+        if(DataRow_info.LVL == 6){
+          this.setchartData()
+        }
+        
       },
+      
+      // 조회버튼 클릭
       btn_Search(){
         
 
@@ -484,14 +493,10 @@ import moment from 'moment'
             this.chart_time_data[0] = 0
           }
 
-          //차트에 추가될 시리즈 이름 = 선택된 유해물질 이름
-          this.chart_series = this.chkboxselected;
 
           //시간별 차트 데이터 바인딩
           this.chartData_time= {
           categories : this.chart_time_categories,
-          series: this.chart_series ,
-            
             
           } 
 
@@ -531,21 +536,19 @@ import moment from 'moment'
           
           //일자별 차트 생성
           else{
-          //일자별 측정수치 값 조회(지역,유해물질) 데이터 확인을 위해 임시로 IOT_NO :'001' 을 집어넣음
+          //일자별 측정수치 값 조회(지역,유해물질) (데이터 확인을 위해 임시로 IOT_NO :'001' 을 집어넣음)
           let chart_date_result = await SELECT_DANGER_MNT_DATE('001',this.chkboxselected,this.LB_REG_SDATE_DATE,this.LB_REG_EDATE_DATE)
-
           console.log("Data_result",chart_date_result)
           
           //차트 시작일자, 종료일자 지정
-          var First_date =  moment(chart_date_result[0].REG_DATE)
-          var Last_date = moment(chart_date_result[chart_date_result.length-1].REG_DATE)
+          // var First_date =  moment(chart_date_result[0].REG_DATE)
+          // var Last_date = moment(chart_date_result[chart_date_result.length-1].REG_DATE)
 
           // 조회된 데이터가 null이거나 undefined 가 아닌 경우
           if(!Utility.fn_IsNull(chart_date_result[0].REG_DATE))
           {
             var ca = 0;  //카테고리 갯수 변수
-            var ser = 0;  //시리즈 갯수 변수
-          
+            // var ser = 0;  //시리즈 갯수 변수
             //조회결과값을 카테고리, data 변수에 담는다
             for(var j = 0; j<chart_date_result.length;j++)
             {
@@ -560,26 +563,26 @@ import moment from 'moment'
                 this.chart_date_categories[ca] = moment(chart_date_result[j].REG_DATE).format('MM-DD');
                 ca++;
               }
-              debugger
               //시리즈 중복확인
-              if(this.chart_series.GAS_TYPE != undefined && this.chart_series.GAS_TYPE.includes(chart_date_result[j].GAS_TYPE))
-              {
+              if(this.chart_series[0] != undefined && this.chart_series[0].GAS_TYPE != undefined && SeriesChk(this.chart_series,chart_date_result[j].GAS_TYPE)){
                 debugger
-                for(var se = 0 ; se <= this.chart_series.length ; se++){
-                  if(this.chart_series[se].GAS_TYPE == chart_date_result[j].GAS_TYPE){
-                    ser = se
-                    this.chart_series[ser].DATA += chart_date_result[j].H_VALUE
-                  }
-                }
+                console.log("시리즈 중복되었음",this.chart_series)
+                //시리즈에 데이터 추가
+                // var idx = this.chart_series.findindex(arr => arr.GAS_TYPE == chart_date_result[j].GAS_TYPE)
+                // this.chart_series[idx].data.push(this.chart_series_date_result[j].H_VALUE)
               }
               else{
-                  this.chart_series[ser].name = chart_date_result[j].GAS_NAME
-                  this.chart_series[ser].GAS_TYPE = chart_date_result[j].GAS_TYPE
-                  this.chart_series[ser].DATA = chart_date_result[j].H_VALUE
+                debugger
+                //신규 시리즈 추가
+                this.chart_series.push({
+                 name : chart_date_result[j].GAS_NAME, 
+                 GAS_TYPE : chart_date_result[j].GAS_TYPE
+                //  data : chart_date_result[j].H_VALUE
+                 })
               }
+
             }
           }
-           
 
           //일자별 차트 데이터 바인딩
           this.chartData_date= {
@@ -632,6 +635,13 @@ import moment from 'moment'
       }
 
   }
+}
+
+//시리즈 중복체크 함수
+function SeriesChk(arr, val) {
+    return arr.some(function(arrVal) {
+        return val === arrVal.GAS_TYPE;
+    });
 }
 
 </script>
