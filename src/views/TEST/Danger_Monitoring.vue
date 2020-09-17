@@ -85,8 +85,8 @@
         <div>
           <label style="font-size : 15pt" v-text="Chart_Tittle"> </label>
         </div>
-        <div id = "chart-date" v-if="Gubun == 'DATE'"></div>
-        <div id = "chart-time" v-if="Gubun == 'TIME'"></div>
+        <div id = "chart-date" style="float : left" v-if="Gubun == 'DATE'"></div>
+        <div id = "chart-time" style="float : left" v-if="Gubun == 'TIME'"></div>
         <!-- 세부정보 끝 -->
       </div> 
       <!-- 컨텐츠 끝 -->
@@ -158,7 +158,7 @@ export default {
         //차트
         Chart_Tittle : '일자별 현황', // 차트 제목
         
-        chart_series : [{}],           //차트 series (선택된 유해물질)
+        chart_series : [],            //차트 series (선택된 유해물질)
 
         chartData_time : {},           //시간별 차트 데이터(카테고리+data)
         chartOptions_time : {},        //시간별 차트 옵션
@@ -248,7 +248,6 @@ export default {
       btn_expand() {
         // 전체접기
         this.$refs.tuiGrid.invoke('collapseAll')
-        console.log('this.Search_Data', this.convert_Data)
         // 설정값 만큼 노드 펼침
         for (var i = 0; i < this.convert_Data.length; i++) {
           if (this.convert_Data[i].LVL <= this.expand_level) {
@@ -460,8 +459,8 @@ export default {
       // 조회버튼 클릭
       btn_Search(){
         
-
       },
+
       // 차트 조회
       async setchartData() {
         try
@@ -469,28 +468,45 @@ export default {
           //기존의 내용을 지운다.
           $('#chart-time').empty();
           $('#chart-date').empty();
-          
+          this.chart_series = [];
           //시간별 차트 생성
           if(this.Gubun == "TIME")
           {
-                        //시간별 측정수치 값 조회(지역,유해물질)
-          let chart_time_result = await SELECT_DANGER_MNT_TIME(this.txt_IOT_NO,this.chkboxselected,this.LB_REG_SDATE_DATE)
-
+          //시간별 측정수치 값 조회(지역,유해물질)
+          let chart_time_result = await SELECT_DANGER_MNT_TIME('001',this.chkboxselected,this.LB_REG_SDATE_DATE)
+          debugger
           //---------------------------시간별 차트--------------------------------------------
           // 조회된 데이터가 null이거나 undefined 가 아닌 경우
-          if(!Utility.fn_IsNull(chart_time_result[0].REG_TIME))
+          if(!Utility.fn_IsNull(chart_time_result[0].REG_DATE))
           {
+            var ca1 = 0;  //카테고리 갯수 변수
             //조회결과값을 카테고리, data 변수에 담는다
-            for(var i = 0; i<chart_time_result.length;i++)
+            for(var j = 0; j<chart_time_result.length;j++)
             {
-              this.chart_time_categories[i] = chart_time_result[i].REG_TIME
-              this.chart_time_data[i] = chart_time_result[i].H_VALUE
+              //카테고리(x축값) 중복 확인
+              if(this.chart_time_categories.includes(moment(chart_time_result[j].REG_DATE).format('MM-DD')))
+              {
+                
+              }
+              else{
+                this.chart_date_categories[ca1] = moment(chart_time_result[j].REG_DATE).format('MM-DD');
+                ca1++;
+              }
+              //시리즈 중복확인
+              if(this.chart_series[0] != undefined && this.chart_series[0].name != undefined && SeriesChk(this.chart_series,chart_time_result[j].GAS_NAME)){
+                //시리즈에 데이터 추가
+                var idx1 = this.chart_series.findIndex(arr => arr.name == chart_time_result[j].GAS_NAME)
+                this.chart_series[idx1].data.push(chart_time_result[j].H_VALUE)
+              }
+              else{
+                //신규 시리즈 추가
+                this.chart_series.push({
+                 name : chart_time_result[j].GAS_NAME, 
+                 data : [chart_time_result[j].H_VALUE],
+                 spline: true
+                 })
+              }
             }
-          }
-          else
-          {
-            this.chart_time_categories[0] = 0
-            this.chart_time_data[0] = 0
           }
 
 
@@ -504,9 +520,8 @@ export default {
           this.chartOptions_time ={           
             chart: 
             {
-              width: 230,
-              height: 300,
-              title: '시간별 측정수치',
+              width: 1200,
+              height: 400,
               format: '1,000'
             },
             plot: 
@@ -523,8 +538,7 @@ export default {
             },
             legend : {
               visible : false  //범례 숨김
-            },
-            theme : 'TimeTheme'
+            }
           }
 
           //차트 생성위치
@@ -538,7 +552,6 @@ export default {
           else{
           //일자별 측정수치 값 조회(지역,유해물질) (데이터 확인을 위해 임시로 IOT_NO :'001' 을 집어넣음)
           let chart_date_result = await SELECT_DANGER_MNT_DATE('001',this.chkboxselected,this.LB_REG_SDATE_DATE,this.LB_REG_EDATE_DATE)
-          console.log("Data_result",chart_date_result)
           
           //차트 시작일자, 종료일자 지정
           // var First_date =  moment(chart_date_result[0].REG_DATE)
@@ -548,55 +561,46 @@ export default {
           if(!Utility.fn_IsNull(chart_date_result[0].REG_DATE))
           {
             var ca = 0;  //카테고리 갯수 변수
-            // var ser = 0;  //시리즈 갯수 변수
             //조회결과값을 카테고리, data 변수에 담는다
-            for(var j = 0; j<chart_date_result.length;j++)
+            for(var k = 0; k<chart_date_result.length;k++)
             {
-              this.chart_date_data[j] = chart_date_result[j].H_VALUE
-            
               //카테고리(x축값) 중복 확인
-              if(this.chart_date_categories.includes(moment(chart_date_result[j].REG_DATE).format('MM-DD')))
+              if(this.chart_date_categories.includes(moment(chart_date_result[k].REG_DATE).format('MM-DD')))
               {
-                continue;
+                
               }
               else{
-                this.chart_date_categories[ca] = moment(chart_date_result[j].REG_DATE).format('MM-DD');
+                this.chart_date_categories[ca] = moment(chart_date_result[k].REG_DATE).format('MM-DD');
                 ca++;
               }
               //시리즈 중복확인
-              if(this.chart_series[0] != undefined && this.chart_series[0].GAS_TYPE != undefined && SeriesChk(this.chart_series,chart_date_result[j].GAS_TYPE)){
-                debugger
-                console.log("시리즈 중복되었음",this.chart_series)
+              if(this.chart_series[0] != undefined && this.chart_series[0].name != undefined && SeriesChk(this.chart_series,chart_date_result[k].GAS_NAME)){
                 //시리즈에 데이터 추가
-                // var idx = this.chart_series.findindex(arr => arr.GAS_TYPE == chart_date_result[j].GAS_TYPE)
-                // this.chart_series[idx].data.push(this.chart_series_date_result[j].H_VALUE)
+                var idx2 = this.chart_series.findIndex(arr => arr.name == chart_date_result[k].GAS_NAME)
+                this.chart_series[idx2].data.push(chart_date_result[k].H_VALUE)
               }
               else{
-                debugger
                 //신규 시리즈 추가
                 this.chart_series.push({
-                 name : chart_date_result[j].GAS_NAME, 
-                 GAS_TYPE : chart_date_result[j].GAS_TYPE
-                //  data : chart_date_result[j].H_VALUE
+                 name : chart_date_result[k].GAS_NAME, 
+                 data : [chart_date_result[k].H_VALUE],
+                 spline: true
                  })
               }
-
             }
           }
-
           //일자별 차트 데이터 바인딩
           this.chartData_date= {
           categories : this.chart_date_categories,
           series: this.chart_series
           } 
-
+          
           //일자별 차트 옵션
           this.chartOptions_date ={
             chart: 
             {
-              width: 230,
-              height: 300,
-              title: '일자별 측정수치',
+              width: 1200,
+              height: 400,
               format: '1,000'
             },
             plot: 
@@ -614,8 +618,7 @@ export default {
             legend : 
             {
               visible : false   //범례 숨김
-            },
-            theme : 'DateTheme'
+            }
           }
 
           //차트 생성위치
@@ -640,7 +643,7 @@ export default {
 //시리즈 중복체크 함수
 function SeriesChk(arr, val) {
     return arr.some(function(arrVal) {
-        return val === arrVal.GAS_TYPE;
+        return val === arrVal.name;
     });
 }
 
