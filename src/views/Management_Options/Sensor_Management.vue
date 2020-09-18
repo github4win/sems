@@ -139,7 +139,7 @@
             </div>
             검출대상:
             <div class="col-md-12 col-sm-12 col-xs-12 common-schwrap">
-              <b-form-checkbox-group v-model="chkboxselected" :disabled="chkboxGroup">
+              <!-- <b-form-checkbox-group v-model="chkboxselected" :disabled="chkboxGroup">
                 <b-row>
                   <div class="col-md-3 col-sm-3 col-xs-3">
                     <div class="col-md-2 col-sm-2 col-xs-2">
@@ -267,7 +267,16 @@
                     </div>
                   </div>
                 </b-row>
-                <!-- <div class="mt-3">Selected: <strong>{{ chkboxselected }}</strong></div> -->
+              </b-form-checkbox-group> -->
+              <b-form-checkbox-group 
+                v-model="chkboxselected"
+                style="column-count: 4;">
+                <b-form-checkbox
+                  v-for="option in chk_options"
+                  :key="option.value"
+                  :value="option.value"
+                  style="margin-left :50px; margin-bottom: 5px; margin-top:10px"
+                >{{ option.text }}</b-form-checkbox>
               </b-form-checkbox-group>
             </div>
             <!-- 세부정보 상세 끝 -->
@@ -289,7 +298,7 @@ import GlobalValue from "@/assets/js/GlobalValue.js";  // 전 화면 공통으�
 import Utility from "@/assets/js/CommonUtility.js"; // 전 화면 공통으로 사용하는 함수
 import { GridDefault } from "@/assets/js/GridDefault.js"; // 그리드 기본값 세팅, 그리드 EditOptions
 import { SEARCH_MENU, SAVE_MENU, DELETE_MENU} from "@/api/Management.js";
-import { SEARCH_COMBO1, SEARCH_COMBO2, SEARCH_TREE, SEARCH_COMBO3, SAVE_SENSOR, DELETE_SENSOR, SEARCH_TREE_AREA } from '@/api/Sensor_Management.js'
+import { SEARCH_DANGER_LIST,SEARCH_COMBO1, SEARCH_COMBO2, SEARCH_TREE, SEARCH_COMBO3, SAVE_SENSOR, DELETE_SENSOR, SEARCH_TREE_AREA } from '@/api/Sensor_Management.js'
 import SensorManagementModal from './Sensor_Management_Modal.vue'
 import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
@@ -585,25 +594,24 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       async SetInit(gubun){
         this.Search_Tree_Grid(gubun, 'AREA0001')
         this.SearchInfo('')
-        // await this.SetCombo(gubun);   // 콤보바인딩
+        await this.SetCombo(gubun);   // 콤보바인딩
         
       },
       async SetCombo(gubun){
         // 데이터 조회
-        const cboGugun = await SEARCH_COMBO1()
+        const cboDanger= await SEARCH_DANGER_LIST()
+
         var temp_cbo = []
-        // 콤보박스에 값을 집어넣기 위해 루프
-        for (var i = 0; i < cboGugun.length; i++) {
+        // 체크박스에 값을 집어넣기 위해 루프
+        for (var i = 0; i < cboDanger.length; i++) {
           temp_cbo.push({
-            text: cboGugun[i].CODE_NAME,
-            value: cboGugun[i].CODE_NO
+            text: cboDanger[i].CODE_NAME,
+            value: cboDanger[i].CODE_NO
           })
         }
+
         // 콤보박스에 값을 집어넣음
-        this.gugun_options = temp_cbo
-        this.gugun_value = temp_cbo[0].value
-        // 조회와 동시 동/리 콤보조회
-        this.cboGugun_change(this.gugun_value, gubun)
+        this.chk_options = temp_cbo
       },
 
       // 벨리데이션 체크 (컨트롤 구분명)
