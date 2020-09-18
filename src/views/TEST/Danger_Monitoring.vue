@@ -71,7 +71,7 @@
         </div>
 
         <!-- 세부정보 시작 -->
-        <div class="menu_list_item col-md-12 col-sm-9 col-xs-9">      
+        <!-- <div class="menu_list_item col-md-12 col-sm-9 col-xs-9">      
             <label style="font-size : 15pt" >검출대상</label>
             <div class="col-md-12 col-sm-12 col-xs-12 common-schwrap">
               <b-form-checkbox-group 
@@ -85,9 +85,7 @@
                 >{{ option.text }}</b-form-checkbox>
               </b-form-checkbox-group>
             </div>
-        </div>
-        <div>
-        </div>
+        </div> -->
         <loading :active.sync="visible" :can-cancel="false"></loading>
         <div id = "chart-date" style="float : left" v-if="Gubun == 'DATE'"></div>
         <div id = "chart-time" style="float : left" v-if="Gubun == 'TIME'"></div>
@@ -153,9 +151,10 @@ export default {
         txt_IoT_Place: '',  //선택된 지역 텍스트
         txt_IOT_NO: '',     //선택된 센서 코드
         popup_Param: '',    //팝업창 파라미터  
-  
-        chk_options :[],    // 유해물질 리스트
-        chkboxselected: [], //선택된 체크항목
+
+        // chk_options :[],    // 유해물질 리스트
+        Gaslist : [], //유해물질 목록
+        // chkboxselected: [], //선택된 체크항목
 
         // 메뉴경로의 필수 입력표시
         IsRequire_MenuRoute : true,
@@ -334,19 +333,11 @@ export default {
       async SetCombo(){
         // 데이터 조회
         const cboDanger= await SEARCH_DANGER_LIST()
-
-        var temp_cbo = []
+        
         // 체크박스에 값을 집어넣기 위해 루프
         for (var i = 0; i < cboDanger.length; i++) {
-          temp_cbo.push({
-            text: cboDanger[i].CODE_NAME,
-            value: cboDanger[i].CODE_NO
-          })
+          this.Gaslist.push(cboDanger[i].CODE_NO)
         }
-
-        // 콤보박스에 값을 집어넣음
-        this.chk_options = temp_cbo
-      
       },
 
       // 조회 데이터 트리형 변환
@@ -474,15 +465,15 @@ export default {
         // 포커스된 행의 정보
         let DataRow_info = this.$refs.tuiGrid.invoke("getRow", DataRow.rowKey);
 
-        //선택된 센서에 등록된 유해물질 정보 체크 
-        if (DataRow_info.GAS_TYPE == "") {
-          this.chkboxselected = []
-        }
-        else {
-          var split_GAS = []
-          split_GAS = DataRow_info.GAS_TYPE.split(',')
-          this.chkboxselected = split_GAS
-        }
+        // //선택된 센서에 등록된 유해물질 정보 체크 
+        // if (DataRow_info.GAS_TYPE == "") {
+        //   this.chkboxselected = []
+        // }
+        // else {
+        //   var split_GAS = []
+        //   split_GAS = DataRow_info.GAS_TYPE.split(',')
+        //   this.chkboxselected = split_GAS
+        // }
 
         this.txt_IOT_NO = DataRow_info.IOT_NO  //차트 조회용 센서번호
         
@@ -514,7 +505,7 @@ export default {
           if(this.Gubun == "TIME")
           {
           //시간별 측정수치 값 조회(지역,유해물질)
-          let chart_time_result = await SELECT_DANGER_MNT_TIME(this.txt_IOT_NO,this.chkboxselected,this.LB_REG_SDATE_DATE)
+          let chart_time_result = await SELECT_DANGER_MNT_TIME(this.txt_IOT_NO,this.Gaslist,this.LB_REG_SDATE_DATE)
           //---------------------------시간별 차트--------------------------------------------
           // 조회된 데이터가 null이거나 undefined 가 아닌 경우
           if(!Utility.fn_IsNull(chart_time_result[0].REG_TIME))
@@ -559,7 +550,7 @@ export default {
             chart: 
             {
               width: 1200,
-              height: 400,
+              height: 650,
               title : "시간별 현황",
               format: '1,000'
             },
@@ -590,7 +581,7 @@ export default {
           //일자별 차트 생성
           else{
           //일자별 측정수치 값 조회(지역,유해물질)
-          let chart_date_result = await SELECT_DANGER_MNT_DATE(this.txt_IOT_NO,this.chkboxselected,this.LB_REG_SDATE_DATE,this.LB_REG_EDATE_DATE)
+          let chart_date_result = await SELECT_DANGER_MNT_DATE(this.txt_IOT_NO,this.Gaslist,this.LB_REG_SDATE_DATE,this.LB_REG_EDATE_DATE)
           
           //차트 시작일자, 종료일자 지정
           // var First_date =  moment(chart_date_result[0].REG_DATE)
@@ -639,7 +630,7 @@ export default {
             chart: 
             {
               width: 1200,
-              height: 400,
+              height: 650,
               title : "일자별 현황",
               format: '1,000'
             },

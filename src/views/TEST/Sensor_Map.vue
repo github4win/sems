@@ -3,10 +3,6 @@
     <!-- 모달 설정  -->
     <modals-container />
     <div id="myMap">
-      <div id="Category" class="map-compass" >
-        
-      </div> <!--end map-compass -->
-
       <div id="popup" class="ol-popup">
         <a href="#" id="popup-closer" class="ol-popup-closer" @click="close()" style="text-decoration: none; color:black;">✖</a>
         <div id="popup-content"></div>
@@ -54,9 +50,6 @@
 
     // 화면이 로드될 때 DOM 생성이 완료된 후 실행되는 이벤트 선언부
     mounted() {
-      document.getElementById("myMap").style.width = 100 + "%";
-      document.getElementById("myMap").style.height = 500 + "px";
-
       var Circle_iotNO;   // IOT 고유번호
       var Circle_Text;    // 센서 내용
       var Circle_Center = [];  // 센서 위치
@@ -78,6 +71,10 @@
       // 구글맵 사용
       var mapTypeUrl = "http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}";
 
+      document.getElementById("myMap").style.width = screen.width;
+    //   document.getElementById("myMap").style.width = 100 + "%";
+      document.getElementById("myMap").style.height = 500 + "px";
+
       // googleLayers
       var googleLayers = new TileLayer({
         source: new XYZ({
@@ -87,7 +84,6 @@
       
       // 맵 생성
       this.map = new Map({
-
           controls: [],
 
           overlays: [this.overlay],             // 현재 생성한 Overlay 맵에 적용
@@ -100,7 +96,7 @@
             center: Circle_Center[0], // 지도 가운데 좌표 설정
             minZoom: 12, 
             maxZoom: 22,
-            zoom: 14.5            
+            zoom: 13.5            
           }), 
       });
        // 맵 클릭 이벤트
@@ -109,7 +105,8 @@
       });
 
       this.search();   // 센서 조회(센서 범위, 위치, 색상, 기상 정보...), 퓨처 생성(원), 맵에 레이어 적용
-      this.map.refresh()
+      this.map.values_.size = [600,600],
+      console.log("Map",this.map)
     },
 
     // 이벤트 선언부
@@ -170,7 +167,6 @@
       },
 
       featureClick(evt) {
-
         // 현재 클릭한 Feature의 정보
         var feature = this.map.forEachFeatureAtPixel(evt.pixel, function(feature) 
         {
@@ -185,17 +181,10 @@
         // Overlay의 내용
         this.content = document.getElementById('popup-content')
                                                                                                                                                                                   
-        // 센서의 수만큼 반복
-        for (var i = 0; i < this.Circle_cnt; i++)
-        {
-          // 클릭한 Feature의 Text속성과 IOT 고유번호가 같은 센서일 경우
-          if (feature.Text == this.Circle_iotNO[i])
-          {
-            this.content.innerHTML = this.Circle_Text[i];   // Overlay에 기상 정보 입력
+        // 클릭한 Feature의 Text속성과 IOT 고유번호가 같은 센서일 경우
+        this.content.innerHTML = this.params.IOT_INFO.IOT_NM;   // Overlay에 기상 정보 입력
             
-            this.overlay.setPosition(this.Circle_Center[i]) // Overlay의 위치는 원의 중심
-          }
-        }
+        this.overlay.setPosition(this.Circle_Center[0]) // Overlay의 위치는 원의 중심
       }
     }
   };

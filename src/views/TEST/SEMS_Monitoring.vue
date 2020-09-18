@@ -476,6 +476,7 @@
             });            
 
             this.Circle_iotNO[i] = obj.iotNO;       // 센서별 IOT 고유번호
+            debugger
             this.Circle_Text[i] = obj.codeVALUE;    // 센서별 기상정보
             this.Circle_Center[i] = lonlat;         // 센서별 위치
 
