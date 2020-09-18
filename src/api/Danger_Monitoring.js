@@ -16,3 +16,11 @@ export function SELECT_DANGER_MNT_TIME(IOT_NO,GAS_TYPE,DATE) {
     })
 }
 
+// 센서 위치 정보
+export function GET_SENSOR_INFO(IOT_NO) {
+    return request({
+        url: '/GET_SENSOR_INFO?data={IOT_NO:"' + IOT_NO +'"}',
+        method: 'get'
+    })
+}
+

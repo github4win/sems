@@ -49,6 +49,10 @@
           <b-button size="sm" variant="primary" style="float: right; margin-right: 5px; margin-bottom:5px;" @click="btn_expand">적용</b-button>	
           <b-form-select class= "col-md-2 col-sm-3 col-xs-3" style="float:right; margin-right :10px; height: 28px; margin-bottom:5px;"
             :options="expand_options" v-model="expand_level"></b-form-select>
+          <b-button size="sm" variant="primary" style="float: right; margin-right: 10px; margin-bottom:5px;" @click="btn_loaction">위치</b-button>	
+          <b-modal id="SearchMap" title="센서위치" hide-footer centered>
+              <SensorMap v-on:PopupOK="PopupOK" v-bind:params="popup_Param"></SensorMap>
+          </b-modal>
           <!-- 메인 그리드 시작 -->
           <grid
             id="grdMain"
@@ -83,8 +87,8 @@
             </div>
         </div>
         <div>
-          <label style="font-size : 15pt" v-text="Chart_Tittle"> </label>
         </div>
+        <loading :active.sync="visible" :can-cancel="false"></loading>
         <div id = "chart-date" style="float : left" v-if="Gubun == 'DATE'"></div>
         <div id = "chart-time" style="float : left" v-if="Gubun == 'TIME'"></div>
         <!-- 세부정보 끝 -->
@@ -103,16 +107,21 @@ import { GridDefault } from "@/assets/js/GridDefault.js"; // 그리드 기본값
 import { SEARCH_DANGER_LIST,  SEARCH_TREE_AREA } from '@/api/Sensor_Management.js'
 import { SELECT_DANGER_MNT_DATE,SELECT_DANGER_MNT_TIME} from "@/api/Danger_Monitoring.js";  //시간별 측정수치, 일자별 측정수치
 import SensorManagementModal from '../Management_Options/Sensor_Management_Modal.vue'
+import SensorMap from './Sensor_Map.vue'
 import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 import tui from 'tui-chart'; 
 import moment from 'moment'
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
+
 
 export default {
 
     components: {
       grid: Grid,
-      // Sub_Chart,
-      SensorManagementModal
+      SensorManagementModal,
+      SensorMap,
+      Loading
     },
 
     computed: {
@@ -124,6 +133,8 @@ export default {
     data() {
 
       return {
+        visible : false,
+
         Gubun : "DATE",          //구분 기본값 :기간
         LB_REG_SDATE_DATE : "",  //시작기간 
         LB_REG_EDATE_DATE : "",  //종료기간
@@ -156,8 +167,6 @@ export default {
         Search_Data: "",                // 초기 조회한 데이터(전체 데이터)
 
         //차트
-        Chart_Tittle : '일자별 현황', // 차트 제목
-        
         chart_series : [],            //차트 series (선택된 유해물질)
 
         chartData_time : {},           //시간별 차트 데이터(카테고리+data)
@@ -230,21 +239,50 @@ export default {
           this.LB_REG_SDATE_DATE = sDate
           this.LB_REG_EDATE_DATE = eDate
       },
+      
       //기간, 시간 변경시 종료날짜 활성화/비활성화
       cboChagned(value){
-  
           if(value == "DATE"){
               document.getElementById("EDATE_DIV").hidden = false;
-              this.Chart_Tittle = "일자별 현황"
+              this.showing_chart = this.$refs.dateChart
           }
           else{
               document.getElementById("EDATE_DIV").hidden = true;
-              this.Chart_Tittle = "시간별 현황"
+              this.showing_chart = this.$refs.timeChart
           }
           this.setDate();
       },
       
-      //선택된 레벨만큼 트리 열기
+      // 조회버튼 클릭
+      btn_Search(){
+        const Focus_Data_Index = this.$refs.tuiGrid.invoke("getFocusedCell").rowKey;       // 포커스된 노드 Index
+          var Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);   // 포커스된 노드 정보
+
+        //센서선택시 조회
+        if(Focus_Data_info.LVL == 6){
+          this.setchartData();
+        }
+        
+      },
+
+      //위치 지도 팝업
+      btn_loaction(){
+        const Focus_Data_Index = this.$refs.tuiGrid.invoke("getFocusedCell").rowKey;       // 포커스된 노드 Index
+            var Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);   // 포커스된 노드 정보
+
+        //센서 선택시 지도 표시
+        if(Focus_Data_info.LVL != 6){
+          this.$bvModal.msgBoxOk("센서를 선택해 주세요.", GlobalValue.Err_option);
+          return;
+        }
+        else{
+          this.popup_Param = {ModalID: 'SearchMap', IOT_INFO : Focus_Data_info}
+          this.$bvModal.show('SearchMap')
+        }
+        
+      },
+
+      // 선택된 레벨만큼 트리 열기
       btn_expand() {
         // 전체접기
         this.$refs.tuiGrid.invoke('collapseAll')
@@ -258,7 +296,7 @@ export default {
         }
       },
 
-      //트리 조회
+      // 트리 조회
       Search_Tree_Grid(gubun, param) {
         SEARCH_TREE_AREA(param).then(Tree_Data => {
           if (Utility.fn_IsNull(Tree_Data[0]["KEY_FIELD"])) {
@@ -280,13 +318,13 @@ export default {
         })
       },
 
-      //팝업적용 버튼 이벤트
+      // 팝업적용 버튼 이벤트
       PopupOK(param) {
         this.Search_Tree_Grid(undefined, param.AREA_CODE)
         this.txt_IoT_Place = param.AREA_FULL_NAME
       },
 
-      //팝업 호출
+      // 팝업 호출
       getSearch(param) {
         this.popup_Param = {ModalID: 'SearchModal', searchID: param}
         this.$bvModal.show('SearchModal')
@@ -447,20 +485,18 @@ export default {
         }
 
         this.txt_IOT_NO = DataRow_info.IOT_NO  //차트 조회용 센서번호
-        console.log("DataRow_Info", DataRow_info); 
         
+        //차트의 내용을 지운다.
+        $('#chart-time').empty();
+        $('#chart-date').empty();
+
         //센서 선택시 차트 조회
         if(DataRow_info.LVL == 6){
           this.setchartData()
         }
         
       },
-      
-      // 조회버튼 클릭
-      btn_Search(){
-        
-      },
-
+    
       // 차트 조회
       async setchartData() {
         try
@@ -469,27 +505,31 @@ export default {
           $('#chart-time').empty();
           $('#chart-date').empty();
           this.chart_series = [];
+          // this.chart_date_categories = [];
+          // this.chart_time_categories = 
+          
+          this.visible = true //로딩창 보이기 
+
           //시간별 차트 생성
           if(this.Gubun == "TIME")
           {
           //시간별 측정수치 값 조회(지역,유해물질)
-          let chart_time_result = await SELECT_DANGER_MNT_TIME('001',this.chkboxselected,this.LB_REG_SDATE_DATE)
-          debugger
+          let chart_time_result = await SELECT_DANGER_MNT_TIME(this.txt_IOT_NO,this.chkboxselected,this.LB_REG_SDATE_DATE)
           //---------------------------시간별 차트--------------------------------------------
           // 조회된 데이터가 null이거나 undefined 가 아닌 경우
-          if(!Utility.fn_IsNull(chart_time_result[0].REG_DATE))
+          if(!Utility.fn_IsNull(chart_time_result[0].REG_TIME))
           {
             var ca1 = 0;  //카테고리 갯수 변수
             //조회결과값을 카테고리, data 변수에 담는다
             for(var j = 0; j<chart_time_result.length;j++)
             {
               //카테고리(x축값) 중복 확인
-              if(this.chart_time_categories.includes(moment(chart_time_result[j].REG_DATE).format('MM-DD')))
+              if(this.chart_time_categories.includes(chart_time_result[j].REG_TIME))
               {
                 
               }
               else{
-                this.chart_date_categories[ca1] = moment(chart_time_result[j].REG_DATE).format('MM-DD');
+                this.chart_time_categories[ca1] = chart_time_result[j].REG_TIME;
                 ca1++;
               }
               //시리즈 중복확인
@@ -508,12 +548,10 @@ export default {
               }
             }
           }
-
-
           //시간별 차트 데이터 바인딩
           this.chartData_time= {
-          categories : this.chart_time_categories,
-            
+            categories : this.chart_time_categories, 
+            series: this.chart_series
           } 
 
           //시간별 차트 옵션
@@ -522,6 +560,7 @@ export default {
             {
               width: 1200,
               height: 400,
+              title : "시간별 현황",
               format: '1,000'
             },
             plot: 
@@ -537,7 +576,7 @@ export default {
               zoomable: true    //마우스 드래그로 확대보기 기능
             },
             legend : {
-              visible : false  //범례 숨김
+              visible : true  //범례 숨김
             }
           }
 
@@ -550,8 +589,8 @@ export default {
           
           //일자별 차트 생성
           else{
-          //일자별 측정수치 값 조회(지역,유해물질) (데이터 확인을 위해 임시로 IOT_NO :'001' 을 집어넣음)
-          let chart_date_result = await SELECT_DANGER_MNT_DATE('001',this.chkboxselected,this.LB_REG_SDATE_DATE,this.LB_REG_EDATE_DATE)
+          //일자별 측정수치 값 조회(지역,유해물질)
+          let chart_date_result = await SELECT_DANGER_MNT_DATE(this.txt_IOT_NO,this.chkboxselected,this.LB_REG_SDATE_DATE,this.LB_REG_EDATE_DATE)
           
           //차트 시작일자, 종료일자 지정
           // var First_date =  moment(chart_date_result[0].REG_DATE)
@@ -601,6 +640,7 @@ export default {
             {
               width: 1200,
               height: 400,
+              title : "일자별 현황",
               format: '1,000'
             },
             plot: 
@@ -617,7 +657,7 @@ export default {
             },
             legend : 
             {
-              visible : false   //범례 숨김
+              visible : true   //범례 숨김
             }
           }
 
@@ -629,7 +669,7 @@ export default {
           tui.lineChart(container,this.chartData_date,this.chartOptions_date)
           }
 
-
+          this.visible = false //로딩창 숨기기
         }
         catch(err)
         {
