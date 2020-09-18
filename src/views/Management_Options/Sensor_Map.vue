@@ -94,7 +94,7 @@
             center: Circle_Center[0], // 지도 가운데 좌표 설정
             minZoom: 12, 
             maxZoom: 22,
-            zoom: 13.5            
+            zoom: 14.5            
           }), 
       });
        // 맵 클릭 이벤트
@@ -103,7 +103,7 @@
       });
 
       this.search();   // 센서 조회(센서 범위, 위치, 색상, 기상 정보...), 퓨처 생성(원), 맵에 레이어 적용
-      this.map.values_.size = [600,600]
+      this.map.values_.size = [500,500]
       
     },
 
