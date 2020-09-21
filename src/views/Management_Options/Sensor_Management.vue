@@ -332,7 +332,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
       btn_expand() {
         // 전체접기
         this.$refs.tuiGrid.invoke('collapseAll')
-        console.log('this.Search_Data', this.convert_Data)
+        
         // 설정값 만큼 노드 펼침
         for (var i = 0; i < this.convert_Data.length; i++) {
           if (this.convert_Data[i].LVL <= this.expand_level) {
@@ -867,7 +867,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         // 포커스된 행의 정보
         let DataRow_info = this.$refs.tuiGrid.invoke("getRow", DataRow.rowKey);
         
-        console.log('DataRow_info', DataRow_info)
         if (DataRow_info.IOT_NO == "") {
           this.chkboxselected = []
           if (DataRow_info.NODE_TYPE == 'R' || DataRow_info.NODE_TYPE == 'G' || DataRow_info.AREA_FULL_CODE != '') {
@@ -894,7 +893,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
             var mm = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1)  : (date.getMonth() + 1)
             var dd = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
             var yyyymmdd = yyyy + '-' + mm + '-' + dd
-            console.log('yyyymmdd', yyyymmdd)
+            
             // newRow로 생성할 때
             document.getElementById('b-input-IoT-No').readOnly = false
             document.getElementById('b-input-IoT-Name').readOnly = false

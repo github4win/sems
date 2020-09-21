@@ -149,7 +149,6 @@
             this.Circle_iotNO[0] = obj.IOT_NO;       // 센서별 IOT 고유번호
             this.Circle_Text[0] = obj.CODE_VALUE;    // 센서별 기상정보
             this.Circle_Center[0] = lonlat;         // 센서별 위치
-            console.log(lonlat)
 
             this.map.addLayer(vectorLayer);         // 맵에 레이어를 추가
         }

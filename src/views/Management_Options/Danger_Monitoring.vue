@@ -502,11 +502,6 @@ export default {
       async setchartData() {
         try
         {
-          this.LB_REG_SDATE_DATE
-          this.LB_REG_EDATE_DATE
-          debugger
-
-
           //기존의 내용을 지운다.
           $('#chart-time').empty();
           $('#chart-date').empty();

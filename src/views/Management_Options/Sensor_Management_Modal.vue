@@ -179,7 +179,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
         selectValue.paramGubun = this.params.searchID
         if (this.params.searchID == '1') {
           this.$emit('PopupOK', selectValue)
-          console.log("SelectValue",selectValue)
+          
           this.Close()
         } else {
           if (selectValue.LEVEL == 5) {
