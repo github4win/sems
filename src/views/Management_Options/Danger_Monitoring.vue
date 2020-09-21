@@ -11,31 +11,30 @@
       <div class="common-schwrap">
         <fieldset>
           <div class="row">
-            <div class="col-md-3 col-sm-6">
-              <label class="col-md-3 col-sm-3 col-xs-3 control-label" >지역: </label>
-                  <b-form-input id="b-form-IoT-Place" v-model="txt_IoT_Place" :state="Iot_Place_EmptyValidation" :disabled = 'true' class="col-md-6 col-sm-7 col-xs-7" ></b-form-input>
+            <div class="col-md-4 col-sm-6" style="max-width : 400px">
+              <label class="col-md-2 col-sm-3 col-xs-3 control-label" style="min-width: 50px" >지역: </label>
+                  <b-form-input id="b-form-IoT-Place" v-model="txt_IoT_Place" :state="Iot_Place_EmptyValidation" :disabled = 'true' class="col-md-8 col-sm-7 col-xs-7" style="max-width : 300px" ></b-form-input>
                   <b-button style="width: 60px; margin-left:8px" variant="primary" @click="getSearch('1')">선택</b-button>
             </div>
             <b-modal id="SearchModal" title="지역선택" hide-footer centered>
               <sensor-management-modal v-on:PopupOK="PopupOK" v-bind:params="popup_Param"></sensor-management-modal>
             </b-modal>
-            <div class="col-md-1 col-sm-1">
-              <label class="col-md-6 col-sm-3 col-xs-3 control-label">구분: </label>
-                <b-form-select id="cboGubun" v-model="Gubun" class="col-md-6 col-sm-6 form-control" @change="cboChagned">
+            <div style="width : 150px">
+              <label class="control-label" style="float : left; min-width: 60px">구분: </label>
+                <b-form-select id="cboGubun" v-model="Gubun" class="form-control" style="width: 80px" @change="cboChagned">
                     <option value="DATE">기간</option>
                     <option value="TIME">시간</option>
                 </b-form-select>
             </div>
-            <div class="col-md-2 col-sm-6">
-              <div class="col-md-9 col-sm-8 col-xs-8" style="float: right">                                
-                 <input type="date" id="REG_SDATE" v-model="LB_REG_SDATE_DATE" class="form-control">
+            <div style="width : 230px">
+              <div>  
+                <label class="control-label" style="float : left; min-width: 60px">날짜: </label>
+                 <input type="date" id="REG_SDATE" v-model="LB_REG_SDATE_DATE" class="form-control" style="width: 170px">
               </div>
             </div>
-            <div id="EDATE_DIV" class="col-md-2 col-sm-6">
-              <label class="col-md-2 col-sm-3 col-xs-3 control-label"> ~ </label>
-              <div class="col-md-9 col-sm-8 col-xs-8">                                
-                 <input type="date" id="REG_EDATE" v-text="'~'" v-model="LB_REG_EDATE_DATE" class="form-control">
-              </div>
+            <div id="EDATE_DIV" style="width: 250px; display: contents;">
+            <label class="control-label" style="margin-right: 10px; text-align : center"> ~ </label>
+            <input type="date" id="REG_EDATE" v-model="LB_REG_EDATE_DATE" class="form-control" style="width: 170px">
             </div>
           </div>
         </fieldset>
@@ -44,7 +43,7 @@
 
       <!-- 컨텐츠 시작 -->
       <div style="margin-top:20px;"> 
-        <div class="menu_list col-md-3 col-sm-3 col-xs-3">
+        <div class="sensor_list col-md-3 col-sm-3 col-xs-3">
           <label>IoT 센서리스트</label>
           <b-button size="sm" variant="primary" style="float: right; margin-right: 5px; margin-bottom:5px;" @click="btn_expand">적용</b-button>	
           <b-form-select class= "col-md-2 col-sm-3 col-xs-3" style="float:right; margin-right :10px; height: 28px; margin-bottom:5px;"
@@ -86,9 +85,10 @@
               </b-form-checkbox-group>
             </div>
         </div> -->
+
         <loading :active.sync="visible" :can-cancel="false"></loading>
-        <div id = "chart-date" style="float : left" v-if="Gubun == 'DATE'"></div>
-        <div id = "chart-time" style="float : left" v-if="Gubun == 'TIME'"></div>
+        <div class="chart" id = "chart-date" style="float : left" v-if="Gubun == 'DATE'"></div>
+        <div class="chart" id = "chart-time" style="float : left" v-if="Gubun == 'TIME'"></div>
         <!-- 세부정보 끝 -->
       </div> 
       <!-- 컨텐츠 끝 -->
@@ -164,9 +164,12 @@ export default {
         grd_Data: [],										// 그리드에 바인딩 할 Data 배열 변수
         Real_Node: [],                  // 최상위 노드(Win Tech)
         Search_Data: "",                // 초기 조회한 데이터(전체 데이터)
+        grid_bodyheight : '',
 
         //차트
         chart_series : [],            //차트 series (선택된 유해물질)
+        chart_width : '',             //차트 너비
+        chart_hieght : '',            //차트 높이
 
         chartData_time : {},           //시간별 차트 데이터(카테고리+data)
         chartOptions_time : {},        //시간별 차트 옵션
@@ -183,13 +186,15 @@ export default {
     },
 
     created() {
+      //차트, 그리드 너비, 높이 값 설정
+      this.SetContentSize()
+
       // 센서 트리
       this.gridProps = {
 
         data: this.grd_Data,
         scrollY: true,
         scrollX: false,
-        width:'350',
         bodyheight : 500,
         columns: [
           { header: "Iot 센서리스트",     name: "IOT_TREE_NM" },
@@ -224,9 +229,9 @@ export default {
         if(Default_Area_info != undefined && Default_Area_info[0].AREA_CODE != null){
           this.txt_IoT_Place = Default_Area_info[0].AREA_NAME;
           this.setDate();
-          debugger
           this.Search_Tree_Grid(gubun, Default_Area_info[0].AREA_CODE)
         }
+
         await this.SetCombo();   // 콤보바인딩
       },
 
@@ -267,7 +272,6 @@ export default {
         if(Focus_Data_info.LVL == 6){
           this.setchartData();
         }
-        
       },
 
       //위치 지도 팝업
@@ -331,7 +335,6 @@ export default {
 
       // 팝업 호출
       getSearch(param) {
-        debugger
         this.popup_Param = {ModalID: 'SearchModal', searchID: param}
         this.$bvModal.show('SearchModal')
       },
@@ -499,18 +502,28 @@ export default {
       async setchartData() {
         try
         {
+          this.LB_REG_SDATE_DATE
+          this.LB_REG_EDATE_DATE
+          debugger
+
+
           //기존의 내용을 지운다.
           $('#chart-time').empty();
           $('#chart-date').empty();
+
+          this.SetContentSize();
+
           this.chart_series = [];
           this.chart_date_categories = [];
-          // this.chart_time_categories = 
-          
+
           this.visible = true //로딩창 보이기 
 
           //시간별 차트 생성
           if(this.Gubun == "TIME")
           {
+            if(this.LB_REG_SDATE_DATE == ""){
+              this.$bvModal.msgBoxOk("날짜를 선택해 주세요.", GlobalValue.Err_option);
+            }
           //시간별 측정수치 값 조회(지역,유해물질)
           let chart_time_result = await SELECT_DANGER_MNT_TIME(this.txt_IOT_NO,this.Gaslist,this.LB_REG_SDATE_DATE)
           //---------------------------시간별 차트--------------------------------------------
@@ -556,7 +569,7 @@ export default {
           this.chartOptions_time ={           
             chart: 
             {
-              width: 1150,
+              width: this.chart_width,
               height: 600,
               title : "시간별 현황",
               format: '1,000'
@@ -568,6 +581,9 @@ export default {
             xAxis: 
             {
               tickInterval: 'auto'   //x축 간격: 자동
+            },
+            yAxis:{
+              min : 0  //y축 최솟값 0
             },
             series :
             {
@@ -586,12 +602,11 @@ export default {
           
           //일자별 차트 생성
           else{
+            if(this.LB_REG_SDATE_DATE == "" || this.LB_REG_EDATE_DATE == ""){
+              this.$bvModal.msgBoxOk("날짜를 선택해 주세요.", GlobalValue.Err_option);
+            }
           //일자별 측정수치 값 조회(지역,유해물질)
           let chart_date_result = await SELECT_DANGER_MNT_DATE(this.txt_IOT_NO,this.Gaslist,this.LB_REG_SDATE_DATE,this.LB_REG_EDATE_DATE)
-          console.log("CHART_DATA_RESULT",chart_date_result)
-          //차트 시작일자, 종료일자 지정
-          // var First_date =  moment(chart_date_result[0].REG_DATE)
-          // var Last_date = moment(chart_date_result[chart_date_result.length-1].REG_DATE)
 
           // 조회된 데이터가 null이거나 undefined 가 아닌 경우
           if(!Utility.fn_IsNull(chart_date_result[0].REG_DATE))
@@ -635,7 +650,7 @@ export default {
           this.chartOptions_date ={
             chart: 
             {
-              width: 1150,
+              width: this.chart_width,
               height: 600,
               title : "일자별 현황",
               format: '1,000'
@@ -647,6 +662,9 @@ export default {
             xAxis: 
             {
               tickInterval: 'auto'   //x축 간격: 자동
+            },
+            yAxis:{
+              min : 0  //y축 최솟값 0
             },
             series :
             {
@@ -671,8 +689,19 @@ export default {
         {
           this.$bvModal.msgBoxOk(err, GlobalValue.Err_option);
         }
-      }
+      },
 
+      //창 크기에 따라 그리드 높이, 차트너비,높이  변경
+      SetContentSize(){
+         //화면 너비에 따라 차트 너비 변경
+          var windowWidth = $(window).width()
+          if(windowWidth > 800){
+           this.chart_width = windowWidth - 350
+          }
+          else{
+            this.chart_width = 400
+          }
+      }
   }
 }
 
@@ -687,13 +716,14 @@ function SeriesChk(arr, val) {
 
 <style lang="less" scope>
 
-// 메뉴리스트 부분 너비
-.menu_list {
-    max-width:30% !important;
+// 센서리스트 부분 너비
+.sensor_list {
+    // max-width:30% !important;
+    max-width : 350px;
 }
   
-// 메뉴세부정보 부분 너비
-.menu_list_item {
+// 차트 부분 너비
+.chart {
     max-width:70% !important;
 }
 
@@ -708,7 +738,12 @@ label.Input-Area-Label {
 .chk_options {
     margin-left: 150px;
 }
-
+.col-md-2{
+  width: 14%;
+}
+col-md-3{
+  width: 20%;
+}
 
 
 </style>

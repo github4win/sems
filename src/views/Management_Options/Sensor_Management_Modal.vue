@@ -375,7 +375,6 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
       // 메인 그리드 삭제 버튼 
       async btn_Select() {
-        debugger
         const Focus_Data_Index = this.$refs.tuiGrid.invoke("getFocusedCell").rowKey;     // 포커스된 노드 Index
         const Focus_Data_info = this.$refs.tuiGrid.invoke("getRow", Focus_Data_Index);   // 포커스된 노드 정보
         
