@@ -13,7 +13,7 @@
           <div class="row">
             <div class="col-md-3 col-sm-6">
               <label class="col-md-3 col-sm-3 col-xs-3 control-label" >지역: </label>
-                  <b-form-input id="b-form-IoT-Place" v-model="txt_IoT_Place" :state="Iot_Place_EmptyValidation" :disabled = 'true' class="col-md-7 col-sm-7 col-xs-7" ></b-form-input>
+                  <b-form-input id="b-form-IoT-Place" v-model="txt_IoT_Place" :state="Iot_Place_EmptyValidation" :disabled = 'true' class="col-md-6 col-sm-7 col-xs-7" ></b-form-input>
                   <b-button style="width: 60px; margin-left:8px" variant="primary" @click="getSearch('1')">선택</b-button>
             </div>
             <b-modal id="SearchModal" title="지역선택" hide-footer centered>
@@ -27,13 +27,13 @@
                 </b-form-select>
             </div>
             <div class="col-md-2 col-sm-6">
-              <div class="col-md-8 col-sm-8 col-xs-8" style="float: right">                                
+              <div class="col-md-9 col-sm-8 col-xs-8" style="float: right">                                
                  <input type="date" id="REG_SDATE" v-model="LB_REG_SDATE_DATE" class="form-control">
               </div>
             </div>
             <div id="EDATE_DIV" class="col-md-2 col-sm-6">
               <label class="col-md-2 col-sm-3 col-xs-3 control-label"> ~ </label>
-              <div class="col-md-8 col-sm-8 col-xs-8">                                
+              <div class="col-md-9 col-sm-8 col-xs-8">                                
                  <input type="date" id="REG_EDATE" v-text="'~'" v-model="LB_REG_EDATE_DATE" class="form-control">
               </div>
             </div>
@@ -103,7 +103,7 @@ import GlobalValue from "@/assets/js/GlobalValue.js";  // 전 화면 공통으�
 import Utility from "@/assets/js/CommonUtility.js"; // 전 화면 공통으로 사용하는 함수
 import { GridDefault } from "@/assets/js/GridDefault.js"; // 그리드 기본값 세팅, 그리드 EditOptions
 import { SEARCH_DANGER_LIST,  SEARCH_TREE_AREA } from '@/api/Sensor_Management.js'
-import { SELECT_DANGER_MNT_DATE,SELECT_DANGER_MNT_TIME} from "@/api/Danger_Monitoring.js";  //시간별 측정수치, 일자별 측정수치
+import { DEFAULT_AREA, SELECT_DANGER_MNT_DATE, SELECT_DANGER_MNT_TIME} from "@/api/Danger_Monitoring.js";  //시간별 측정수치, 일자별 측정수치
 import SensorManagementModal from './Sensor_Management_Modal.vue'
 import SensorMap from './Sensor_Map.vue'
 import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
@@ -183,19 +183,19 @@ export default {
     },
 
     created() {
-      // 메인 그리드
+      // 센서 트리
       this.gridProps = {
 
         data: this.grd_Data,
         scrollY: true,
         scrollX: false,
         width:'350',
-        bodyheight : 550,
+        bodyheight : 500,
         columns: [
           { header: "Iot 센서리스트",     name: "IOT_TREE_NM" },
-          { header: "정렬순서",           name: "KEY_FIELD",        hidden: true },
-          { header: "정렬순서",           name: "PARENT_FIELD", hidden: true},
-          { header: "정렬순서",           name: "USE_YN", hidden: true}
+          { header: "키값",               name: "KEY_FIELD",   hidden: true },
+          { header: "부모코드",           name: "PARENT_FIELD", hidden: true},
+          { header: "사용유무",           name: "USE_YN", hidden: true}
         ],
         myTheme: {
           name: "mygrid",
@@ -218,9 +218,15 @@ export default {
     methods: {
       //초기화
       async SetInit(gubun){
-        this.txt_IoT_Place = "대한민국"
-        this.setDate();
-        this.Search_Tree_Grid(gubun, 'AREA0001')
+        // 지역코드 초기값 조회 
+        const Default_Area_info = await DEFAULT_AREA()
+
+        if(Default_Area_info != undefined && Default_Area_info[0].AREA_CODE != null){
+          this.txt_IoT_Place = Default_Area_info[0].AREA_NAME;
+          this.setDate();
+          debugger
+          this.Search_Tree_Grid(gubun, Default_Area_info[0].AREA_CODE)
+        }
         await this.SetCombo();   // 콤보바인딩
       },
 
@@ -325,6 +331,7 @@ export default {
 
       // 팝업 호출
       getSearch(param) {
+        debugger
         this.popup_Param = {ModalID: 'SearchModal', searchID: param}
         this.$bvModal.show('SearchModal')
       },
@@ -496,7 +503,7 @@ export default {
           $('#chart-time').empty();
           $('#chart-date').empty();
           this.chart_series = [];
-          // this.chart_date_categories = [];
+          this.chart_date_categories = [];
           // this.chart_time_categories = 
           
           this.visible = true //로딩창 보이기 
@@ -549,8 +556,8 @@ export default {
           this.chartOptions_time ={           
             chart: 
             {
-              width: 1200,
-              height: 650,
+              width: 1150,
+              height: 600,
               title : "시간별 현황",
               format: '1,000'
             },
@@ -570,7 +577,6 @@ export default {
               visible : true  //범례 숨김
             }
           }
-
           //차트 생성위치
           var container = document.getElementById('chart-time');
 
@@ -582,7 +588,7 @@ export default {
           else{
           //일자별 측정수치 값 조회(지역,유해물질)
           let chart_date_result = await SELECT_DANGER_MNT_DATE(this.txt_IOT_NO,this.Gaslist,this.LB_REG_SDATE_DATE,this.LB_REG_EDATE_DATE)
-          
+          console.log("CHART_DATA_RESULT",chart_date_result)
           //차트 시작일자, 종료일자 지정
           // var First_date =  moment(chart_date_result[0].REG_DATE)
           // var Last_date = moment(chart_date_result[chart_date_result.length-1].REG_DATE)
@@ -629,8 +635,8 @@ export default {
           this.chartOptions_date ={
             chart: 
             {
-              width: 1200,
-              height: 650,
+              width: 1150,
+              height: 600,
               title : "일자별 현황",
               format: '1,000'
             },
@@ -659,7 +665,6 @@ export default {
           //일자별 차트 생성
           tui.lineChart(container,this.chartData_date,this.chartOptions_date)
           }
-
           this.visible = false //로딩창 숨기기
         }
         catch(err)

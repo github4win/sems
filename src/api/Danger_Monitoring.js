@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+// MARK 조회
+export function DEFAULT_AREA() {
+    return request({
+        url: '/DEFAULT_AREA',
+        method: 'get'
+    })
+}
+
 // 일자별 차트 조회
 export function SELECT_DANGER_MNT_DATE(IOT_NO,GAS_TYPE,SDATE,EDATE) {
     return request({

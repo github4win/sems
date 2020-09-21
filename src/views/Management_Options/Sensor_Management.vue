@@ -135,139 +135,9 @@
                   </div>
                 </div>
               </b-row>
-
             </div>
             검출대상:
             <div class="col-md-12 col-sm-12 col-xs-12 common-schwrap">
-              <!-- <b-form-checkbox-group v-model="chkboxselected" :disabled="chkboxGroup">
-                <b-row>
-                  <div class="col-md-3 col-sm-3 col-xs-3">
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-xs-8">
-                      <b-form-checkbox
-                        v-model="chk_Box1"
-                        value="O"
-                        unchecked-value=""
-                      >일산화탄소(CO)</b-form-checkbox>
-                    </div>
-                  </div>
-                  <div class="col-md-3 col-sm-3 col-xs-3">
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-xs-8">
-                      <b-form-checkbox
-                        v-model="chk_Box2"
-                        value="R"
-                        unchecked-value=""
-                      >황화수소(H₂S)</b-form-checkbox>
-                    </div>
-                  </div>
-                  <div class="col-md-3 col-sm-3 col-xs-3">
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-xs-8">
-                      <b-form-checkbox
-                        v-model="chk_Box3"
-                        value="T"
-                        unchecked-value=""
-                      >암모니아(NH₃)</b-form-checkbox>
-                    </div>
-                  </div>
-                  <div class="col-md-3 col-sm-3 col-xs-3">
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-xs-8">
-                      <b-form-checkbox
-                        v-model="chk_Box4"
-                        value="V"
-                        unchecked-value=""
-                      >메탄(CH⁴)</b-form-checkbox>
-                    </div>
-                  </div>
-                </b-row>
-                <b-row>
-                  <div class="col-md-3 col-sm-3 col-xs-3">
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-xs-8">
-                      <b-form-checkbox
-                        v-model="chk_Box5"
-                        value="P"
-                        unchecked-value=""
-                      >질소산화물(NOx)</b-form-checkbox>
-                    </div>
-                  </div>
-                  <div class="col-md-3 col-sm-3 col-xs-3">
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-xs-8">
-                      <b-form-checkbox
-                        v-model="chk_Box6"
-                        value="S"
-                        unchecked-value=""
-                      >염소(Cl₂)</b-form-checkbox>
-                    </div>
-                  </div>
-                  <div class="col-md-3 col-sm-3 col-xs-3">
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-xs-8">
-                      <b-form-checkbox
-                        v-model="chk_Box7"
-                        value="W"
-                        unchecked-value=""
-                      >아세톤(Aceton)</b-form-checkbox>
-                    </div>
-                  </div>
-                  <div class="col-md-3 col-sm-3 col-xs-3">
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-xs-8">
-                      <b-form-checkbox
-                        v-model="chk_Box8"
-                        value="25"
-                        unchecked-value=""
-                      >미세먼지</b-form-checkbox>
-                    </div>
-                  </div>
-                </b-row>
-                <b-row>
-                  <div class="col-md-3 col-sm-3 col-xs-3">
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-xs-8">
-                      <b-form-checkbox
-                        v-model="chk_Box9"
-                        value="Q"
-                        unchecked-value=""
-                      >황산화물(SOx)</b-form-checkbox>
-                    </div>
-                  </div>
-                  <div class="col-md-3 col-sm-3 col-xs-3">
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-xs-8">
-                      <b-form-checkbox
-                        v-model="chk_Box10"
-                        value="U"
-                        unchecked-value=""
-                      >수소(H₂)</b-form-checkbox>
-                    </div>
-                  </div>
-                  <div class="col-md-3 col-sm-3 col-xs-3">
-                    <div class="col-md-2 col-sm-2 col-xs-2">
-                    </div>
-                    <div class="col-md-8 col-sm-8 col-xs-8">
-                      <b-form-checkbox
-                        v-model="chk_Box11"
-                        value="X"
-                        unchecked-value=""
-                      >에탄올(Ethanol)</b-form-checkbox>
-                    </div>
-                  </div>
-                </b-row>
-              </b-form-checkbox-group> -->
               <b-form-checkbox-group 
                 v-model="chkboxselected"
                 style="column-count: 4;">
@@ -275,7 +145,7 @@
                   v-for="option in chk_options"
                   :key="option.value"
                   :value="option.value"
-                  style="margin-left :50px; margin-bottom: 5px; margin-top:10px"
+                  style="margin-left :50px; margin-right : 50px; margin-bottom: 5px; margin-top:10px"
                 >{{ option.text }}</b-form-checkbox>
               </b-form-checkbox-group>
             </div>
@@ -389,20 +259,7 @@ import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
 
 
         chkboxselected: [],
-        chkgrpOptions: [
-          { text: '일산화탄소(CO)', value: 'O'},
-          { text: '황화수소(H₂S)', value: 'R'},
-          { text: '암모니아(NH₃)', value: 'T'},
-          { text: '메탄(CH⁴)', value: 'V'},
-          { text: '질소산화물(NOx)', value: 'P'},
-          { text: '염소(Cl₂)', value: 'S'},
-          { text: '아세톤(Aceton)', value: 'W'},
-          { text: '미세먼지', value: '25'},
-          { text: '황산화물(SOx)', value: 'Q'},
-          { text: '수소(H₂)', value: 'U'},
-          { text: '에탄올(Ethanol)', value: 'X'},
-        ],
-        
+        chk_options : [],
 
         save_yn : "",         // 저장 여부
 
