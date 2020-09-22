@@ -1,9 +1,10 @@
 import request from '@/utils/request'
 
 // MARK 조회
-export function DEFAULT_AREA() {
+export function SELECT_DEFAULT_AREA() {
+    debugger
     return request({
-        url: '/DEFAULT_AREA',
+        url: '/SELECT_DEFAULT_AREA',
         method: 'get'
     })
 }

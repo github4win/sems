@@ -103,7 +103,7 @@ import GlobalValue from "@/assets/js/GlobalValue.js";  // 전 화면 공통으�
 import Utility from "@/assets/js/CommonUtility.js"; // 전 화면 공통으로 사용하는 함수
 import { GridDefault } from "@/assets/js/GridDefault.js"; // 그리드 기본값 세팅, 그리드 EditOptions
 import { SEARCH_DANGER_LIST,  SEARCH_TREE_AREA } from '@/api/Sensor_Management.js'
-import { DEFAULT_AREA, SELECT_DANGER_MNT_DATE, SELECT_DANGER_MNT_TIME} from "@/api/Danger_Monitoring.js";  //시간별 측정수치, 일자별 측정수치
+import { SELECT_DEFAULT_AREA, SELECT_DANGER_MNT_DATE, SELECT_DANGER_MNT_TIME} from "@/api/Danger_Monitoring.js";  //시간별 측정수치, 일자별 측정수치
 import SensorManagementModal from './Sensor_Management_Modal.vue'
 import SensorMap from './Sensor_Map.vue'
 import { Grid } from "@toast-ui/vue-grid"; // tui-Grid Module
@@ -223,9 +223,11 @@ export default {
     methods: {
       //초기화
       async SetInit(gubun){
+        try{
         // 지역코드 초기값 조회 
-        const Default_Area_info = await DEFAULT_AREA()
-
+        debugger
+        const Default_Area_info = await SELECT_DEFAULT_AREA()
+        debugger
         if(Default_Area_info != undefined && Default_Area_info[0].AREA_CODE != null){
           this.txt_IoT_Place = Default_Area_info[0].AREA_NAME;
           this.setDate();
@@ -233,6 +235,10 @@ export default {
         }
 
         await this.SetCombo();   // 콤보바인딩
+        }catch(err){
+          alert(err, GlobalValue.Err_option)
+        }
+
       },
 
       //초기 날짜 설정
