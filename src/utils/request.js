@@ -65,8 +65,8 @@ service.interceptors.response.use(
         if (response.data && response.data.result) {
             if (typeof res === 'object') res.result = response.data.result
         }
-        
-        return JSON.parse(res)
+        var tt = JSON.parse(res);
+        return tt;
     },
     error => {
         //console.log('err', error, error.message, error.response) // for debug

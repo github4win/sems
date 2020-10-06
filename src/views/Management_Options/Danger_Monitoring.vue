@@ -525,8 +525,8 @@ export default {
             if(this.LB_REG_SDATE_DATE == ""){
               this.$bvModal.msgBoxOk("날짜를 선택해 주세요.", GlobalValue.Err_option);
             }
-          //시간별 측정수치 값 조회(지역,유해물질)
-          let chart_time_result = await SELECT_DANGER_MNT_TIME(this.txt_IOT_NO,this.Gaslist,this.LB_REG_SDATE_DATE)
+          //시간별 측정수치 값 조회(지역,유해물질)  
+          let chart_time_result = await SELECT_DANGER_MNT_TIME(this.txt_IOT_NO,this.Gaslist,this.LB_REG_SDATE_DATE.replace(/-/g, ''))
           //---------------------------시간별 차트--------------------------------------------
           // 조회된 데이터가 null이거나 undefined 가 아닌 경우
           if(!Utility.fn_IsNull(chart_time_result[0].REG_TIME))
@@ -606,8 +606,9 @@ export default {
             if(this.LB_REG_SDATE_DATE == "" || this.LB_REG_EDATE_DATE == ""){
               this.$bvModal.msgBoxOk("날짜를 선택해 주세요.", GlobalValue.Err_option);
             }
+
           //일자별 측정수치 값 조회(지역,유해물질)
-          let chart_date_result = await SELECT_DANGER_MNT_DATE(this.txt_IOT_NO,this.Gaslist,this.LB_REG_SDATE_DATE,this.LB_REG_EDATE_DATE)
+          let chart_date_result = await SELECT_DANGER_MNT_DATE(this.txt_IOT_NO,this.Gaslist,this.LB_REG_SDATE_DATE.replace(/-/g, ''),this.LB_REG_EDATE_DATE.replace(/-/g, ''))
 
           // 조회된 데이터가 null이거나 undefined 가 아닌 경우
           if(!Utility.fn_IsNull(chart_date_result[0].REG_DATE))
