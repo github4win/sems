@@ -39,6 +39,12 @@ Vue.use(VueRouter)
     name: 'SEMS_Area_MNG',
     component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Area_Management.vue')
   }
+  ,
+  {
+    path: '/SEMS_Notice_MNG',
+    name: 'SEMS_Notice_MNG',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Management_Options/Notice_Management.vue')
+  }
 ]
 
 const router = new VueRouter({
