@@ -49,12 +49,6 @@
 // import 영역
 /*eslint-disable no-unused-vars, no-empty*/ // 변수 선언 후 사용하지 않거나, 무의미한 띄어쓰기가 코드에 들어간 경우 에러를 내뱉는 경우를 방지
 import Utility from "../../assets/js/CommonUtility.js";   // 전 화면 공통으로 사용하는 함수
-import {SELECT_NOT_DETAIL} from "@/api/Test_map.js";
-import moment, { months } from 'moment'
-
-//전역변수 선언
-var SELECTED_ASSET = [{}];
-
 
 // Vue 핸들링 영역
 export default {
@@ -68,13 +62,13 @@ export default {
 
       LB_TITLE : "제목",
       LB_REG_DATE: "등록일자",         
-      LB_REG_USER: "작성자",
+      LB_REG_USER: "공지자",
       LB_DATA : "내용",
       
-      LB_TITLE_TXT :"",
-      LB_REG_DATE_TXT: "",
-      LB_REG_USER_TXT: "",
-      LB_DATA_TXT: "",
+      LB_TITLE_TXT :"",       // 제목
+      LB_REG_DATE_TXT: "",    // 등록일자
+      LB_REG_USER_TXT: "",    // 공지자
+      LB_DATA_TXT: "",        // 내용
 
       Device_Type : "",    // 스크린 사이즈
     };
@@ -82,7 +76,7 @@ export default {
 
   // 화면이 로드될 때 실행되는 이벤트
   created() {
-    this.SEARCH();
+    this.SEARCH();  // 세부내용 조회
   },
 
   // 화면이 로드될 때 DOM 생성이 완료된 후 실행되는 이벤트 선언부
@@ -98,20 +92,22 @@ export default {
     },
 
     //세부내용 조회
-    async SEARCH(){
-        let NOT_RESULT = await SELECT_NOT_DETAIL(this.TARGET.NOT_ID);
-
-           // 조회된 데이터가 null이거나 undefined 인 경우
-           if(Utility.fn_IsNull(NOT_RESULT[0].NOT_ID))
-           {
-              return;
-           }
-        
-        this.LB_TITLE_TXT = NOT_RESULT[0].TITLE;
-        this.LB_REG_DATE_TXT = moment(NOT_RESULT[0].REG_DATE).format('YYYY-MM-DD');
-        this.LB_REG_USER_TXT = NOT_RESULT[0].REG_USER;
-        this.LB_DATA_TXT = NOT_RESULT[0].DATA;
-
+     SEARCH(){
+      // 5개의 공지사항 갯수 만큼
+      for(var i = 0; i < this.TARGET.NOT_RESULT.length; i++)
+      {
+        // 공지사항 SEQ가 같은 경우
+        if(this.TARGET.NOT_RESULT[i].SEQ === this.TARGET.NOT_ID )
+        {
+          debugger
+          // 데이터 바인딩
+          this.LB_TITLE_TXT = this.TARGET.NOT_RESULT[i].POP_TITLE.split('<br/>').join("\r\n");  // 공지사항 제목
+          this.LB_REG_DATE_TXT = this.TARGET.NOT_RESULT[i].REG_DATE;    // 공지사항 등록일자
+          this.LB_REG_USER_TXT = this.TARGET.NOT_RESULT[i].NOTICE_USER; // 공지사항 공지자
+          this.LB_DATA_TXT = this.TARGET.NOT_RESULT[i].POP_CONTENT.split('<br/>').join("\r\n"); // 공지사항 내용
+          break;
+        }
+      }
     },
 
     // 취소 버튼 클릭

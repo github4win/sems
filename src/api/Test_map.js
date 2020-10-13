@@ -40,12 +40,13 @@ export function SELECT_NOT() {
     })
 }
 
-
-// 공지사항 세부내용 조회
-export function SELECT_NOT_DETAIL(NOT_ID) {
+// 현재 사용중인 공지사항 조회(2020.10.13 KOY)
+export function SELECT_NOTI() {
     return request({
-        url: '/SELECT_NOT_DETAIL?data={NOT_ID:"'+ NOT_ID +'"}',
+        url: '/SELECT_NOTI',
         method: 'get'
     })
 }
+
+
 
