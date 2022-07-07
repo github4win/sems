@@ -17,7 +17,7 @@
     "element-ui": "^2.13.0",
     "jquery": "^3.4.1",
     "js-cookie": "^2.2.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "ol": "^6.3.1",
     "register-service-worker": "^1.6.2",
     "tui-chart": "^3.11.1",
